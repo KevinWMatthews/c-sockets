@@ -1,7 +1,7 @@
 #include "Socket.h"
 #include "UnixSocket.h"
 
-int Socket_Create(void)
+int Socket_Open(void)
 {
-    return UnixSocket_Create();
+    return UnixSocket_Open();
 }

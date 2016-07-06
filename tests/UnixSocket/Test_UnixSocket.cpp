@@ -22,18 +22,18 @@ TEST_GROUP(UnixSocket)
     }
 };
 
-TEST(UnixSocket, it_can_fail_to_create_a_socket)
+TEST(UnixSocket, it_can_fail_to_open_a_socket)
 {
-    mock().expectOneCall("UnixSocket_Create")
+    mock().expectOneCall("UnixSocket_Open")
         .andReturnValue(UNIX_SOCKET_FAIL);
-    LONGS_EQUAL( SOCKET_FAIL, Socket_Create() );
+    LONGS_EQUAL( SOCKET_FAIL, Socket_Open() );
 }
 
-TEST(UnixSocket, it_can_create_a_socket)
+TEST(UnixSocket, it_can_open_a_socket)
 {
     int file_descriptor = 42;   // Or whatever.
-    mock().expectOneCall("UnixSocket_Create")
+    mock().expectOneCall("UnixSocket_Open")
         .andReturnValue(file_descriptor);
 
-    LONGS_EQUAL( file_descriptor, Socket_Create() );
+    LONGS_EQUAL( file_descriptor, Socket_Open() );
 }

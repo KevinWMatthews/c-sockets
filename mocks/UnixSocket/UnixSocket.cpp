@@ -5,8 +5,8 @@ extern "C"
 
 #include "CppUTestExt/MockSupport.h"
 
-int UnixSocket_Create(void)
+int UnixSocket_Open(void)
 {
-    mock().actualCall("UnixSocket_Create");
+    mock().actualCall("UnixSocket_Open");
     return mock().intReturnValue();
 }

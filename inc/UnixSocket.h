@@ -5,6 +5,6 @@ typedef enum
 {
     UNIX_SOCKET_FAIL = -1
 } UnixSocketReturnCode;
-int UnixSocket_Create(void);
+int UnixSocket_Open(void);
 
 #endif
