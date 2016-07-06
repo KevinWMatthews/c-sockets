@@ -10,9 +10,12 @@ extern "C"
 
 TEST_GROUP(UnixSocket)
 {
+    int file_descriptor;
+
     void setup()
     {
         mock().strictOrder();
+        file_descriptor = 42;
     }
 
     void teardown()
@@ -20,32 +23,38 @@ TEST_GROUP(UnixSocket)
         mock().checkExpectations();
         mock().clear();
     }
+
+    void expectOpenSocket(int file_descriptor_or_error_code)
+    {
+        mock().expectOneCall("UnixSocket_Open")
+            .andReturnValue(file_descriptor_or_error_code);
+    }
+
+    void expectCloseSocket(int file_descriptor)
+    {
+        mock().expectOneCall("UnixSocket_Close")
+            .withParameter("file_descriptor", file_descriptor);
+    }
 };
 
 TEST(UnixSocket, it_can_fail_to_open_a_socket)
 {
-    mock().expectOneCall("UnixSocket_Open")
-        .andReturnValue(UNIX_SOCKET_FAIL);
+    expectOpenSocket(UNIX_SOCKET_FAIL);
     LONGS_EQUAL( SOCKET_FAIL, Socket_Open() );
 }
 
 TEST(UnixSocket, it_can_open_a_socket)
 {
-    int file_descriptor = 42;   // Or whatever.
-    mock().expectOneCall("UnixSocket_Open")
-        .andReturnValue(file_descriptor);
+    expectOpenSocket(file_descriptor);
 
     LONGS_EQUAL( SOCKET_SUCCESS, Socket_Open() );
 }
 
 TEST(UnixSocket, it_can_close_a_socket)
 {
-    int file_descriptor = 42;
-    mock().expectOneCall("UnixSocket_Open")
-        .andReturnValue(file_descriptor);
-    mock().expectOneCall("UnixSocket_Close")
-        .withParameter("file_descriptor", file_descriptor);
-
+    expectOpenSocket(file_descriptor);
+    expectCloseSocket(file_descriptor);
     Socket_Open();
+
     Socket_Close();
 }
