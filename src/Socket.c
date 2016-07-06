@@ -1,19 +1,57 @@
 #include "Socket.h"
 #include "UnixSocket.h"
 
-static int file_descriptor;
-
-int Socket_Open(void)
+typedef struct SocketStruct
 {
-    file_descriptor = UnixSocket_Open();
-    if ( file_descriptor < 0)
+    int file_descriptor;
+} SocketStruct;
+
+Socket Socket_Create(void)
+{
+    Socket self = calloc( 1, sizeof(*self) );
+    if (self == 0)
     {
-        return file_descriptor;
+        return 0;
+    }
+    return self;
+}
+
+void Socket_Destroy(Socket * self)
+{
+    if (self == 0)
+    {
+        return;
+    }
+    free(*self);
+    *self = 0;
+}
+
+int Socket_Open(Socket self)
+{
+    int file_descriptor = 0;
+    if (self == 0)
+    {
+        return SOCKET_NULL_POINTER;
+    }
+    file_descriptor = UnixSocket_Open();
+    self->file_descriptor = file_descriptor;
+    if (self->file_descriptor < 0)
+    {
+        return SOCKET_FAIL;
     }
     return SOCKET_SUCCESS;
 }
 
-void Socket_Close(void)
+void Socket_Close(Socket self)
 {
-    UnixSocket_Close(file_descriptor);
+    UnixSocket_Close(self->file_descriptor);
+}
+
+int Socket_GetFileDescriptor(Socket self)
+{
+    if (self == 0)
+    {
+        return SOCKET_NULL_POINTER;
+    }
+    return self->file_descriptor;
 }
