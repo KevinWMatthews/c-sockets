@@ -1,12 +1,19 @@
 #include "Socket.h"
 #include "UnixSocket.h"
 
+static int file_descriptor;
+
 int Socket_Open(void)
 {
-    return UnixSocket_Open();
+    file_descriptor = UnixSocket_Open();
+    if ( file_descriptor < 0)
+    {
+        return file_descriptor;
+    }
+    return SOCKET_SUCCESS;
 }
 
-void Socket_Close(int file_descriptor)
+void Socket_Close(void)
 {
     UnixSocket_Close(file_descriptor);
 }

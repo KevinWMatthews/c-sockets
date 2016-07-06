@@ -35,14 +35,17 @@ TEST(UnixSocket, it_can_open_a_socket)
     mock().expectOneCall("UnixSocket_Open")
         .andReturnValue(file_descriptor);
 
-    LONGS_EQUAL( file_descriptor, Socket_Open() );
+    LONGS_EQUAL( SOCKET_SUCCESS, Socket_Open() );
 }
 
 TEST(UnixSocket, it_can_close_a_socket)
 {
     int file_descriptor = 42;
+    mock().expectOneCall("UnixSocket_Open")
+        .andReturnValue(file_descriptor);
     mock().expectOneCall("UnixSocket_Close")
         .withParameter("file_descriptor", file_descriptor);
 
-    Socket_Close(file_descriptor);
+    Socket_Open();
+    Socket_Close();
 }
