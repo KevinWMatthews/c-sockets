@@ -3,6 +3,5 @@
 
 int Socket_Create(void)
 {
-    UnixSocket_Create();
-    return SOCKET_FAIL;
+    return UnixSocket_Create();
 }

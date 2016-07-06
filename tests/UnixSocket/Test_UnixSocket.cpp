@@ -28,3 +28,12 @@ TEST(UnixSocket, it_can_fail_to_create_a_socket)
         .andReturnValue(UNIX_SOCKET_FAIL);
     LONGS_EQUAL( SOCKET_FAIL, Socket_Create() );
 }
+
+TEST(UnixSocket, it_can_create_a_socket)
+{
+    int file_descriptor = 42;   // Or whatever.
+    mock().expectOneCall("UnixSocket_Create")
+        .andReturnValue(file_descriptor);
+
+    LONGS_EQUAL( file_descriptor, Socket_Create() );
+}
