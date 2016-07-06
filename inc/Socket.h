@@ -6,5 +6,6 @@ typedef enum
     SOCKET_FAIL = -1
 } SocketReturnCode;
 int Socket_Open(void);
+void Socket_Close(int);
 
 #endif
