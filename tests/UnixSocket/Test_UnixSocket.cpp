@@ -11,11 +11,13 @@ extern "C"
 TEST_GROUP(UnixSocket)
 {
     int file_descriptor;
+    int file_descriptor2;
 
     void setup()
     {
         mock().strictOrder();
         file_descriptor = 42;
+        file_descriptor2 = 43;
     }
 
     void teardown()
@@ -56,5 +58,25 @@ TEST(UnixSocket, it_can_close_a_socket)
     expectCloseSocket(file_descriptor);
     Socket_Open();
 
+    Socket_Close();
+}
+
+TEST(UnixSocket, it_can_open_several_sockets)
+{
+    expectOpenSocket(file_descriptor);
+    expectOpenSocket(file_descriptor2);
+
+    Socket_Open();
+    Socket_Open();
+}
+
+IGNORE_TEST(UnixSocket, it_can_close_several_sockets)
+{
+    expectOpenSocket(file_descriptor);
+    expectOpenSocket(file_descriptor2);
+    Socket_Open();
+    Socket_Open();
+
+    Socket_Close();
     Socket_Close();
 }
