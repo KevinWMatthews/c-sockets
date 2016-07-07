@@ -32,19 +32,19 @@ TEST_GROUP(UnixSocket)
         mock().clear();
     }
 
-    void expectOpenSocket(int file_descriptor_or_error_code)
+    void expectSocketOpen(int file_descriptor_or_error_code)
     {
         mock().expectOneCall("UnixSocket_Open")
             .andReturnValue(file_descriptor_or_error_code);
     }
 
-    void expectCloseSocket(int file_descriptor)
+    void expectSocketClose(int file_descriptor)
     {
         mock().expectOneCall("UnixSocket_Close")
             .withParameter("file_descriptor", file_descriptor);
     }
 
-    void expectConnectSocket(const char * ip_address, int port, int result)
+    void expectSocketConnect(const char * ip_address, int port, int result)
     {
         mock().expectOneCall("UnixSocket_Connect")
             .withParameter("ip_address", ip_address)
@@ -76,14 +76,14 @@ TEST(UnixSocket, it_can_handle_null_pointers)
 
 TEST(UnixSocket, it_can_fail_to_open_a_socket)
 {
-    expectOpenSocket(UNIX_SOCKET_FAIL);
+    expectSocketOpen(UNIX_SOCKET_FAIL);
     LONGS_EQUAL( SOCKET_FAIL, Socket_Open(socket) );
     LONGS_EQUAL( -1, Socket_GetFileDescriptor(socket) );
 }
 
 TEST(UnixSocket, it_can_open_a_socket)
 {
-    expectOpenSocket(file_descriptor);
+    expectSocketOpen(file_descriptor);
 
     LONGS_EQUAL( SOCKET_SUCCESS, Socket_Open(socket) );
     LONGS_EQUAL( 42, Socket_GetFileDescriptor(socket) );
@@ -91,8 +91,8 @@ TEST(UnixSocket, it_can_open_a_socket)
 
 TEST(UnixSocket, it_can_close_a_socket)
 {
-    expectOpenSocket(file_descriptor);
-    expectCloseSocket(file_descriptor);
+    expectSocketOpen(file_descriptor);
+    expectSocketClose(file_descriptor);
     Socket_Open(socket);
 
     Socket_Close(socket);
@@ -100,8 +100,8 @@ TEST(UnixSocket, it_can_close_a_socket)
 
 TEST(UnixSocket, it_can_open_several_sockets)
 {
-    expectOpenSocket(file_descriptor);
-    expectOpenSocket(file_descriptor2);
+    expectSocketOpen(file_descriptor);
+    expectSocketOpen(file_descriptor2);
 
     Socket_Open(socket);
     Socket_Open(socket2);
@@ -109,10 +109,10 @@ TEST(UnixSocket, it_can_open_several_sockets)
 
 TEST(UnixSocket, it_can_close_several_sockets)
 {
-    expectOpenSocket(file_descriptor);
-    expectOpenSocket(file_descriptor2);
-    expectCloseSocket(file_descriptor);
-    expectCloseSocket(file_descriptor2);
+    expectSocketOpen(file_descriptor);
+    expectSocketOpen(file_descriptor2);
+    expectSocketClose(file_descriptor);
+    expectSocketClose(file_descriptor2);
     Socket_Open(socket);
     Socket_Open(socket2);
 
@@ -125,9 +125,9 @@ TEST(UnixSocket, it_can_fail_to_connect_to_a_server)
     const char * ip_address = "192.168.2.1";
     int port = 10004;
 
-    expectOpenSocket(file_descriptor);
-    expectConnectSocket(ip_address, port, UNIX_SOCKET_FAIL);
-    expectCloseSocket(file_descriptor);
+    expectSocketOpen(file_descriptor);
+    expectSocketConnect(ip_address, port, UNIX_SOCKET_FAIL);
+    expectSocketClose(file_descriptor);
 
     Socket_Open(socket);
 
@@ -141,9 +141,9 @@ TEST(UnixSocket, it_can_connect_to_a_server)
     const char * ip_address = "192.168.2.1";
     int port = 10004;
 
-    expectOpenSocket(file_descriptor);
-    expectConnectSocket(ip_address, port, UNIX_SOCKET_SUCCESS);
-    expectCloseSocket(file_descriptor);
+    expectSocketOpen(file_descriptor);
+    expectSocketConnect(ip_address, port, UNIX_SOCKET_SUCCESS);
+    expectSocketClose(file_descriptor);
 
     Socket_Open(socket);
 
