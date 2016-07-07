@@ -1,6 +1,7 @@
 # Set to @ to keep this makefile quiet
 SILENCE = @
 
+DEFAULT_PRODUCT = Linux
 ALL_TEST_MODULES = \
 				   UnixSocket
 
@@ -30,6 +31,7 @@ ifeq ($(SUPPRESS_ENTERING_DIRECTORY_MESSAGE),Y)
 	NO_PRINT_DIRECTORY = --no-print-directory
 endif
 
+PRODUCTION_MAKEFILE = Makefile_Production.make
 TEST_MAKEFILE = Makefile_CppUTest.make
 MAKE = make $(NO_PRINT_DIRECTORY) --file
 CLEAR = clear
@@ -39,6 +41,11 @@ CLEAR = clear
 #############################
 ### Auto-generated values ###
 #############################
+# If user did not specify a product to build, set one by default.
+ifeq ($(strip $(PRODUCT)),)
+	PRODUCT = $(DEFAULT_PRODUCT)
+endif
+
 # If user did not specify a module to test, test all of them.
 ifeq ($(strip $(TEST_MODULES)),)
 	TEST_MODULES = $(ALL_TEST_MODULES)
@@ -60,7 +67,8 @@ ifeq ($(MAKECMDGOALS),full_clean)
 	SUBMAKE_TARGET = full_clean
 endif
 
-.PHONY: test clean full_clean $(TEST_MODULES) screen_clear
+.PHONY: linux test clean full_clean $(TEST_MODULES) screen_clear
+linux: $(PRODUCT)
 
 test: screen_clear $(TEST_MODULES)
 	@echo "Built and tested: $(TEST_MODULES)"
@@ -70,6 +78,9 @@ clean: $(TEST_MODULES)
 
 full_clean: $(TEST_MODULES)
 	@echo "Fully cleaned: $(TEST_MODULES)"
+
+$(PRODUCT):
+	$(SILENCE)$(MAKE) $(PRODUCTION_MAKEFILE) PRODUCT=$@
 
 $(TEST_MODULES):
 # Using $@ trims the whitespace
