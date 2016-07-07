@@ -34,3 +34,12 @@ int UnixSocket_Send(int file_descriptor, const char * message, unsigned int mess
         .withParameter("message_length", message_length);
     return mock().intReturnValue();
 }
+
+int UnixSocket_Receive(int file_descriptor, char * buffer, unsigned int buffer_length)
+{
+    mock().actualCall("UnixSocket_Receive")
+        .withParameter("file_descriptor", file_descriptor)
+        .withParameter("buffer", buffer)
+        .withParameter("buffer_length", buffer_length);
+    return mock().intReturnValue();
+}

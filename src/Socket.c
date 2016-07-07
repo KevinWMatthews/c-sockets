@@ -83,3 +83,16 @@ int Socket_Send(Socket self, const char * message, unsigned int message_length)
     file_descriptor = self->file_descriptor;
     return UnixSocket_Send(file_descriptor, message, message_length);
 }
+
+int Socket_Receive(Socket self, char * buffer, unsigned int buffer_length)
+{
+    int file_descriptor = 0;
+
+    if (self == 0)
+    {
+        return SOCKET_NULL_POINTER;
+    }
+    file_descriptor = self->file_descriptor;
+
+    return UnixSocket_Receive(file_descriptor, buffer, buffer_length);
+}

@@ -61,17 +61,20 @@ TEST_GROUP(UnixSocket)
             .withParameter("message_length", message_length)
             .andReturnValue(result);
     }
+
+    void expectSocketReceive(int file_descriptor, char * buffer, unsigned int buffer_length, int result)
+    {
+        mock().expectOneCall("UnixSocket_Receive")
+            .withParameter("file_descriptor", file_descriptor)
+            .withParameter("buffer", buffer)
+            .withParameter("buffer_length", buffer_length)
+            .andReturnValue(result);
+    }
 };
 
 /* Test List:
- *   Connect:
+ *   Close:
  *     Null pointer
- *     Fail
- *     Success
- *   Send:
- *     Null pointer
- *     Fail
- *     Success
  */
 
 TEST(UnixSocket, it_can_create_and_double_destroy_a_socket_struct)
@@ -83,10 +86,12 @@ TEST(UnixSocket, it_can_create_and_double_destroy_a_socket_struct)
 
 TEST(UnixSocket, it_can_handle_null_pointers)
 {
+    char buffer[10] = {0};
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_GetFileDescriptor(NULL) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Open(NULL) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Connect(NULL, "0.0.0.0", 0) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Send(NULL, "msg", 3) );
+    LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Receive(NULL, buffer, 10) );
 }
 
 TEST(UnixSocket, it_can_fail_to_open_a_socket)
@@ -204,6 +209,47 @@ TEST(UnixSocket, it_can_send_data_to_a_server)
     Socket_Connect(socket, ip_address, port);
 
     LONGS_EQUAL( number_of_bytes_sent, Socket_Send(socket, message, message_length) );
+
+    Socket_Close(socket);
+}
+
+TEST(UnixSocket, it_can_fail_to_receive_from_a_socket)
+{
+    const char * ip_address = "192.168.2.1";
+    int port = 10004;
+    char receive_buffer[10] = {0};
+    unsigned int receive_buffer_length = 9;
+
+    expectSocketOpen(file_descriptor);
+    expectSocketConnect(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);
+    expectSocketReceive(file_descriptor, receive_buffer, receive_buffer_length, UNIX_SOCKET_FAIL);
+    expectSocketClose(file_descriptor);
+
+    Socket_Open(socket);
+    Socket_Connect(socket, ip_address, port);
+
+    LONGS_EQUAL( SOCKET_FAIL, Socket_Receive(socket, receive_buffer, receive_buffer_length) );
+
+    Socket_Close(socket);
+}
+
+TEST(UnixSocket, it_can_receive_from_a_socket)
+{
+    const char * ip_address = "192.168.2.1";
+    int port = 10004;
+    char receive_buffer[10] = {0};
+    unsigned int receive_buffer_length = 9;
+    int number_of_bytes_read = 1;
+
+    expectSocketOpen(file_descriptor);
+    expectSocketConnect(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);
+    expectSocketReceive(file_descriptor, receive_buffer, receive_buffer_length, number_of_bytes_read);
+    expectSocketClose(file_descriptor);
+
+    Socket_Open(socket);
+    Socket_Connect(socket, ip_address, port);
+
+    LONGS_EQUAL( number_of_bytes_read, Socket_Receive(socket, receive_buffer, receive_buffer_length) );
 
     Socket_Close(socket);
 }
