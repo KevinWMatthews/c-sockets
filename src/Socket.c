@@ -55,3 +55,19 @@ int Socket_GetFileDescriptor(Socket self)
     }
     return self->file_descriptor;
 }
+
+int Socket_Connect(Socket self, const char * ip_address, int port)
+{
+    int result = 0;
+    if (self == 0)
+    {
+        return SOCKET_NULL_POINTER;
+    }
+
+    result = UnixSocket_Connect(ip_address, port);
+    if ( result < 0 )
+    {
+        return result;
+    }
+    return SOCKET_SUCCESS;
+}

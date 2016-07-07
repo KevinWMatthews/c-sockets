@@ -43,7 +43,22 @@ TEST_GROUP(UnixSocket)
         mock().expectOneCall("UnixSocket_Close")
             .withParameter("file_descriptor", file_descriptor);
     }
+
+    void expectConnectSocket(const char * ip_address, int port, int result)
+    {
+        mock().expectOneCall("UnixSocket_Connect")
+            .withParameter("ip_address", ip_address)
+            .withParameter("port", port)
+            .andReturnValue(result);
+    }
 };
+
+/* Test List:
+ *   Connect:
+ *     Null pointer
+ *     Fail
+ *     Success
+ */
 
 TEST(UnixSocket, it_can_create_and_double_destroy_a_socket_struct)
 {
@@ -56,6 +71,7 @@ TEST(UnixSocket, it_can_handle_null_pointers)
 {
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_GetFileDescriptor(NULL) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Open(NULL) );
+    LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Connect(NULL, "0.0.0.0", 0) );
 }
 
 TEST(UnixSocket, it_can_fail_to_open_a_socket)
@@ -102,4 +118,36 @@ TEST(UnixSocket, it_can_close_several_sockets)
 
     Socket_Close(socket);
     Socket_Close(socket2);
+}
+
+TEST(UnixSocket, it_can_fail_to_connect_to_a_server)
+{
+    const char * ip_address = "192.168.2.1";
+    int port = 10004;
+
+    expectOpenSocket(file_descriptor);
+    expectConnectSocket(ip_address, port, UNIX_SOCKET_FAIL);
+    expectCloseSocket(file_descriptor);
+
+    Socket_Open(socket);
+
+    LONGS_EQUAL( SOCKET_FAIL, Socket_Connect(socket, ip_address, port) );
+
+    Socket_Close(socket);
+}
+
+TEST(UnixSocket, it_can_connect_to_a_server)
+{
+    const char * ip_address = "192.168.2.1";
+    int port = 10004;
+
+    expectOpenSocket(file_descriptor);
+    expectConnectSocket(ip_address, port, UNIX_SOCKET_SUCCESS);
+    expectCloseSocket(file_descriptor);
+
+    Socket_Open(socket);
+
+    LONGS_EQUAL( SOCKET_SUCCESS, Socket_Connect(socket, ip_address, port) );
+
+    Socket_Close(socket);
 }

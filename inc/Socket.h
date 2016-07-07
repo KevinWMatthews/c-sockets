@@ -17,5 +17,6 @@ int Socket_Open(Socket);
 void Socket_Close(Socket);
 
 int Socket_GetFileDescriptor(Socket);
+int Socket_Connect(Socket, const char * ip_address, int port);
 
 #endif
