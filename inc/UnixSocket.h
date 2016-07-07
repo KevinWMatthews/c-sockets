@@ -9,5 +9,6 @@ typedef enum
 int UnixSocket_Open(void);
 void UnixSocket_Close(int);
 int UnixSocket_Connect(int file_descriptor, const char * ip_address, int port);
+int UnixSocket_Send(int file_descriptor, const char * message, unsigned int message_length);
 
 #endif

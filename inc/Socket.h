@@ -18,5 +18,6 @@ void Socket_Close(Socket);
 
 int Socket_GetFileDescriptor(Socket);
 int Socket_Connect(Socket, const char * ip_address, int port);
+int Socket_Send(Socket, const char * message, unsigned int message_length);
 
 #endif
