@@ -1,5 +1,6 @@
 #include "Socket.h"
 #include "UnixSocket.h"
+#include <stdlib.h>
 
 typedef struct SocketStruct
 {
