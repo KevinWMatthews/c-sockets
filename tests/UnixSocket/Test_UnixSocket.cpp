@@ -140,7 +140,7 @@ TEST(UnixSocket, it_can_close_several_sockets)
     Socket_Close(socket2);
 }
 
-TEST(UnixSocket, it_can_fail_to_connect_to_a_server)
+TEST(UnixSocket, it_can_fail_to_connect_to_a_socket)
 {
     const char * ip_address = "192.168.2.1";
     int port = 10004;
@@ -156,7 +156,7 @@ TEST(UnixSocket, it_can_fail_to_connect_to_a_server)
     Socket_Close(socket);
 }
 
-TEST(UnixSocket, it_can_connect_to_a_server)
+TEST(UnixSocket, it_can_connect_to_a_socket)
 {
     const char * ip_address = "192.168.2.1";
     int port = 10004;
@@ -172,7 +172,7 @@ TEST(UnixSocket, it_can_connect_to_a_server)
     Socket_Close(socket);
 }
 
-TEST(UnixSocket, it_can_fail_send_data_to_a_server)
+TEST(UnixSocket, it_can_fail_send_data_to_a_socket)
 {
     const char * ip_address = "192.168.2.1";
     int port = 10004;
@@ -192,7 +192,7 @@ TEST(UnixSocket, it_can_fail_send_data_to_a_server)
     Socket_Close(socket);
 }
 
-TEST(UnixSocket, it_can_send_data_to_a_server)
+TEST(UnixSocket, it_can_send_data_to_a_socket)
 {
     const char * ip_address = "192.168.2.1";
     int port = 10004;
