@@ -17,9 +17,10 @@ void UnixSocket_Close(int file_descriptor)
         .withParameter("file_descriptor", file_descriptor);
 }
 
-int UnixSocket_Connect(const char * ip_address, int port)
+int UnixSocket_Connect(int file_descriptor, const char * ip_address, int port)
 {
     mock().actualCall("UnixSocket_Connect")
+        .withParameter("file_descriptor", file_descriptor)
         .withParameter("ip_address", ip_address)
         .withParameter("port", port);
     return mock().intReturnValue();

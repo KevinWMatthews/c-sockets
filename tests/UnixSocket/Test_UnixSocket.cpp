@@ -44,9 +44,10 @@ TEST_GROUP(UnixSocket)
             .withParameter("file_descriptor", file_descriptor);
     }
 
-    void expectSocketConnect(const char * ip_address, int port, int result)
+    void expectSocketConnect(int file_descriptor, const char * ip_address, int port, int result)
     {
         mock().expectOneCall("UnixSocket_Connect")
+            .withParameter("file_descriptor", file_descriptor)
             .withParameter("ip_address", ip_address)
             .withParameter("port", port)
             .andReturnValue(result);
@@ -126,7 +127,7 @@ TEST(UnixSocket, it_can_fail_to_connect_to_a_server)
     int port = 10004;
 
     expectSocketOpen(file_descriptor);
-    expectSocketConnect(ip_address, port, UNIX_SOCKET_FAIL);
+    expectSocketConnect(file_descriptor, ip_address, port, UNIX_SOCKET_FAIL);
     expectSocketClose(file_descriptor);
 
     Socket_Open(socket);
@@ -142,7 +143,7 @@ TEST(UnixSocket, it_can_connect_to_a_server)
     int port = 10004;
 
     expectSocketOpen(file_descriptor);
-    expectSocketConnect(ip_address, port, UNIX_SOCKET_SUCCESS);
+    expectSocketConnect(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);
     expectSocketClose(file_descriptor);
 
     Socket_Open(socket);

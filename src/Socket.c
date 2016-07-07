@@ -58,13 +58,14 @@ int Socket_GetFileDescriptor(Socket self)
 
 int Socket_Connect(Socket self, const char * ip_address, int port)
 {
-    int result = 0;
+    int file_descriptor = 0, result = 0;
     if (self == 0)
     {
         return SOCKET_NULL_POINTER;
     }
+    file_descriptor = self->file_descriptor;
 
-    result = UnixSocket_Connect(ip_address, port);
+    result = UnixSocket_Connect(file_descriptor, ip_address, port);
     if ( result < 0 )
     {
         return result;

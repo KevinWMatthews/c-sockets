@@ -8,6 +8,6 @@ typedef enum
 } UnixSocketReturnCode;
 int UnixSocket_Open(void);
 void UnixSocket_Close(int);
-int UnixSocket_Connect(const char * ip_address, int port);
+int UnixSocket_Connect(int file_descriptor, const char * ip_address, int port);
 
 #endif
