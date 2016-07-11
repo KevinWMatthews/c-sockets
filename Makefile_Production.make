@@ -1,5 +1,5 @@
 # Set to @ to keep this makefile quiet
-SILENCE =
+SILENCE = @
 
 ######################
 ### Compiler flags ###
@@ -17,7 +17,6 @@ INCLUDE_FLAGS = $(addprefix -I, $(INC_DIRS))
 ### Product Configuration ###
 #############################
 TARGET_NAME = $(PRODUCT)
-SRC = $(call get_c_src_from_dir_list, $(SRC_DIRS))
 
 
 
@@ -26,12 +25,6 @@ SRC = $(call get_c_src_from_dir_list, $(SRC_DIRS))
 #############################
 # Include directory structure for a specific build configuration
 include ProductConfig_$(PRODUCT).make
-
-SRC = $(call get_c_src_from_dir_list, $(SRC_DIRS))
-src_obj = $(call c_to_o, $(SRC))
-SRC_OBJ = $(addprefix $(OBJECT_DIR)/, $(src_obj))
-src_dep = $(call c_to_d, $(SRC))
-SRC_DEP = $(addprefix $(OBJECT_DIR)/, $(src_dep))
 
 C_COMPILER = gcc
 DEP_FLAGS = -MMD -MP
