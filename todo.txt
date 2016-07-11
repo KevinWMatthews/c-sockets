@@ -1,0 +1,4 @@
+Document return values in Socket.h.
+Can Socket_Close() fail?
+
+Add is_connected flag?

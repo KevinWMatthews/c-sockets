@@ -1,7 +1,7 @@
 # Set to @ to keep this makefile quiet
 SILENCE = @
 
-DEFAULT_PRODUCT = Linux
+DEFAULT_PRODUCT = LinuxServer
 ALL_TEST_MODULES = \
 				   UnixSocket
 

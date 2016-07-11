@@ -2,7 +2,8 @@
 ### Project configuration ###
 #############################
 #ROOT_DIRECTORY=
-SRC_DIRS = src src_platform/$(PRODUCT)
+PLATFORM = Linux
+SRC_DIRS = src src_platform/$(PLATFORM) product/$(PRODUCT)
 INC_DIRS = inc
 BUILD_DIR = build
 OBJECT_DIR = obj
