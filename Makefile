@@ -58,16 +58,16 @@ endif
 ###############
 # Generating the target for the submake in this fashion enables us to use the TEST_MODULES target.
 ifeq ($(MAKECMDGOALS),)
-	SUBMAKE_TARGET = all
+	SUBMAKE_GOAL = all
 endif
 ifeq ($(MAKECMDGOALS),test)
-	SUBMAKE_TARGET = test
+	SUBMAKE_GOAL = test
 endif
 ifeq ($(MAKECMDGOALS),clean)
-	SUBMAKE_TARGET = clean
+	SUBMAKE_GOAL = clean
 endif
 ifeq ($(MAKECMDGOALS),full_clean)
-	SUBMAKE_TARGET = full_clean
+	SUBMAKE_GOAL = full_clean
 endif
 
 .PHONY: all linux test clean full_clean $(TEST_MODULES) screen_clear
@@ -84,11 +84,11 @@ full_clean: $(TEST_MODULES)
 	@echo "Fully cleaned: $(TEST_MODULES)"
 
 $(PRODUCT):
-	$(SILENCE)$(MAKE) $(PRODUCTION_MAKEFILE) $(SUBMAKE_TARGET) PRODUCT=$@
+	$(SILENCE)$(MAKE) $(PRODUCTION_MAKEFILE) $(SUBMAKE_GOAL) PRODUCT=$@
 
 $(TEST_MODULES):
 # Using $@ trims the whitespace
-	$(SILENCE)$(MAKE) $(TEST_MAKEFILE) $(SUBMAKE_TARGET) TEST_MODULE=$@
+	$(SILENCE)$(MAKE) $(TEST_MAKEFILE) $(SUBMAKE_GOAL) TEST_MODULE=$@
 
 # clear the terminal screen
 screen_clear:
