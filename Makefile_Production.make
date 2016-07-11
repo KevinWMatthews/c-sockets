@@ -81,8 +81,7 @@ endif
 .PHONY: all clean full_clean screen_clear
 
 all: $(TARGET)
-	@echo Running target: $(TARGET)
-	./$(TARGET)
+	@echo Compiled: $(TARGET)
 
 $(TARGET): $(SRC_OBJ)
 	$(SILENCE)$(QUIET)$(MAKE_DIR) $(dir $@)

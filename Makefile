@@ -1,7 +1,9 @@
 # Set to @ to keep this makefile quiet
 SILENCE = @
 
-DEFAULT_PRODUCT = LinuxServer
+ALL_PRODUCTS = \
+				LinuxClient
+
 ALL_TEST_MODULES = \
 				   UnixSocket
 
@@ -43,7 +45,7 @@ CLEAR = clear
 #############################
 # If user did not specify a product to build, set one by default.
 ifeq ($(strip $(PRODUCT)),)
-	PRODUCT = $(DEFAULT_PRODUCT)
+	PRODUCTS = $(ALL_PRODUCTS)
 endif
 
 # If user did not specify a module to test, test all of them.
@@ -71,19 +73,19 @@ ifeq ($(MAKECMDGOALS),full_clean)
 endif
 
 .PHONY: all linux test clean full_clean $(TEST_MODULES) screen_clear
-linux: $(PRODUCT)
+linux: $(PRODUCTS)
 
 test: screen_clear $(TEST_MODULES)
 	@echo "Built and tested: $(TEST_MODULES)"
 
-clean: $(PRODUCT) $(TEST_MODULES)
-	@echo "Cleaned: $(PRODUCT)"
+clean: $(PRODUCTS) $(TEST_MODULES)
+	@echo "Cleaned: $(PRODUCTS)"
 	@echo "Cleaned: $(TEST_MODULES)"
 
 full_clean: $(TEST_MODULES)
 	@echo "Fully cleaned: $(TEST_MODULES)"
 
-$(PRODUCT):
+$(PRODUCTS):
 	$(SILENCE)$(MAKE) $(PRODUCTION_MAKEFILE) $(SUBMAKE_GOAL) PRODUCT=$@
 
 $(TEST_MODULES):
