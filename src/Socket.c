@@ -57,6 +57,15 @@ int Socket_GetFileDescriptor(Socket self)
     return self->file_descriptor;
 }
 
+int Socket_Bind(Socket self, const char * ip_address, int port)
+{
+    if (self == 0)
+    {
+        return SOCKET_NULL_POINTER;
+    }
+    return UnixSocket_Bind(self->file_descriptor, ip_address, port);
+}
+
 int Socket_Connect(Socket self, const char * ip_address, int port)
 {
     int file_descriptor = 0, result = 0;
