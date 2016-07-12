@@ -5,7 +5,7 @@ ALL_PRODUCTS = \
 				LinuxClient
 
 ALL_TEST_MODULES = \
-				   UnixSocket
+				   Socket
 
 
 

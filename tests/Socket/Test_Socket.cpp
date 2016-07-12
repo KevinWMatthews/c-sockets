@@ -4,11 +4,11 @@ extern "C"
 #include "UnixSocket.h"
 }
 
-#include "Test_UnixSocket.h"
+#include "Test_Socket.h"
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
 
-TEST_GROUP(UnixSocket)
+TEST_GROUP(Socket)
 {
     int file_descriptor;
     int file_descriptor2;
@@ -77,14 +77,14 @@ TEST_GROUP(UnixSocket)
  *     Null pointer
  */
 
-TEST(UnixSocket, it_can_create_and_double_destroy_a_socket_struct)
+TEST(Socket, it_can_create_and_double_destroy_a_socket_struct)
 {
     Socket_Destroy(&socket);
     POINTERS_EQUAL(NULL, socket);
     // Destroy happens again in teardown
 }
 
-TEST(UnixSocket, it_can_handle_null_pointers)
+TEST(Socket, it_can_handle_null_pointers)
 {
     char buffer[10] = {0};
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_GetFileDescriptor(NULL) );
@@ -94,14 +94,14 @@ TEST(UnixSocket, it_can_handle_null_pointers)
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Receive(NULL, buffer, 10) );
 }
 
-TEST(UnixSocket, it_can_fail_to_open_a_socket)
+TEST(Socket, it_can_fail_to_open_a_socket)
 {
     expectSocketOpen(UNIX_SOCKET_FAIL);
     LONGS_EQUAL( SOCKET_FAIL, Socket_Open(socket) );
     LONGS_EQUAL( -1, Socket_GetFileDescriptor(socket) );
 }
 
-TEST(UnixSocket, it_can_open_a_socket)
+TEST(Socket, it_can_open_a_socket)
 {
     expectSocketOpen(file_descriptor);
 
@@ -109,7 +109,7 @@ TEST(UnixSocket, it_can_open_a_socket)
     LONGS_EQUAL( 42, Socket_GetFileDescriptor(socket) );
 }
 
-TEST(UnixSocket, it_can_close_a_socket)
+TEST(Socket, it_can_close_a_socket)
 {
     expectSocketOpen(file_descriptor);
     expectSocketClose(file_descriptor);
@@ -118,7 +118,7 @@ TEST(UnixSocket, it_can_close_a_socket)
     Socket_Close(socket);
 }
 
-TEST(UnixSocket, it_can_open_several_sockets)
+TEST(Socket, it_can_open_several_sockets)
 {
     expectSocketOpen(file_descriptor);
     expectSocketOpen(file_descriptor2);
@@ -127,7 +127,7 @@ TEST(UnixSocket, it_can_open_several_sockets)
     Socket_Open(socket2);
 }
 
-TEST(UnixSocket, it_can_close_several_sockets)
+TEST(Socket, it_can_close_several_sockets)
 {
     expectSocketOpen(file_descriptor);
     expectSocketOpen(file_descriptor2);
@@ -140,7 +140,7 @@ TEST(UnixSocket, it_can_close_several_sockets)
     Socket_Close(socket2);
 }
 
-TEST(UnixSocket, it_can_fail_to_connect_to_a_socket)
+TEST(Socket, it_can_fail_to_connect_to_a_socket)
 {
     const char * ip_address = "192.168.2.1";
     int port = 10004;
@@ -156,7 +156,7 @@ TEST(UnixSocket, it_can_fail_to_connect_to_a_socket)
     Socket_Close(socket);
 }
 
-TEST(UnixSocket, it_can_connect_to_a_socket)
+TEST(Socket, it_can_connect_to_a_socket)
 {
     const char * ip_address = "192.168.2.1";
     int port = 10004;
@@ -172,7 +172,7 @@ TEST(UnixSocket, it_can_connect_to_a_socket)
     Socket_Close(socket);
 }
 
-TEST(UnixSocket, it_can_fail_send_data_to_a_socket)
+TEST(Socket, it_can_fail_send_data_to_a_socket)
 {
     const char * ip_address = "192.168.2.1";
     int port = 10004;
@@ -192,7 +192,7 @@ TEST(UnixSocket, it_can_fail_send_data_to_a_socket)
     Socket_Close(socket);
 }
 
-TEST(UnixSocket, it_can_send_data_to_a_socket)
+TEST(Socket, it_can_send_data_to_a_socket)
 {
     const char * ip_address = "192.168.2.1";
     int port = 10004;
@@ -213,7 +213,7 @@ TEST(UnixSocket, it_can_send_data_to_a_socket)
     Socket_Close(socket);
 }
 
-TEST(UnixSocket, it_can_fail_to_receive_from_a_socket)
+TEST(Socket, it_can_fail_to_receive_from_a_socket)
 {
     const char * ip_address = "192.168.2.1";
     int port = 10004;
@@ -233,7 +233,7 @@ TEST(UnixSocket, it_can_fail_to_receive_from_a_socket)
     Socket_Close(socket);
 }
 
-TEST(UnixSocket, it_can_receive_from_a_socket)
+TEST(Socket, it_can_receive_from_a_socket)
 {
     const char * ip_address = "192.168.2.1";
     int port = 10004;
