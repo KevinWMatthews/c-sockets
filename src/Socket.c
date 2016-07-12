@@ -45,6 +45,10 @@ int Socket_Open(Socket self)
 
 void Socket_Close(Socket self)
 {
+    if (self == 0)
+    {
+        return;
+    }
     UnixSocket_Close(self->file_descriptor);
 }
 

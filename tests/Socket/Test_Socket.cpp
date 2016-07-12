@@ -120,6 +120,7 @@ TEST(Socket, it_can_handle_null_pointers)
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Connect(NULL, "0.0.0.0", 0) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Send(NULL, "msg", 3) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Receive(NULL, buffer, 10) );
+    Socket_Close(NULL);
 }
 
 TEST(Socket, it_can_fail_to_open_a_socket)
