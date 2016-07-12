@@ -2,3 +2,7 @@ Document return values in Socket.h.
 Can Socket_Close() fail?
 
 Add is_connected flag?
+
+Should a bind with a null address bind to any address? Maybe so, but work through the entire example first.
+
+Should the backlog be part of the Socket struct?

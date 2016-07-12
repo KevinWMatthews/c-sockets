@@ -52,3 +52,11 @@ int UnixSocket_Receive(int file_descriptor, char * buffer, unsigned int buffer_l
         .withParameter("buffer_length", buffer_length);
     return mock().intReturnValue();
 }
+
+int UnixSocket_Listen(int file_descriptor, int backlog)
+{
+    mock().actualCall("UnixSocket_Listen")
+        .withParameter("file_descriptor", file_descriptor)
+        .withParameter("backlog", backlog);
+    return mock().intReturnValue();
+}

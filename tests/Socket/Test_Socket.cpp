@@ -79,6 +79,14 @@ TEST_GROUP(Socket)
             .withParameter("buffer_length", buffer_length)
             .andReturnValue(result);
     }
+
+    void expectSocketListen(int file_descriptor, int backlog, int result)
+    {
+        mock().expectOneCall("UnixSocket_Listen")
+            .withParameter("file_descriptor", file_descriptor)
+            .withParameter("backlog", backlog)
+            .andReturnValue(result);
+    }
 };
 
 /* Test List:
@@ -121,6 +129,7 @@ TEST(Socket, it_can_handle_null_pointers)
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Send(NULL, "msg", 3) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Receive(NULL, buffer, 10) );
     Socket_Close(NULL);
+    LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Listen(NULL, 10) );
 }
 
 TEST(Socket, it_can_fail_to_open_a_socket)
@@ -311,6 +320,43 @@ TEST(Socket, it_can_receive_from_a_socket)
     Socket_Connect(socket, ip_address, port);
 
     LONGS_EQUAL( number_of_bytes_read, Socket_Receive(socket, receive_buffer, receive_buffer_length) );
+
+    Socket_Close(socket);
+}
+
+TEST(Socket, it_can_fail_to_listen_on_a_socket)
+{
+    char * ip_address = 0;
+    int port = 8888;
+    int backlog = 3;
+
+    expectSocketOpen(file_descriptor);
+    expectSocketBind(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);    //TODO any ip address
+    expectSocketListen(file_descriptor, backlog, UNIX_SOCKET_FAIL);
+    expectSocketClose(file_descriptor);
+
+    Socket_Open(socket);
+    Socket_Bind(socket, ip_address, port);
+
+    LONGS_EQUAL( SOCKET_FAIL, Socket_Listen(socket, backlog) );
+
+    Socket_Close(socket);
+}
+TEST(Socket, it_can_to_listen_on_a_socket)
+{
+    char * ip_address = 0;
+    int port = 8888;
+    int backlog = 3;
+
+    expectSocketOpen(file_descriptor);
+    expectSocketBind(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);    //TODO any ip address
+    expectSocketListen(file_descriptor, backlog, UNIX_SOCKET_SUCCESS);
+    expectSocketClose(file_descriptor);
+
+    Socket_Open(socket);
+    Socket_Bind(socket, ip_address, port);
+
+    LONGS_EQUAL( SOCKET_SUCCESS, Socket_Listen(socket, backlog) );
 
     Socket_Close(socket);
 }

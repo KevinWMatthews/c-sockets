@@ -110,3 +110,12 @@ int Socket_Receive(Socket self, char * buffer, unsigned int buffer_length)
 
     return UnixSocket_Receive(file_descriptor, buffer, buffer_length);
 }
+
+int Socket_Listen(Socket self, int backlog)
+{
+    if (self == 0)
+    {
+        return SOCKET_NULL_POINTER;
+    }
+    return UnixSocket_Listen(self->file_descriptor, backlog);
+}

@@ -2,7 +2,8 @@
 SILENCE = @
 
 ALL_PRODUCTS = \
-				LinuxClient
+				LinuxClient \
+				LinuxServer
 
 ALL_TEST_MODULES = \
 				   Socket
