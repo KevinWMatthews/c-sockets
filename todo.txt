@@ -1,7 +1,3 @@
-Figure out why test Socket.o files conflict with production .o files and how to fix it.
-    If test code is run first, cpputest_calloc_location() and cpputest_free_location() are undefined.
-    If production code is run first, these function are not inserted so memory leak checks will never fail. Silent and deadly.
-
 Document return values in Socket.h.
 Can Socket_Close() fail?
 

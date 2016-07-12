@@ -60,9 +60,9 @@ REMOVE = rm -rf
 # Auto-generate list of source code
 SRC = $(call get_c_src_from_dir_list, $(SRC_DIRS))
 src_obj = $(call c_to_o, $(SRC))
-SRC_OBJ = $(addprefix $(OBJECT_DIR)/, $(src_obj))
+SRC_OBJ = $(addprefix $(OBJECT_DIR)/$(TEST_DIRS)/, $(src_obj))
 src_dep = $(call c_to_d, $(SRC))
-SRC_DEP = $(addprefix $(OBJECT_DIR)/, $(src_dep))
+SRC_DEP = $(addprefix $(OBJECT_DIR)/$(TEST_DIRS)/, $(src_dep))
 
 # Auto-generate list of test code
 TEST = $(call get_cpp_src_from_dir_list, $(TEST_DIRS)) $(call get_c_src_from_dir_list, $(TEST_DIRS))
@@ -138,7 +138,7 @@ $(OBJECT_DIR)/%.o: %.cpp
 	$(SILENCE)$(CPP_COMPILER) $(DEP_FLAGS) -o $@ -c $< $(CFLAGS) $(INCLUDE_FLAGS) $(TEST_INCLUDE_FLAGS)
 
 # Compile source .c files
-$(OBJECT_DIR)/%.o: %.c
+$(OBJECT_DIR)/$(TEST_DIRS)/%.o: %.c
 	$(SILENCE)$(QUIET)$(MAKE_DIR) $(dir $@)
 	$(SILENCE)$(C_COMPILER) $(DEP_FLAGS) -o $@ -c $< $(CFLAGS) $(INCLUDE_FLAGS)
 
