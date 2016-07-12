@@ -87,9 +87,31 @@ TEST_GROUP(Socket)
             .withParameter("backlog", backlog)
             .andReturnValue(result);
     }
+
+    void expectSocketAccept(int file_descriptor, int result)
+    {
+        mock().expectOneCall("UnixSocket_Accept")
+            .withParameter("file_descriptor", file_descriptor)
+            .andReturnValue(result);
+    }
 };
 
 /* Test List:
+ *  GetClientAddress:
+ *      Failure?
+ *      Success.
+ *      Should return 0 if file descriptor is 0?
+ *
+ *  GetClientAddressLength:
+ *      Failure?
+ *      Success.
+ *      Should return 0 if file descriptor is 0?
+ *
+ *  Accept:
+ *      Null address - is valid, I think.
+ *      Null size pointer - is valid if address is null.
+ *      Should we verify the contents of the client address and client address length?
+ *
  *  Connect:
  *      Null ip_address pointer.
  *      Invalid IP address?
@@ -130,6 +152,7 @@ TEST(Socket, it_can_handle_null_pointers)
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Receive(NULL, buffer, 10) );
     Socket_Close(NULL);
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Listen(NULL, 10) );
+    POINTERS_EQUAL( NULL, Socket_Accept(NULL) );
 }
 
 TEST(Socket, it_can_fail_to_open_a_socket)
@@ -342,6 +365,7 @@ TEST(Socket, it_can_fail_to_listen_on_a_socket)
 
     Socket_Close(socket);
 }
+
 TEST(Socket, it_can_to_listen_on_a_socket)
 {
     char * ip_address = 0;
@@ -359,4 +383,52 @@ TEST(Socket, it_can_to_listen_on_a_socket)
     LONGS_EQUAL( SOCKET_SUCCESS, Socket_Listen(socket, backlog) );
 
     Socket_Close(socket);
+}
+
+TEST(Socket, it_can_fail_to_accept_a_socket_connection)
+{
+    char * ip_address = 0;
+    int port = 8888;
+    int backlog = 3;
+
+    expectSocketOpen(file_descriptor);
+    expectSocketBind(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);    //TODO any ip address
+    expectSocketListen(file_descriptor, backlog, UNIX_SOCKET_SUCCESS);
+    expectSocketAccept(file_descriptor, UNIX_SOCKET_FAIL);
+    expectSocketClose(file_descriptor);
+
+    Socket_Open(socket);
+    Socket_Bind(socket, ip_address, port);
+    Socket_Listen(socket, backlog);
+
+    POINTERS_EQUAL( NULL, Socket_Accept(socket) );
+
+    Socket_Close(socket);
+}
+
+TEST(Socket, it_can_accept_a_socket_connection)
+{
+    Socket new_socket;
+    int new_file_descriptor = 44;
+    char * ip_address = 0;
+    int port = 8888;
+    int backlog = 3;
+
+    expectSocketOpen(file_descriptor);
+    expectSocketBind(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);    //TODO any ip address
+    expectSocketListen(file_descriptor, backlog, UNIX_SOCKET_SUCCESS);
+    expectSocketAccept(file_descriptor, new_file_descriptor);
+    expectSocketClose(file_descriptor);
+
+    Socket_Open(socket);
+    Socket_Bind(socket, ip_address, port);
+    Socket_Listen(socket, backlog);
+
+    new_socket = Socket_Accept(socket);
+    LONGS_EQUAL( new_file_descriptor, Socket_GetFileDescriptor(new_socket) );
+
+    // Should we verify the client address and client address length here?
+
+    Socket_Close(socket);
+    Socket_Destroy(&new_socket);
 }

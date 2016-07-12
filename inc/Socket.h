@@ -17,10 +17,12 @@ int Socket_Open(Socket);
 void Socket_Close(Socket);
 
 int Socket_GetFileDescriptor(Socket);
+
 int Socket_Bind(Socket, const char * ip_address, int port);
 int Socket_Connect(Socket, const char * ip_address, int port);
 int Socket_Send(Socket, const char * message, unsigned int message_length);
 int Socket_Receive(Socket, char * buffer, unsigned int buffer_length);
 int Socket_Listen(Socket, int backlog);
+Socket Socket_Accept(Socket);
 
 #endif

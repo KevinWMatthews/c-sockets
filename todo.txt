@@ -10,3 +10,11 @@ Add is_connected flag?
 Should a bind with a null address bind to any address? Maybe so, but work through the entire example first.
 
 Should the backlog be part of the Socket struct?
+
+I'm being inconsistent with return values between UnixSocket and Socket modules.
+
+Add options for flags to Socket_Send().
+
+Remove MSG_NOSIGNAL and allow the user to customize how to handle SIGPIPE errors.
+
+Add a name to each Socket struct.

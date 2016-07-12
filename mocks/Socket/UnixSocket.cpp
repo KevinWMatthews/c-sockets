@@ -60,3 +60,10 @@ int UnixSocket_Listen(int file_descriptor, int backlog)
         .withParameter("backlog", backlog);
     return mock().intReturnValue();
 }
+
+int UnixSocket_Accept(int file_descriptor)
+{
+    mock().actualCall("UnixSocket_Accept")
+        .withParameter("file_descriptor", file_descriptor);
+    return mock().intReturnValue();
+}

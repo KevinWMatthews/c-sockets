@@ -1,6 +1,5 @@
 #include "UnixSocket.h"
 #include <sys/socket.h>
-#include <arpa/inet.h>
 #include <unistd.h>
 
 int UnixSocket_Open(void)
@@ -33,7 +32,8 @@ int UnixSocket_Connect(int file_descriptor, const char * ip_address, int port)
 
 int UnixSocket_Send(int file_descriptor, const char * message, unsigned int message_length)
 {
-    return send(file_descriptor, message, message_length, 0);
+    // MSG_NOSIGNAL suppresses SIGPIPE signal and lets the user handle the error.
+    return send(file_descriptor, message, message_length, MSG_NOSIGNAL);
 }
 
 int UnixSocket_Receive(int file_descriptor, char * buffer, unsigned int buffer_length)
@@ -43,5 +43,10 @@ int UnixSocket_Receive(int file_descriptor, char * buffer, unsigned int buffer_l
 
 int UnixSocket_Listen(int file_descriptor, int backlog)
 {
-    return 0;
+    return listen(file_descriptor, backlog);
+}
+
+int UnixSocket_Accept(int file_descriptor)
+{
+    return accept(file_descriptor, 0, 0);
 }
