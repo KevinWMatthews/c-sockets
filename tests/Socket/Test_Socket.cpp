@@ -97,6 +97,13 @@ TEST_GROUP(Socket)
 };
 
 /* Test List:
+ *  GetAddress:
+ *      Invalid address after closing and reopening a socket.
+ *
+ *  GetPort:
+ *      Invalid port after closing and reopening a socket.
+ *      Valid value.
+ *
  *  GetClientAddress:
  *      Failure?
  *      Success.
@@ -145,6 +152,8 @@ TEST(Socket, it_can_handle_null_pointers)
 {
     char buffer[10] = {0};
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_GetFileDescriptor(NULL) );
+    POINTERS_EQUAL( NULL, Socket_GetIpAddress(NULL) );
+    LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_GetPort(NULL) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Open(NULL) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Bind(NULL, "0.0.0.0", 0) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Connect(NULL, "0.0.0.0", 0) );
@@ -153,6 +162,12 @@ TEST(Socket, it_can_handle_null_pointers)
     Socket_Close(NULL);
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Listen(NULL, 10) );
     POINTERS_EQUAL( NULL, Socket_Accept(NULL) );
+}
+
+TEST(Socket, it_has_null_address_and_port_after_init)
+{
+    POINTERS_EQUAL( NULL, Socket_GetIpAddress(socket) );
+    LONGS_EQUAL( SOCKET_INVALID_PORT, Socket_GetPort(socket) );
 }
 
 TEST(Socket, it_can_fail_to_open_a_socket)
@@ -263,6 +278,42 @@ TEST(Socket, it_can_to_bind_to_a_socket)
     LONGS_EQUAL( SOCKET_SUCCESS, Socket_Bind(socket, ip_address, port) );
 
     Socket_Close(socket);
+}
+
+TEST(Socket, it_has_an_ip_address_and_port_after_binding)
+{
+    const char * ip_address = "192.168.2.1";
+    int port = 10004;
+
+    expectSocketOpen(file_descriptor);
+    expectSocketBind(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);
+    expectSocketClose(file_descriptor);
+
+    Socket_Open(socket);
+    Socket_Bind(socket, ip_address, port);
+
+    STRCMP_EQUAL( ip_address, Socket_GetIpAddress(socket) );
+    LONGS_EQUAL( port, Socket_GetPort(socket) );
+
+    Socket_Close(socket);
+}
+
+TEST(Socket, it_has_no_ip_address_and_port_after_closing_a_socket)
+{
+    const char * ip_address = "192.168.2.1";
+    int port = 10004;
+
+    expectSocketOpen(file_descriptor);
+    expectSocketBind(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);
+    expectSocketClose(file_descriptor);
+
+    Socket_Open(socket);
+    Socket_Bind(socket, ip_address, port);
+
+    Socket_Close(socket);
+
+    STRCMP_EQUAL( NULL, Socket_GetIpAddress(socket) );
+    LONGS_EQUAL( SOCKET_INVALID_PORT, Socket_GetPort(socket) );
 }
 
 TEST(Socket, it_can_fail_send_data_to_a_socket)

@@ -5,6 +5,8 @@
 typedef struct SocketStruct
 {
     int file_descriptor;
+    const char * ip_address;
+    int port;
 } SocketStruct;
 
 Socket Socket_Create(void)
@@ -14,6 +16,7 @@ Socket Socket_Create(void)
     {
         return 0;
     }
+    self->port = SOCKET_INVALID_PORT;
     return self;
 }
 
@@ -50,6 +53,8 @@ void Socket_Close(Socket self)
         return;
     }
     UnixSocket_Close(self->file_descriptor);
+    self->ip_address = 0;
+    self->port = SOCKET_INVALID_PORT;
 }
 
 int Socket_GetFileDescriptor(Socket self)
@@ -61,12 +66,32 @@ int Socket_GetFileDescriptor(Socket self)
     return self->file_descriptor;
 }
 
+const char * Socket_GetIpAddress(Socket self)
+{
+    if (self == 0)
+    {
+        return 0;
+    }
+    return self->ip_address;
+}
+
+int Socket_GetPort(Socket self)
+{
+    if (self == 0)
+    {
+        return SOCKET_NULL_POINTER;
+    }
+    return self->port;
+}
+
 int Socket_Bind(Socket self, const char * ip_address, int port)
 {
     if (self == 0)
     {
         return SOCKET_NULL_POINTER;
     }
+    self->ip_address = ip_address;
+    self->port = port;
     return UnixSocket_Bind(self->file_descriptor, ip_address, port);
 }
 
