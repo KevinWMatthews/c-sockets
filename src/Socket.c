@@ -102,6 +102,10 @@ int Socket_Connect(Socket self, const char * ip_address, int port)
     {
         return SOCKET_NULL_POINTER;
     }
+    if (ip_address == 0)
+    {
+        return SOCKET_NULL_POINTER;
+    }
     file_descriptor = self->file_descriptor;
 
     result = UnixSocket_Connect(file_descriptor, ip_address, port);

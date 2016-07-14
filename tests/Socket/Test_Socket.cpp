@@ -107,7 +107,6 @@ TEST_GROUP(Socket)
  *      Should we verify the contents of the client address and client address length?
  *
  *  Connect:
- *      Null ip_address pointer.
  *      Error if passed invalid IP address.
  *      Error if passed invalid port.
  *
@@ -213,6 +212,18 @@ TEST(Socket, it_can_fail_to_connect_to_a_socket)
 
     LONGS_EQUAL( SOCKET_FAIL, Socket_Connect(socket, ip_address, port) );
 
+    Socket_Close(socket);
+}
+
+TEST(Socket, it_does_not_allow_a_null_ip_address)
+{
+    int port = 10004;
+
+    expectSocketOpen(file_descriptor);
+    expectSocketClose(file_descriptor);
+
+    Socket_Open(socket);
+    LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Connect(socket, NULL, port) );
     Socket_Close(socket);
 }
 
