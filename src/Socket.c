@@ -147,6 +147,15 @@ int Socket_Receive(Socket self, char * buffer, unsigned int buffer_length)
     {
         return SOCKET_NULL_POINTER;
     }
+    if (buffer == 0)
+    {
+        return SOCKET_NULL_POINTER;
+    }
+    if (buffer_length == 0)
+    {
+        return SOCKET_FAIL;
+    }
+
     file_descriptor = self->file_descriptor;
 
     return UnixSocket_Receive(file_descriptor, buffer, buffer_length);

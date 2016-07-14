@@ -118,8 +118,6 @@ TEST_GROUP(Socket)
  *      Invalid message length?
  *
  *  Receive:
- *      Null buffer.
- *      Invalid buffer length.
  */
 
 TEST(Socket, it_can_create_and_double_destroy_a_socket_struct)
@@ -395,6 +393,43 @@ TEST(Socket, it_can_fail_to_receive_from_a_socket)
     expectSocketOpen(file_descriptor);
     expectSocketConnect(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);
     expectSocketReceive(file_descriptor, receive_buffer, receive_buffer_length, UNIX_SOCKET_FAIL);
+    expectSocketClose(file_descriptor);
+
+    Socket_Open(socket);
+    Socket_Connect(socket, ip_address, port);
+
+    LONGS_EQUAL( SOCKET_FAIL, Socket_Receive(socket, receive_buffer, receive_buffer_length) );
+
+    Socket_Close(socket);
+}
+
+TEST(Socket, it_will_not_receive_with_a_null_buffer)
+{
+    const char * ip_address = "192.168.2.1";
+    int port = 10004;
+    unsigned int receive_buffer_length = 9;
+
+    expectSocketOpen(file_descriptor);
+    expectSocketConnect(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);
+    expectSocketClose(file_descriptor);
+
+    Socket_Open(socket);
+    Socket_Connect(socket, ip_address, port);
+
+    LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Receive(socket, NULL, receive_buffer_length) );
+
+    Socket_Close(socket);
+}
+
+TEST(Socket, it_will_not_receive_if_buffer_length_is_zero)
+{
+    const char * ip_address = "192.168.2.1";
+    int port = 10004;
+    char receive_buffer[10] = {0};
+    unsigned int receive_buffer_length = 0;
+
+    expectSocketOpen(file_descriptor);
+    expectSocketConnect(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);
     expectSocketClose(file_descriptor);
 
     Socket_Open(socket);
