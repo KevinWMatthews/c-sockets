@@ -115,7 +115,6 @@ TEST_GROUP(Socket)
  *      Error if passed invalid port.
  *
  *  Send:
- *      Invalid message length?
  *
  *  Receive:
  */
@@ -358,6 +357,25 @@ TEST(Socket, it_will_not_send_a_null_message)
     Socket_Connect(socket, ip_address, port);
 
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Send(socket, NULL, message_length) );
+
+    Socket_Close(socket);
+}
+
+TEST(Socket, it_will_not_send_a_zero_length_message)
+{
+    const char * ip_address = "192.168.2.1";
+    int port = 10004;
+    char message[] = "Hello";
+    unsigned int message_length = 0;
+
+    expectSocketOpen(file_descriptor);
+    expectSocketConnect(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);
+    expectSocketClose(file_descriptor);
+
+    Socket_Open(socket);
+    Socket_Connect(socket, ip_address, port);
+
+    LONGS_EQUAL( SOCKET_FAIL, Socket_Send(socket, message, message_length) );
 
     Socket_Close(socket);
 }

@@ -134,6 +134,10 @@ int Socket_Send(Socket self, const char * message, unsigned int message_length)
     {
         return SOCKET_NULL_POINTER;
     }
+    if (message_length == 0)
+    {
+        return SOCKET_FAIL;
+    }
 
     file_descriptor = self->file_descriptor;
     return UnixSocket_Send(file_descriptor, message, message_length);
