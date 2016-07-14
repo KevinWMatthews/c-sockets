@@ -111,6 +111,7 @@ TEST_GROUP(Socket)
  *      Error if passed invalid port.
  *
  *  Bind:
+ *      Does not store IP and port if bind fails.
  *      Error if passed invalid IP address.
  *      Error if passed invalid port.
  *
