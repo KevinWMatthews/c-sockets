@@ -97,22 +97,9 @@ TEST_GROUP(Socket)
 };
 
 /* Test List:
- *  GetAddress:
- *      Invalid address after closing and reopening a socket.
+ *  GetIpAddress:
  *
  *  GetPort:
- *      Invalid port after closing and reopening a socket.
- *      Valid value.
- *
- *  GetClientAddress:
- *      Failure?
- *      Success.
- *      Should return 0 if file descriptor is 0?
- *
- *  GetClientAddressLength:
- *      Failure?
- *      Success.
- *      Should return 0 if file descriptor is 0?
  *
  *  Accept:
  *      Null address - is valid, I think.
@@ -121,8 +108,8 @@ TEST_GROUP(Socket)
  *
  *  Connect:
  *      Null ip_address pointer.
- *      Invalid IP address?
- *      Invalid port.
+ *      Error if passed invalid IP address.
+ *      Error if passed invalid port.
  *
  *  Bind:
  *      Null ip_address pointer.
@@ -136,9 +123,6 @@ TEST_GROUP(Socket)
  *  Receive:
  *      Null buffer.
  *      Invalid buffer length.
- *
- *  Close:
- *      Null pointer
  */
 
 TEST(Socket, it_can_create_and_double_destroy_a_socket_struct)
@@ -244,6 +228,8 @@ TEST(Socket, it_can_connect_to_a_socket)
     Socket_Open(socket);
 
     LONGS_EQUAL( SOCKET_SUCCESS, Socket_Connect(socket, ip_address, port) );
+    STRCMP_EQUAL( ip_address, Socket_GetIpAddress(socket) );
+    LONGS_EQUAL( port, Socket_GetPort(socket) );
 
     Socket_Close(socket);
 }

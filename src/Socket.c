@@ -97,7 +97,7 @@ int Socket_Bind(Socket self, const char * ip_address, int port)
 
 int Socket_Connect(Socket self, const char * ip_address, int port)
 {
-    int file_descriptor = 0, result = 0;
+    int file_descriptor = SOCKET_FAIL, result = SOCKET_FAIL;
     if (self == 0)
     {
         return SOCKET_NULL_POINTER;
@@ -109,6 +109,8 @@ int Socket_Connect(Socket self, const char * ip_address, int port)
     {
         return result;
     }
+    self->ip_address = ip_address;
+    self->port = port;
     return SOCKET_SUCCESS;
 }
 
