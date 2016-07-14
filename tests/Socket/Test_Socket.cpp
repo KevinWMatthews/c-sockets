@@ -111,12 +111,10 @@ TEST_GROUP(Socket)
  *      Error if passed invalid port.
  *
  *  Bind:
- *      Null ip_address pointer.
- *      Invalid IP address?
- *      Invalid port.
+ *      Error if passed invalid IP address.
+ *      Error if passed invalid port.
  *
  *  Send:
- *      Null ip_address pointer.
  *      Invalid message length?
  *
  *  Receive:
@@ -261,6 +259,20 @@ TEST(Socket, it_can_fail_to_bind_to_a_socket)
     Socket_Close(socket);
 }
 
+TEST(Socket, it_will_not_bind_with_a_null_ip_address)
+{
+    int port = 10004;
+
+    expectSocketOpen(file_descriptor);
+    expectSocketClose(file_descriptor);
+
+    Socket_Open(socket);
+
+    LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Bind(socket, NULL, port) );
+
+    Socket_Close(socket);
+}
+
 TEST(Socket, it_can_to_bind_to_a_socket)
 {
     const char * ip_address = "192.168.2.1";
@@ -333,6 +345,25 @@ TEST(Socket, it_can_fail_send_data_to_a_socket)
     Socket_Close(socket);
 }
 
+TEST(Socket, it_will_not_send_a_null_message)
+{
+    const char * ip_address = "192.168.2.1";
+    int port = 10004;
+    char message[] = "Hello";
+    unsigned int message_length = sizeof(message);
+
+    expectSocketOpen(file_descriptor);
+    expectSocketConnect(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);
+    expectSocketClose(file_descriptor);
+
+    Socket_Open(socket);
+    Socket_Connect(socket, ip_address, port);
+
+    LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Send(socket, NULL, message_length) );
+
+    Socket_Close(socket);
+}
+
 TEST(Socket, it_can_send_data_to_a_socket)
 {
     const char * ip_address = "192.168.2.1";
@@ -397,7 +428,7 @@ TEST(Socket, it_can_receive_from_a_socket)
 
 TEST(Socket, it_can_fail_to_listen_on_a_socket)
 {
-    char * ip_address = 0;
+    const char * ip_address = "192.168.2.1";
     int port = 8888;
     int backlog = 3;
 
@@ -416,7 +447,7 @@ TEST(Socket, it_can_fail_to_listen_on_a_socket)
 
 TEST(Socket, it_can_to_listen_on_a_socket)
 {
-    char * ip_address = 0;
+    const char * ip_address = "192.168.2.1";
     int port = 8888;
     int backlog = 3;
 
@@ -435,7 +466,7 @@ TEST(Socket, it_can_to_listen_on_a_socket)
 
 TEST(Socket, it_can_fail_to_accept_a_socket_connection)
 {
-    char * ip_address = 0;
+    const char * ip_address = "192.168.2.1";
     int port = 8888;
     int backlog = 3;
 
@@ -458,7 +489,7 @@ TEST(Socket, it_can_accept_a_socket_connection)
 {
     Socket new_socket;
     int new_file_descriptor = 44;
-    char * ip_address = 0;
+    const char * ip_address = "192.168.2.1";
     int port = 8888;
     int backlog = 3;
 

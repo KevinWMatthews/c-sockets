@@ -90,6 +90,11 @@ int Socket_Bind(Socket self, const char * ip_address, int port)
     {
         return SOCKET_NULL_POINTER;
     }
+    if (ip_address == 0)
+    {
+        return SOCKET_NULL_POINTER;
+    }
+
     self->ip_address = ip_address;
     self->port = port;
     return UnixSocket_Bind(self->file_descriptor, ip_address, port);
@@ -120,11 +125,16 @@ int Socket_Connect(Socket self, const char * ip_address, int port)
 
 int Socket_Send(Socket self, const char * message, unsigned int message_length)
 {
-    int file_descriptor = 0;
+    int file_descriptor = SOCKET_FAIL;
     if (self == 0)
     {
         return SOCKET_NULL_POINTER;
     }
+    if (message == 0)
+    {
+        return SOCKET_NULL_POINTER;
+    }
+
     file_descriptor = self->file_descriptor;
     return UnixSocket_Send(file_descriptor, message, message_length);
 }
