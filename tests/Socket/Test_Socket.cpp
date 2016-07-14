@@ -142,12 +142,7 @@ TEST(Socket, it_can_handle_null_pointers)
     POINTERS_EQUAL( NULL, Socket_Accept(NULL) );
 }
 
-TEST(Socket, it_has_null_address_and_port_after_init)
-{
-    POINTERS_EQUAL( NULL, Socket_GetIpAddress(socket) );
-    LONGS_EQUAL( SOCKET_INVALID_PORT, Socket_GetPort(socket) );
-}
-
+// Open
 TEST(Socket, it_can_fail_to_open_a_socket)
 {
     expectSocketOpen(UNIX_SOCKET_FAIL);
@@ -163,6 +158,7 @@ TEST(Socket, it_can_open_a_socket)
     LONGS_EQUAL( 42, Socket_GetFileDescriptor(socket) );
 }
 
+// Close
 TEST(Socket, it_can_close_a_socket)
 {
     expectSocketOpen(file_descriptor);
@@ -194,6 +190,7 @@ TEST(Socket, it_can_close_several_sockets)
     Socket_Close(socket2);
 }
 
+// Connect
 TEST(Socket, it_can_fail_to_connect_to_a_socket)
 {
     const char * ip_address = "192.168.2.1";
@@ -240,6 +237,7 @@ TEST(Socket, it_can_connect_to_a_socket)
     Socket_Close(socket);
 }
 
+// Bind
 TEST(Socket, it_can_fail_to_bind_to_a_socket)
 {
     const char * ip_address = "192.168.2.1";
@@ -282,26 +280,17 @@ TEST(Socket, it_can_to_bind_to_a_socket)
     Socket_Open(socket);
 
     LONGS_EQUAL( SOCKET_SUCCESS, Socket_Bind(socket, ip_address, port) );
-
-    Socket_Close(socket);
-}
-
-TEST(Socket, it_has_an_ip_address_and_port_after_binding)
-{
-    const char * ip_address = "192.168.2.1";
-    int port = 10004;
-
-    expectSocketOpen(file_descriptor);
-    expectSocketBind(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);
-    expectSocketClose(file_descriptor);
-
-    Socket_Open(socket);
-    Socket_Bind(socket, ip_address, port);
-
     STRCMP_EQUAL( ip_address, Socket_GetIpAddress(socket) );
     LONGS_EQUAL( port, Socket_GetPort(socket) );
 
     Socket_Close(socket);
+}
+
+// Get IP addrss and port
+TEST(Socket, it_has_null_address_and_port_after_init)
+{
+    POINTERS_EQUAL( NULL, Socket_GetIpAddress(socket) );
+    LONGS_EQUAL( SOCKET_INVALID_PORT, Socket_GetPort(socket) );
 }
 
 TEST(Socket, it_has_no_ip_address_and_port_after_closing_a_socket)
@@ -322,6 +311,7 @@ TEST(Socket, it_has_no_ip_address_and_port_after_closing_a_socket)
     LONGS_EQUAL( SOCKET_INVALID_PORT, Socket_GetPort(socket) );
 }
 
+// Send
 TEST(Socket, it_can_fail_send_data_to_a_socket)
 {
     const char * ip_address = "192.168.2.1";
@@ -401,6 +391,7 @@ TEST(Socket, it_can_send_data_to_a_socket)
     Socket_Close(socket);
 }
 
+// Receive
 TEST(Socket, it_can_fail_to_receive_from_a_socket)
 {
     const char * ip_address = "192.168.2.1";
@@ -479,6 +470,7 @@ TEST(Socket, it_can_receive_from_a_socket)
     Socket_Close(socket);
 }
 
+// Listen
 TEST(Socket, it_can_fail_to_listen_on_a_socket)
 {
     const char * ip_address = "192.168.2.1";
@@ -517,6 +509,7 @@ TEST(Socket, it_can_to_listen_on_a_socket)
     Socket_Close(socket);
 }
 
+// Accept
 TEST(Socket, it_can_fail_to_accept_a_socket_connection)
 {
     const char * ip_address = "192.168.2.1";
