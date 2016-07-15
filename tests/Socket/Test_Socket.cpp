@@ -94,9 +94,19 @@ TEST_GROUP(Socket)
             .withParameter("file_descriptor", file_descriptor)
             .andReturnValue(result);
     }
+
+    void expectSocketSetOption(int file_descriptor, int option, int result)
+    {
+        mock().expectOneCall("UnixSocket_SetOption")
+            .withParameter("file_descriptor", file_descriptor)
+            .withParameter("option", UNIX_SOCKET_IMMEDIATELY_REUSE_SOCKET)
+            .andReturnValue(result);
+    }
 };
 
 /* Test List:
+ *  SetOption:
+ *
  *  GetIpAddress:
  *
  *  GetPort:
@@ -133,6 +143,7 @@ TEST(Socket, it_can_handle_null_pointers)
     POINTERS_EQUAL( NULL, Socket_GetIpAddress(NULL) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_GetPort(NULL) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Open(NULL) );
+    LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_SetOption(NULL, SOCKET_IMMEDIATELY_REUSE_SOCKET) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Bind(NULL, "0.0.0.0", 0) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Connect(NULL, "0.0.0.0", 0) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Send(NULL, "msg", 3) );
@@ -188,6 +199,29 @@ TEST(Socket, it_can_close_several_sockets)
 
     Socket_Close(socket);
     Socket_Close(socket2);
+}
+
+// Set options
+TEST(Socket, it_can_fail_to_set_a_socket_option)
+{
+    expectSocketOpen(file_descriptor);
+    expectSocketSetOption(file_descriptor, UNIX_SOCKET_IMMEDIATELY_REUSE_SOCKET, UNIX_SOCKET_FAIL);
+    expectSocketClose(file_descriptor);
+
+    Socket_Open(socket);
+    LONGS_EQUAL( SOCKET_FAIL, Socket_SetOption(socket, SOCKET_IMMEDIATELY_REUSE_SOCKET) );
+    Socket_Close(socket);
+}
+
+TEST(Socket, it_can_set_socket_option_immediate_reuse)
+{
+    expectSocketOpen(file_descriptor);
+    expectSocketSetOption(file_descriptor, UNIX_SOCKET_IMMEDIATELY_REUSE_SOCKET, UNIX_SOCKET_SUCCESS);
+    expectSocketClose(file_descriptor);
+
+    Socket_Open(socket);
+    LONGS_EQUAL( SOCKET_SUCCESS, Socket_SetOption(socket, SOCKET_IMMEDIATELY_REUSE_SOCKET) );
+    Socket_Close(socket);
 }
 
 // Connect

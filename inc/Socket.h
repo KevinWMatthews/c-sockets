@@ -27,4 +27,10 @@ int Socket_Receive(Socket, char * buffer, unsigned int buffer_length);
 int Socket_Listen(Socket, int backlog);
 Socket Socket_Accept(Socket);
 
+typedef enum
+{
+    SOCKET_IMMEDIATELY_REUSE_SOCKET
+} SocketOption;
+int Socket_SetOption(Socket, SocketOption);
+
 #endif

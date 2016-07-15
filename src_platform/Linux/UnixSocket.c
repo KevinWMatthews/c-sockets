@@ -1,5 +1,4 @@
 #include "UnixSocket.h"
-#include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
@@ -58,4 +57,10 @@ int UnixSocket_Listen(int file_descriptor, int backlog)
 int UnixSocket_Accept(int file_descriptor)
 {
     return accept(file_descriptor, 0, 0);
+}
+
+int UnixSocket_SetOption(int file_descriptor, UnixSocketOption option)
+{
+    int enable_option = 1;
+    return setsockopt( file_descriptor, SOL_SOCKET, SO_REUSEADDR, (const void *)&enable_option, (socklen_t)sizeof(enable_option) );
 }

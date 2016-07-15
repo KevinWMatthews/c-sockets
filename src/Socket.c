@@ -196,3 +196,20 @@ Socket Socket_Accept(Socket self)
     new_socket->file_descriptor = file_descriptor;
     return new_socket;
 }
+
+int Socket_SetOption(Socket self, SocketOption option)
+{
+    UnixSocketOption unix_option = 0;
+    if (self == 0)
+    {
+        return SOCKET_NULL_POINTER;
+    }
+
+    switch (option)
+    {
+        case SOCKET_IMMEDIATELY_REUSE_SOCKET:
+            unix_option = UNIX_SOCKET_IMMEDIATELY_REUSE_SOCKET;
+    }
+
+    return UnixSocket_SetOption(self->file_descriptor, unix_option);
+}

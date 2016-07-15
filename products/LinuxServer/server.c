@@ -23,6 +23,13 @@ int main(int argc, char * argv[])
         return 0;
     }
 
+    if ( Socket_SetOption(socket, SOCKET_IMMEDIATELY_REUSE_SOCKET) < 0 )
+    {
+        printf("Setting socket option failed!\n");
+        Socket_Destroy(&socket);
+        return 0;
+    }
+
     printf("Binding socket...\n");
     if ( Socket_Bind(socket, 0, 8888) < 0 )
     {

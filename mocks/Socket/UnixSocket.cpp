@@ -67,3 +67,11 @@ int UnixSocket_Accept(int file_descriptor)
         .withParameter("file_descriptor", file_descriptor);
     return mock().intReturnValue();
 }
+
+int UnixSocket_SetOption(int file_descriptor, UnixSocketOption option)
+{
+    mock().actualCall("UnixSocket_SetOption")
+        .withParameter("file_descriptor", file_descriptor)
+        .withParameter("option", option);
+    return mock().intReturnValue();
+}
