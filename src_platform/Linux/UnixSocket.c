@@ -27,7 +27,14 @@ int UnixSocket_Connect(int file_descriptor, const char * ip_address, int port)
 {
     struct sockaddr_in socket;
     socket.sin_family = AF_INET;
-    socket.sin_addr.s_addr = inet_addr(ip_address);
+    if (ip_address == 0)
+    {
+        socket.sin_addr.s_addr = INADDR_ANY;
+    }
+    else
+    {
+        socket.sin_addr.s_addr = inet_addr(ip_address);
+    }
     socket.sin_port = htons(port);
     return connect( file_descriptor, (struct sockaddr *)&socket, sizeof(socket) );
 }

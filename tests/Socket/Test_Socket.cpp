@@ -111,7 +111,6 @@ TEST_GROUP(Socket)
  *      Error if passed invalid port.
  *
  *  Bind:
- *      Does not store IP and port if bind fails.
  *      Error if passed invalid IP address.
  *      Error if passed invalid port.
  *
@@ -251,25 +250,29 @@ TEST(Socket, it_can_fail_to_bind_to_a_socket)
     Socket_Open(socket);
 
     LONGS_EQUAL( SOCKET_FAIL, Socket_Bind(socket, ip_address, port) );
+    POINTERS_EQUAL( NULL, Socket_GetIpAddress(socket) );
+    LONGS_EQUAL( SOCKET_INVALID_PORT, Socket_GetPort(socket) );
 
     Socket_Close(socket);
 }
 
-TEST(Socket, it_will_not_bind_with_a_null_ip_address)
+TEST(Socket, it_will_bind_to_any_ip_address_with_a_null_ip_address_pointer)
 {
+    const char * ip_address = NULL;
     int port = 10004;
 
     expectSocketOpen(file_descriptor);
+    expectSocketBind(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);
     expectSocketClose(file_descriptor);
 
     Socket_Open(socket);
 
-    LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Bind(socket, NULL, port) );
+    LONGS_EQUAL( SOCKET_SUCCESS, Socket_Bind(socket, ip_address, port) );
 
     Socket_Close(socket);
 }
 
-TEST(Socket, it_can_to_bind_to_a_socket)
+TEST(Socket, it_can_to_bind_to_a_specific_ip_and_port)
 {
     const char * ip_address = "192.168.2.1";
     int port = 10004;
