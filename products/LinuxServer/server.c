@@ -1,11 +1,22 @@
 #include <stdio.h>
 #include "Socket.h"
 #include <string.h>
+#include <pthread.h>
 
 void close_and_destroy_socket(Socket *socket)
 { printf("Closing socket...\n");
     Socket_Close(*socket);
     Socket_Destroy(socket);
+}
+
+void * socket_handler_thread(void * client_socket)
+{
+    Socket socket = *(Socket *)client_socket;
+    const char * message = "Hello!";
+
+    Socket_Send( socket, message, sizeof(message) );
+
+    return NULL;
 }
 
 int main(void)
@@ -51,11 +62,24 @@ int main(void)
     do
     {
         client_socket = Socket_Accept(socket);
-        if (client_socket < 0)
+        if (!client_socket)
         {
             printf("Accept failed!\n");
             close_and_destroy_socket(&socket);
             return 1;
+        }
+        else
+        {
+            pthread_t thread_handle;
+            if ( pthread_create( &thread_handle, NULL, socket_handler_thread, (void *)&client_socket) < 0)
+            {
+                printf("Failed to create thread\n");
+                // TODO How to close all of the sockets?
+                close_and_destroy_socket(&socket);
+                close_and_destroy_socket(&client_socket);
+                return 1;
+            }
+
         }
         printf("Connection accepted.\n");
 

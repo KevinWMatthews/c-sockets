@@ -44,6 +44,8 @@ SRC_OBJ = $(addprefix $(OBJECT_DIR)/, $(src_obj))
 src_dep = $(call c_to_d, $(SRC))
 SRC_DEP = $(addprefix $(OBJECT_DIR)/, $(src_dep))
 
+LINKER_FLAGS = $(addprefix -l, $(LIBRARIES))
+
 DEP_FILES = $(SRC_DEP)
 
 TARGET = $(BUILD_DIR)/$(TARGET_NAME)
@@ -86,7 +88,7 @@ all: $(TARGET)
 
 $(TARGET): $(SRC_OBJ)
 	$(SILENCE)$(QUIET)$(MAKE_DIR) $(dir $@)
-	$(SILENCE)$(C_COMPILER) -o $@ $^ $(INCLUDE_FLAGS) $(CFLAGS) $(CXXFLAGS) $(LD_LIBRARIES)
+	$(SILENCE)$(C_COMPILER) -o $@ $^ $(INCLUDE_FLAGS) $(CFLAGS) $(CXXFLAGS) $(LINKER_FLAGS)
 
 # Compile source .c files
 $(OBJECT_DIR)/%.o: %.c
