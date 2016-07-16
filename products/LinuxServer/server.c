@@ -48,24 +48,27 @@ int main(void)
 
     printf("Waiting to accept a connection...\n");
     printf("To connect to this socket, open a new terminal window and type:\ntelnet localhost 8888\n");
-    client_socket = Socket_Accept(socket);
-    if (!client_socket)
+    do
     {
-        printf("Accept failed!\n");
-        close_and_destroy_socket(&socket);
-        return 0;
-    }
-    printf("Connection accepted.\n");
+        client_socket = Socket_Accept(socket);
+        if (client_socket < 0)
+        {
+            printf("Accept failed!\n");
+            close_and_destroy_socket(&socket);
+            return 0;
+        }
+        printf("Connection accepted.\n");
 
-    printf("Sending response to client...\n");
-    if ( Socket_Send(client_socket, confirm_connection, confirm_connection_len) < 0 )
-    {
-        printf("Send failed!\n");
-        close_and_destroy_socket(&socket);
-        close_and_destroy_socket(&client_socket);
-        return 0;
-    }
-    printf("Message sent\n");
+        printf("Sending response to client...\n");
+        if ( Socket_Send(client_socket, confirm_connection, confirm_connection_len) < 0 )
+        {
+            printf("Send failed!\n");
+            close_and_destroy_socket(&socket);
+            close_and_destroy_socket(&client_socket);
+            return 0;
+        }
+        printf("Message sent\n");
+    } while (1);
 
     close_and_destroy_socket(&socket);
     close_and_destroy_socket(&client_socket);
