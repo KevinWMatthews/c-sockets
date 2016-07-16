@@ -17,7 +17,14 @@ int UnixSocket_Bind(int file_descriptor, const char * ip_address, int port)
 {
     struct sockaddr_in socket;
     socket.sin_family = AF_INET;
-    socket.sin_addr.s_addr = INADDR_ANY;
+    if (ip_address == 0)
+    {
+        socket.sin_addr.s_addr = INADDR_ANY;
+    }
+    else
+    {
+        socket.sin_addr.s_addr = inet_addr(ip_address);
+    }
     socket.sin_port = htons(port);
     return bind( file_descriptor, (struct sockaddr *)&socket, sizeof(socket) );
 }
@@ -62,5 +69,5 @@ int UnixSocket_Accept(int file_descriptor)
 int UnixSocket_SetOption(int file_descriptor, UnixSocketOption option)
 {
     int enable_option = 1;
-    return setsockopt( file_descriptor, SOL_SOCKET, SO_REUSEADDR, (const void *)&enable_option, (socklen_t)sizeof(enable_option) );
+    return setsockopt( file_descriptor, SOL_SOCKET, option, (const void *)&enable_option, (socklen_t)sizeof(enable_option) );
 }

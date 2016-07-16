@@ -2,7 +2,7 @@
 #include "Socket.h"
 #include <string.h>
 
-int main(int argc, char * argv[])
+int main(void)
 {
     Socket socket = Socket_Create();
     char * ip_address = "216.58.194.164";   // google

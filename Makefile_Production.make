@@ -7,6 +7,7 @@ SILENCE = @
 CFLAGS += -Wall
 ifeq ($(FATAL_COMPILER_ERRORS),Y)
 	CFLAGS += -Wfatal-errors
+	CFLAGS += -Wextra
 endif
 
 INCLUDE_FLAGS = $(addprefix -I, $(INC_DIRS))

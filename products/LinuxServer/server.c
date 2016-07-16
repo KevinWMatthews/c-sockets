@@ -8,7 +8,7 @@ void close_and_destroy_socket(Socket *socket)
     Socket_Destroy(socket);
 }
 
-int main(int argc, char * argv[])
+int main(void)
 {
     Socket socket = Socket_Create();
     Socket client_socket = {0};

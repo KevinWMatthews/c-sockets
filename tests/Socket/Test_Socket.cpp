@@ -99,7 +99,7 @@ TEST_GROUP(Socket)
     {
         mock().expectOneCall("UnixSocket_SetOption")
             .withParameter("file_descriptor", file_descriptor)
-            .withParameter("option", UNIX_SOCKET_IMMEDIATELY_REUSE_SOCKET)
+            .withParameter("option", option)
             .andReturnValue(result);
     }
 };

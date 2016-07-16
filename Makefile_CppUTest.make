@@ -12,6 +12,7 @@ SILENCE = @
 CFLAGS += -Wall
 ifeq ($(FATAL_COMPILER_ERRORS),Y)
 	CFLAGS += -Wfatal-errors
+	CFLAGS += -Wextra
 endif
 
 ifeq ($(DEBUG),Y)
