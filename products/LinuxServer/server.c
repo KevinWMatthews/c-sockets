@@ -20,14 +20,14 @@ int main(void)
     {
         printf("Open failed!\n");
         Socket_Destroy(&socket);
-        return 0;
+        return 1;
     }
 
     if ( Socket_SetOption(socket, SOCKET_IMMEDIATELY_REUSE_SOCKET) < 0 )
     {
         printf("Setting socket option failed!\n");
         Socket_Destroy(&socket);
-        return 0;
+        return 1;
     }
 
     printf("Binding socket...\n");
@@ -35,7 +35,7 @@ int main(void)
     {
         printf("Bind failed!\n");
         close_and_destroy_socket(&socket);
-        return 0;
+        return 1;
     }
 
     printf("Listening on socket...\n");
@@ -43,7 +43,7 @@ int main(void)
     {
         printf("Listen failed!\n");
         close_and_destroy_socket(&socket);
-        return 0;
+        return 1;
     }
 
     printf("Waiting to accept a connection...\n");
@@ -55,7 +55,7 @@ int main(void)
         {
             printf("Accept failed!\n");
             close_and_destroy_socket(&socket);
-            return 0;
+            return 1;
         }
         printf("Connection accepted.\n");
 
@@ -65,7 +65,7 @@ int main(void)
             printf("Send failed!\n");
             close_and_destroy_socket(&socket);
             close_and_destroy_socket(&client_socket);
-            return 0;
+            return 1;
         }
         printf("Message sent\n");
     } while (1);
