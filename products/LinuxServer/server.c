@@ -2,6 +2,7 @@
 #include "Socket.h"
 #include <string.h>
 #include <pthread.h>
+#include <stdlib.h>
 
 void close_and_destroy_socket(Socket *socket)
 { printf("Closing socket...\n");
@@ -9,13 +10,36 @@ void close_and_destroy_socket(Socket *socket)
     Socket_Destroy(socket);
 }
 
-void * socket_handler_thread(void * client_socket)
+static void * socket_handler_thread(void * client_socket)
 {
     Socket socket = *(Socket *)client_socket;
-    const char * message = "Hello!";
+    const char * confirm_connection = "The server has accepted the connection.\n";
+    char buffer[2000] = {0};
 
-    Socket_Send( socket, message, sizeof(message) );
+    if ( Socket_Send( socket, confirm_connection, strlen(confirm_connection) ) < 0 )
+    {
+        printf("Send failed!\n");
+        close_and_destroy_socket(&socket);
+        exit(EXIT_FAILURE);
+        return NULL;
+    }
 
+    while (1)
+    {
+        memset( buffer, 0, sizeof(buffer) );
+        Socket_Receive( socket, buffer, sizeof(buffer) );
+        printf("Received data from client. Sending response to client...\n");
+        if ( Socket_Send(socket, buffer, sizeof(buffer) ) < 0 )
+        {
+            printf("Send failed!\n");
+            close_and_destroy_socket(&socket);
+            exit(EXIT_FAILURE);
+            return NULL;
+        }
+        printf("Message sent\n");
+    }
+
+    exit(EXIT_FAILURE);
     return NULL;
 }
 
@@ -23,8 +47,6 @@ int main(void)
 {
     Socket socket = Socket_Create();
     Socket client_socket = {0};
-    const char * confirm_connection = "The server has accepted the connection.\n";
-    size_t confirm_connection_len = strlen(confirm_connection);
 
     printf("Opening socket...\n");
     if ( Socket_Open(socket) < 0 )
@@ -82,16 +104,6 @@ int main(void)
 
         }
         printf("Connection accepted.\n");
-
-        printf("Sending response to client...\n");
-        if ( Socket_Send(client_socket, confirm_connection, confirm_connection_len) < 0 )
-        {
-            printf("Send failed!\n");
-            close_and_destroy_socket(&socket);
-            close_and_destroy_socket(&client_socket);
-            return 1;
-        }
-        printf("Message sent\n");
     } while (1);
 
     close_and_destroy_socket(&socket);
