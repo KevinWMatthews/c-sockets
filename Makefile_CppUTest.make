@@ -147,6 +147,9 @@ filelist:
 	@echo $(TEST_OBJ)
 	@echo $(TEST_DEP)
 
+flags:
+	@echo $(INCLUDE_FLAGS)
+
 clean:
 	$(SILENCE)$(QUIET)$(REMOVE) $(TARGET)
 	$(SILENCE)$(QUIET)$(REMOVE) $(PRODUCTION_LIB)

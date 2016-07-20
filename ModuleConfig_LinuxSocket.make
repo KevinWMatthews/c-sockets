@@ -2,10 +2,10 @@
 ### Project configuration ###
 #############################
 #ROOT_DIRECTORY=
-SRC_DIRS = src
-INC_DIRS = inc
+SRC_DIRS = src/Linux
+INC_DIRS = inc inc/Linux
 TEST_DIRS = tests/$(TEST_MODULE)
-MOCK_DIRS = mocks/$(TEST_MODULE)
+MOCK_DIRS = mocks/LinuxSocketOs
 BUILD_DIR = build
 OBJECT_DIR = obj
 
