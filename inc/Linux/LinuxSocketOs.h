@@ -8,7 +8,9 @@ typedef enum
 } LinuxSocketOsReturnCode;
 typedef enum
 {
-    LINUX_SOCKET_OS_AF_INET
+    LINUX_SOCKET_OS_AF_INET,
+    LINUX_SOCKET_OS_AF_UNIX,
+    LINUX_SOCKET_OS_AF_LOCAL
 } LinuxSocketOsOptions;
 int LinuxSocketOs_Open(int domain);
 
