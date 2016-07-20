@@ -6,7 +6,8 @@ ALL_PRODUCTS = \
 				LinuxServer
 
 ALL_TEST_MODULES = \
-				   Socket
+					Socket \
+					LinuxSocket
 
 
 
