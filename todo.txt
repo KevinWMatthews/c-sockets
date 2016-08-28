@@ -1,3 +1,9 @@
+Remove the dependency of TestSocket on UnixSocket.
+
+Split SocketClient and SocketServer.
+
+Move SocketOptions to UnixSocket.
+
 Figure out why test Socket.o files conflict with production .o files and how to fix it.
     If test code is run first, cpputest_calloc_location() and cpputest_free_location() are undefined.
     If production code is run first, these function are not inserted so memory leak checks will never fail. Silent and deadly.

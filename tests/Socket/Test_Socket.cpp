@@ -1,7 +1,7 @@
 extern "C"
 {
 #include "Socket.h"
-#include "UnixSocket.h"
+#include "UnixSocket.h" // This is a bad sign.j
 }
 
 #include "Test_Socket.h"
@@ -106,21 +106,25 @@ TEST_GROUP(Socket)
 
 /* Test List:
  *  SetOption:
+ *      Should this belong in individual socket libraries? Probably....
  *
  *  GetIpAddress:
  *
  *  GetPort:
  *
  *  Accept:
+ *      Move to server.
  *      Null address - is valid, I think.
  *      Null size pointer - is valid if address is null.
  *      Should we verify the contents of the client address and client address length?
  *
  *  Connect:
+ *      Move to client.
  *      Error if passed invalid IP address.
  *      Error if passed invalid port.
  *
  *  Bind:
+ *      Move to server.
  *      Error if passed invalid IP address.
  *      Error if passed invalid port.
  *
