@@ -129,6 +129,12 @@ TEST_GROUP(Socket)
  *  Receive:
  */
 
+TEST(Socket, it_can_create_destroy_a_socket)
+{
+    // Create happens in setup
+    // Destroy happens in teardown
+}
+
 TEST(Socket, it_can_create_and_double_destroy_a_socket_struct)
 {
     Socket_Destroy(&socket);
