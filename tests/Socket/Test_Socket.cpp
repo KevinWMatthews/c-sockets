@@ -192,6 +192,8 @@ TEST(Socket, it_can_open_several_sockets)
 
     Socket_Open(socket);
     Socket_Open(socket2);
+    LONGS_EQUAL( file_descriptor, Socket_GetFileDescriptor(socket) );
+    LONGS_EQUAL( file_descriptor2, Socket_GetFileDescriptor(socket2) );
 }
 
 TEST(Socket, it_can_close_several_sockets)
