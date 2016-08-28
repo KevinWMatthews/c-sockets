@@ -183,6 +183,7 @@ TEST(Socket, it_can_close_a_socket)
     Socket_Open(socket);
 
     Socket_Close(socket);
+    LONGS_EQUAL( SOCKET_INVALID_FILE_DESCRIPTOR, Socket_GetFileDescriptor(socket) );
 }
 
 TEST(Socket, it_can_open_several_sockets)
@@ -207,6 +208,8 @@ TEST(Socket, it_can_close_several_sockets)
 
     Socket_Close(socket);
     Socket_Close(socket2);
+    LONGS_EQUAL( SOCKET_INVALID_FILE_DESCRIPTOR, Socket_GetFileDescriptor(socket) );
+    LONGS_EQUAL( SOCKET_INVALID_FILE_DESCRIPTOR, Socket_GetFileDescriptor(socket2) );
 }
 
 // Set options

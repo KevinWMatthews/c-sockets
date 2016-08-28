@@ -53,6 +53,7 @@ void Socket_Close(Socket self)
         return;
     }
     UnixSocket_Close(self->file_descriptor);
+    self->file_descriptor = SOCKET_INVALID_FILE_DESCRIPTOR;
     self->ip_address = 0;
     self->port = SOCKET_INVALID_PORT;
 }
