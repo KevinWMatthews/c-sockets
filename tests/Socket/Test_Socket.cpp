@@ -164,7 +164,7 @@ TEST(Socket, it_can_fail_to_open_a_socket)
 {
     expectSocketOpen(UNIX_SOCKET_FAIL);
     LONGS_EQUAL( SOCKET_FAIL, Socket_Open(socket) );
-    LONGS_EQUAL( -1, Socket_GetFileDescriptor(socket) );
+    LONGS_EQUAL( SOCKET_INVALID_FILE_DESCRIPTOR, Socket_GetFileDescriptor(socket) );
 }
 
 TEST(Socket, it_can_open_a_socket)
@@ -172,7 +172,7 @@ TEST(Socket, it_can_open_a_socket)
     expectSocketOpen(file_descriptor);
 
     LONGS_EQUAL( SOCKET_SUCCESS, Socket_Open(socket) );
-    LONGS_EQUAL( 42, Socket_GetFileDescriptor(socket) );
+    LONGS_EQUAL( file_descriptor, Socket_GetFileDescriptor(socket) );
 }
 
 // Close

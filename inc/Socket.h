@@ -16,6 +16,10 @@ typedef enum
 int Socket_Open(Socket);
 void Socket_Close(Socket);
 
+typedef enum
+{
+    SOCKET_INVALID_FILE_DESCRIPTOR = -1
+} SocketFileDescriptor;
 int Socket_GetFileDescriptor(Socket);
 const char * Socket_GetIpAddress(Socket);
 int Socket_GetPort(Socket);

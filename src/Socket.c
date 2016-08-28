@@ -41,7 +41,7 @@ int Socket_Open(Socket self)
     self->file_descriptor = file_descriptor;
     if (self->file_descriptor < 0)
     {
-        return SOCKET_FAIL;
+        return SOCKET_INVALID_FILE_DESCRIPTOR;
     }
     return SOCKET_SUCCESS;
 }
