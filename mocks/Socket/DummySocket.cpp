@@ -5,6 +5,8 @@ extern "C"
 #include "DummySocket.h"
 }
 
+typedef Socket DummySocket;
+
 static SocketInterfaceStruct interface_struct;
 static SocketInterface interface = &interface_struct;
 
@@ -71,15 +73,31 @@ int DummySocket_Listen(int file_descriptor, int backlog)
     return mock().intReturnValue();
 }
 
-Socket DummySocket_Create(void)
+static void populate_interface(SocketInterface interface)
 {
+    if (interface == 0)
+        return;
+
+    interface->create = DummySocket_Create;
     interface->open = DummySocket_Open;
     interface->close = DummySocket_Close;
     interface->send = DummySocket_Send;
     interface->receive = DummySocket_Receive;
     interface->connect = DummySocket_Connect;
     interface->bind = DummySocket_Bind;
-    interface->accept = DummySocket_Accept;
     interface->listen = DummySocket_Listen;
-    return Socket_Create(interface);
+    interface->accept = DummySocket_Accept;
+}
+
+Socket DummySocket_Create(void)
+{
+    DummySocket self = (DummySocket)calloc( 1, sizeof(*self) );
+    if (self == 0)
+    {
+        return 0;
+    }
+    self->port = SOCKET_INVALID_PORT;
+    populate_interface(interface);
+    self->interface = interface;
+    return (Socket)self;
 }

@@ -43,13 +43,15 @@ Socket Socket_Accept(Socket self)
         return 0;
     if (self->interface->accept == 0)
         return 0;
+    if (self->interface->create == 0)
+        return 0;
 
     new_file_descriptor = self->interface->accept(self->file_descriptor);
     if (new_file_descriptor < 0)
     {
         return 0;
     }
-    new_socket = Socket_Create(self->interface);    // Both sockets must have the same interface?
+    new_socket = self->interface->create();
     new_socket->file_descriptor = new_file_descriptor;
     return new_socket;
 }

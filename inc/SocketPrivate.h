@@ -10,6 +10,9 @@
 /*
  * Client and server calls
  */
+// Returns a pointer to a new Socket object, or a null pointer on failure.
+typedef Socket (*SocketCreate)(void);
+
 // Return >= 0 file descriptor on success, < 0 on failure.
 typedef int (*SocketOpen)(void);
 
@@ -18,7 +21,7 @@ typedef void (*SocketClose)(int file_descriptor);
 // Returns the number of bytes sent, or < 0 on failure.
 typedef int (*SocketSend)(int file_descriptor, const char * message, unsigned int message_length);
 
-// Returns the number of bytes received, or < 0 on failure. 
+// Returns the number of bytes received, or < 0 on failure.
 typedef int (*SocketReceive)(int file_descriptor, char * buffer, unsigned int buffer_length);
 
 /*
@@ -41,14 +44,15 @@ typedef int (*SocketAccept)(int file_descriptor);
 
 typedef struct SocketInterfaceStruct
 {
+    SocketCreate create;
     SocketOpen open;
     SocketClose close;
     SocketSend send;
     SocketReceive receive;
     SocketConnect connect;
     SocketBind bind;
-    SocketAccept accept;
     SocketListen listen;
+    SocketAccept accept;
 } SocketInterfaceStruct;
 
 typedef struct SocketStruct
