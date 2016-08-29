@@ -12,11 +12,14 @@ typedef int (*SocketOpen)(void);
 typedef void (*SocketClose)(int);
 // Will eventually need to accept a file descriptor struct, probably.
 typedef int (*SocketSend)(int file_descriptor, const char * message, unsigned int message_length);
+// Will eventually need to accept a file descriptor struct, probably.
+typedef int (*SocketReceive)(int file_descriptor, char * buffer, unsigned int buffer_length);
 typedef struct SocketInterfaceStruct
 {
     SocketOpen open;
     SocketClose close;
     SocketSend send;
+    SocketReceive receive;
 } SocketInterfaceStruct;
 
 typedef struct SocketStruct

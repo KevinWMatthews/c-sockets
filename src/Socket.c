@@ -16,6 +16,7 @@ Socket Socket_Create(void)
     interface.open = UnixSocket_Open;
     interface.close = UnixSocket_Close;
     interface.send = UnixSocket_Send;
+    interface.receive = UnixSocket_Receive;
     self->interface = &interface;
     return self;
 }
@@ -109,24 +110,19 @@ int Socket_Send(Socket self, const char * message, unsigned int message_length)
 
 int Socket_Receive(Socket self, char * buffer, unsigned int buffer_length)
 {
-    int file_descriptor = 0;
-
     if (self == 0)
-    {
         return SOCKET_NULL_POINTER;
-    }
+    if (self->interface == 0)
+        return SOCKET_NULL_POINTER;
+    if (self->interface->receive == 0)
+        return SOCKET_NULL_POINTER;
+
     if (buffer == 0)
-    {
         return SOCKET_NULL_POINTER;
-    }
     if (buffer_length == 0)
-    {
         return SOCKET_FAIL;
-    }
 
-    file_descriptor = self->file_descriptor;
-
-    return UnixSocket_Receive(file_descriptor, buffer, buffer_length);
+    return self->interface->receive(self->file_descriptor, buffer, buffer_length);
 }
 
 int Socket_SetOption(Socket self, SocketOption option)
