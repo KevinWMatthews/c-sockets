@@ -14,6 +14,7 @@ Socket Socket_Create(void)
     self->port = SOCKET_INVALID_PORT;
     // set the interface here depending on the interface type
     interface.open = UnixSocket_Open;
+    interface.close = UnixSocket_Close;
     self->interface = &interface;
     return self;
 }
@@ -50,10 +51,12 @@ int Socket_Open(Socket self)
 void Socket_Close(Socket self)
 {
     if (self == 0)
-    {
         return;
-    }
-    UnixSocket_Close(self->file_descriptor);
+    if (self->interface == 0)
+        return;
+    if (self->interface->close == 0)
+        return;
+    self->interface->close(self->file_descriptor);
     self->file_descriptor = SOCKET_INVALID_FILE_DESCRIPTOR;
     self->ip_address = 0;
     self->port = SOCKET_INVALID_PORT;
