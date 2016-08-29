@@ -2,7 +2,6 @@ extern "C"
 {
 #include "Socket.h"
 #include "SocketServer.h"
-#include "UnixSocket.h" // This is a bad sign.j
 #include "DummySocket.h"
 }
 
@@ -31,6 +30,7 @@ extern "C"
  *      Null address - is valid, I think.
  *      Null size pointer - is valid if address is null.
  *      Should we verify the contents of the client address and client address length?
+ *      Accept on any IP address.
         Success
  *
  */
@@ -69,7 +69,7 @@ TEST(SocketServer, it_can_fail_to_bind_to_a_socket)
     int port = 10004;
 
     expectSocketOpen(file_descriptor);
-    expectSocketBind(file_descriptor, ip_address, port, UNIX_SOCKET_FAIL);
+    expectSocketBind(file_descriptor, ip_address, port, DUMMY_SOCKET_FAIL);
     expectSocketClose(file_descriptor);
 
     Socket_Open(socket);
@@ -87,7 +87,7 @@ TEST(SocketServer, it_will_bind_to_any_ip_address_with_a_null_ip_address_pointer
     int port = 10004;
 
     expectSocketOpen(file_descriptor);
-    expectSocketBind(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);
+    expectSocketBind(file_descriptor, ip_address, port, DUMMY_SOCKET_SUCCESS);
     expectSocketClose(file_descriptor);
 
     Socket_Open(socket);
@@ -103,7 +103,7 @@ TEST(SocketServer, it_can_to_bind_to_a_specific_ip_and_port)
     int port = 10004;
 
     expectSocketOpen(file_descriptor);
-    expectSocketBind(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);
+    expectSocketBind(file_descriptor, ip_address, port, DUMMY_SOCKET_SUCCESS);
     expectSocketClose(file_descriptor);
 
     Socket_Open(socket);
@@ -123,8 +123,8 @@ TEST(SocketServer, it_can_fail_to_listen_on_a_socket)
     int backlog = 3;
 
     expectSocketOpen(file_descriptor);
-    expectSocketBind(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);    //TODO any ip address
-    expectSocketListen(file_descriptor, backlog, UNIX_SOCKET_FAIL);
+    expectSocketBind(file_descriptor, ip_address, port, DUMMY_SOCKET_SUCCESS);    //TODO any ip address
+    expectSocketListen(file_descriptor, backlog, DUMMY_SOCKET_FAIL);
     expectSocketClose(file_descriptor);
 
     Socket_Open(socket);
@@ -142,8 +142,8 @@ TEST(SocketServer, it_can_to_listen_on_a_socket)
     int backlog = 3;
 
     expectSocketOpen(file_descriptor);
-    expectSocketBind(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);    //TODO any ip address
-    expectSocketListen(file_descriptor, backlog, UNIX_SOCKET_SUCCESS);
+    expectSocketBind(file_descriptor, ip_address, port, DUMMY_SOCKET_SUCCESS);    //TODO any ip address
+    expectSocketListen(file_descriptor, backlog, DUMMY_SOCKET_SUCCESS);
     expectSocketClose(file_descriptor);
 
     Socket_Open(socket);
@@ -162,9 +162,9 @@ TEST(SocketServer, it_can_fail_to_accept_a_socket_connection)
     int backlog = 3;
 
     expectSocketOpen(file_descriptor);
-    expectSocketBind(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);    //TODO any ip address
-    expectSocketListen(file_descriptor, backlog, UNIX_SOCKET_SUCCESS);
-    expectSocketAccept(file_descriptor, UNIX_SOCKET_FAIL);
+    expectSocketBind(file_descriptor, ip_address, port, DUMMY_SOCKET_SUCCESS);    //TODO any ip address
+    expectSocketListen(file_descriptor, backlog, DUMMY_SOCKET_SUCCESS);
+    expectSocketAccept(file_descriptor, DUMMY_SOCKET_FAIL);
     expectSocketClose(file_descriptor);
 
     Socket_Open(socket);
@@ -185,8 +185,8 @@ TEST(SocketServer, it_can_accept_a_socket_connection)
     int backlog = 3;
 
     expectSocketOpen(file_descriptor);
-    expectSocketBind(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);    //TODO any ip address
-    expectSocketListen(file_descriptor, backlog, UNIX_SOCKET_SUCCESS);
+    expectSocketBind(file_descriptor, ip_address, port, DUMMY_SOCKET_SUCCESS);    //TODO any ip address
+    expectSocketListen(file_descriptor, backlog, DUMMY_SOCKET_SUCCESS);
     expectSocketAccept(file_descriptor, new_file_descriptor);
     expectSocketClose(file_descriptor);
 

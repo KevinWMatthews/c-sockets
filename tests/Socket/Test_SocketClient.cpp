@@ -2,7 +2,6 @@ extern "C"
 {
 #include "Socket.h"
 #include "SocketClient.h"
-#include "UnixSocket.h" // This is a bad sign.
 #include "DummySocket.h"
 }
 

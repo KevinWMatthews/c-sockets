@@ -26,6 +26,7 @@ void Socket_Destroy(Socket * self)
 int Socket_Open(Socket self)
 {
     int file_descriptor = 0;
+
     if (self == 0)
         return SOCKET_NULL_POINTER;
     if (self->interface == 0)

@@ -3,6 +3,7 @@
 int Socket_Connect(Socket self, const char * ip_address, int port)
 {
     int result = SOCKET_FAIL;
+
     if (self == 0)
         return SOCKET_NULL_POINTER;
     if (self->interface == 0)
