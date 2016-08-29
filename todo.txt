@@ -1,3 +1,14 @@
+LinuxSocket should be a wrapper around the Socket module.
+We'll somehow tell Socket to use UnixSocket.
+    Socket will contain function pointers:
+        Open
+        Close
+        Bind
+        Etc
+    We'll populate these accordingly, either with mock functions or with real ones.
+    We can test the Socket module with mock functions.
+    The Linux Socket will populate Socket with UnixSocket functions.
+
 Remove the dependency of TestSocket on UnixSocket.
 
 Split SocketClient and SocketServer.
