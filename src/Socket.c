@@ -78,29 +78,6 @@ int Socket_GetPort(Socket self)
     return self->port;
 }
 
-int Socket_Connect(Socket self, const char * ip_address, int port)
-{
-    int file_descriptor = SOCKET_FAIL, result = SOCKET_FAIL;
-    if (self == 0)
-    {
-        return SOCKET_NULL_POINTER;
-    }
-    if (ip_address == 0)
-    {
-        return SOCKET_NULL_POINTER;
-    }
-    file_descriptor = self->file_descriptor;
-
-    result = UnixSocket_Connect(file_descriptor, ip_address, port);
-    if ( result < 0 )
-    {
-        return result;
-    }
-    self->ip_address = ip_address;
-    self->port = port;
-    return SOCKET_SUCCESS;
-}
-
 int Socket_Send(Socket self, const char * message, unsigned int message_length)
 {
     int file_descriptor = SOCKET_FAIL;

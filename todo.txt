@@ -1,10 +1,10 @@
 Remove the dependency of TestSocket on UnixSocket.
 
 Split SocketClient and SocketServer.
-    Should the Server have its own struct? Why?
-    Should we prevent client functions from being called on a Server?
+    Should the Server have its own struct? I don't think so. Why should it?
+    Should we prevent client functions from being called on a Server or Client? No?
     Should we rename functions to be specific? Not yet.
-    Should Socket.h include SocketServer.h?
+    Should Socket.h include SocketServer.h and SocketClient.h? For now.
 
 Move SocketOptions to UnixSocket.
 

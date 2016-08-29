@@ -43,11 +43,6 @@ TEST_GROUP(Socket)
  *
  *  GetPort:
  *
- *  Connect:
- *      Move to client.
- *      Error if passed invalid IP address.
- *      Error if passed invalid port.
- *
  *  Send:
  *
  *  Receive:
@@ -74,7 +69,6 @@ TEST(Socket, it_can_handle_null_pointers)
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_GetPort(NULL) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Open(NULL) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_SetOption(NULL, SOCKET_IMMEDIATELY_REUSE_SOCKET) );
-    LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Connect(NULL, "0.0.0.0", 0) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Send(NULL, "msg", 3) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Receive(NULL, buffer, 10) );
     Socket_Close(NULL);
