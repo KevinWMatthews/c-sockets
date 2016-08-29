@@ -51,14 +51,12 @@ TEST_GROUP(LinuxSocket)
 
 TEST(LinuxSocket, it_can_create_and_destroy_a_socket)
 {
-    //TODO
-    // POINTERS_EQUAL(NULL, socket);
 }
 
 TEST(LinuxSocket, it_can_handle_null_pointers)
 {
     LinuxSocket_Destroy(&socket);
-    // LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_SetOption(NULL, SOCKET_IMMEDIATELY_REUSE_SOCKET) );
+    LONGS_EQUAL( SOCKET_NULL_POINTER, LinuxSocket_SetOption(NULL, LINUX_SOCKET_IMMEDIATELY_REUSE_SOCKET) );
 }
 
 // Set options

@@ -1,15 +1,23 @@
 #include "LinuxSocket.h"
+#include "UnixSocket.h"
 #include <stdlib.h>
 
-typedef struct LinuxSocketStruct * LinuxSocket;
 typedef struct LinuxSocketStruct
 {
-    int make_compiler_happy;
+    SocketStruct base;
 } LinuxSocketStruct;
+
+static SocketInterfaceStruct interface_struct;
+static SocketInterface interface = &interface_struct;
 
 Socket LinuxSocket_Create(void)
 {
     LinuxSocket self = calloc( 1, sizeof(*self) );
+    if (self == 0)
+    {
+        return 0;
+    }
+    self->base.interface = interface;
     return (Socket)self;
 }
 
@@ -21,36 +29,19 @@ void LinuxSocket_Destroy(Socket * self)
     *self = 0;
 }
 
-// int LinuxSocket_Open(Socket self, LinuxSocketOptions options)
-// {
-//     int result = LINUX_SOCKET_FAIL;
+int LinuxSocket_SetOption(Socket self, LinuxSocketOption option)
+{
+    UnixSocketOption unix_option = 0;
+    if (self == 0)
+    {
+        return SOCKET_NULL_POINTER;
+    }
 
-//     if (self == 0)
-//     {
-//         return LINUX_SOCKET_FAIL;
-//     }
-//     result = LinuxSocketOs_Open(options);
-//     if (result >= 0)
-//     {
-//         return LINUX_SOCKET_SUCCESS;
-//     }
-//     return LINUX_SOCKET_FAIL;
-// }
+    switch (option)
+    {
+        case LINUX_SOCKET_IMMEDIATELY_REUSE_SOCKET:
+            unix_option = UNIX_SOCKET_IMMEDIATELY_REUSE_SOCKET;
+    }
 
-//TODO convert to LinuxSocket module
-// int Socket_SetOption(Socket self, SocketOption option)
-// {
-//     UnixSocketOption unix_option = 0;
-//     if (self == 0)
-//     {
-//         return SOCKET_NULL_POINTER;
-//     }
-
-//     switch (option)
-//     {
-//         case SOCKET_IMMEDIATELY_REUSE_SOCKET:
-//             unix_option = UNIX_SOCKET_IMMEDIATELY_REUSE_SOCKET;
-//     }
-
-//     return UnixSocket_SetOption(self->file_descriptor, unix_option);
-// }
+    return UnixSocket_SetOption(self->file_descriptor, unix_option);
+}

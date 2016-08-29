@@ -19,6 +19,7 @@ int UnixSocket_Accept(int file_descriptor);
 
 typedef enum
 {
+    //TODO invalid option for initial value of variables.
     UNIX_SOCKET_IMMEDIATELY_REUSE_SOCKET = SO_REUSEADDR
 } UnixSocketOption;
 int UnixSocket_SetOption(int file_descriptor, UnixSocketOption option);

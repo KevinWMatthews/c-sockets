@@ -3,6 +3,8 @@
 
 #include "Socket.h"
 
+typedef struct LinuxSocketStruct * LinuxSocket;
+
 // typedef enum
 // {
 //     LINUX_SOCKET_FAIL = -1,
@@ -19,10 +21,10 @@ void LinuxSocket_Destroy(Socket *);
 // int LinuxSocket_Open(Socket, LinuxSocketOptions);
 
 //TODO convert to LinuxSocket module
-// typedef enum
-// {
-//     SOCKET_IMMEDIATELY_REUSE_SOCKET
-// } SocketOption;
-// int Socket_SetOption(Socket, SocketOption);
+typedef enum
+{
+    LINUX_SOCKET_IMMEDIATELY_REUSE_SOCKET
+} LinuxSocketOption;
+int LinuxSocket_SetOption(Socket, LinuxSocketOption);
 
 #endif
