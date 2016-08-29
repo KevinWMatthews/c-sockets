@@ -5,7 +5,11 @@ extern "C"
 #include "DummySocket.h"
 }
 
-typedef Socket DummySocket;
+typedef struct DummySocketStruct * DummySocket;
+typedef struct DummySocketStruct
+{
+    SocketStruct base;
+} DummySocketStruct;
 
 static SocketInterfaceStruct interface_struct;
 static SocketInterface interface = &interface_struct;
@@ -96,8 +100,9 @@ Socket DummySocket_Create(void)
     {
         return 0;
     }
-    self->port = SOCKET_INVALID_PORT;
     populate_interface(interface);
-    self->interface = interface;
+    self->base.interface = interface;
+    self->base.port = SOCKET_INVALID_PORT;
+    self->base.file_descriptor = SOCKET_INVALID_FILE_DESCRIPTOR;
     return (Socket)self;
 }
