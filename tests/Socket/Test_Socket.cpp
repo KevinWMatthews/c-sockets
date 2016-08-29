@@ -1,6 +1,7 @@
 extern "C"
 {
 #include "Socket.h"
+#include "SocketServer.h"
 #include "UnixSocket.h" // This is a bad sign.j
 }
 
@@ -42,19 +43,8 @@ TEST_GROUP(Socket)
  *
  *  GetPort:
  *
- *  Accept:
- *      Move to server.
- *      Null address - is valid, I think.
- *      Null size pointer - is valid if address is null.
- *      Should we verify the contents of the client address and client address length?
- *
  *  Connect:
  *      Move to client.
- *      Error if passed invalid IP address.
- *      Error if passed invalid port.
- *
- *  Bind:
- *      Move to server.
  *      Error if passed invalid IP address.
  *      Error if passed invalid port.
  *
@@ -84,13 +74,10 @@ TEST(Socket, it_can_handle_null_pointers)
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_GetPort(NULL) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Open(NULL) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_SetOption(NULL, SOCKET_IMMEDIATELY_REUSE_SOCKET) );
-    LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Bind(NULL, "0.0.0.0", 0) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Connect(NULL, "0.0.0.0", 0) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Send(NULL, "msg", 3) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Receive(NULL, buffer, 10) );
     Socket_Close(NULL);
-    LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Listen(NULL, 10) );
-    POINTERS_EQUAL( NULL, Socket_Accept(NULL) );
 }
 
 // Open
@@ -210,59 +197,6 @@ TEST(Socket, it_can_connect_to_a_socket)
     Socket_Open(socket);
 
     LONGS_EQUAL( SOCKET_SUCCESS, Socket_Connect(socket, ip_address, port) );
-    STRCMP_EQUAL( ip_address, Socket_GetIpAddress(socket) );
-    LONGS_EQUAL( port, Socket_GetPort(socket) );
-
-    Socket_Close(socket);
-}
-
-// Bind
-TEST(Socket, it_can_fail_to_bind_to_a_socket)
-{
-    const char * ip_address = "192.168.2.1";
-    int port = 10004;
-
-    expectSocketOpen(file_descriptor);
-    expectSocketBind(file_descriptor, ip_address, port, UNIX_SOCKET_FAIL);
-    expectSocketClose(file_descriptor);
-
-    Socket_Open(socket);
-
-    LONGS_EQUAL( SOCKET_FAIL, Socket_Bind(socket, ip_address, port) );
-    POINTERS_EQUAL( NULL, Socket_GetIpAddress(socket) );
-    LONGS_EQUAL( SOCKET_INVALID_PORT, Socket_GetPort(socket) );
-
-    Socket_Close(socket);
-}
-
-TEST(Socket, it_will_bind_to_any_ip_address_with_a_null_ip_address_pointer)
-{
-    const char * ip_address = NULL;
-    int port = 10004;
-
-    expectSocketOpen(file_descriptor);
-    expectSocketBind(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);
-    expectSocketClose(file_descriptor);
-
-    Socket_Open(socket);
-
-    LONGS_EQUAL( SOCKET_SUCCESS, Socket_Bind(socket, ip_address, port) );
-
-    Socket_Close(socket);
-}
-
-TEST(Socket, it_can_to_bind_to_a_specific_ip_and_port)
-{
-    const char * ip_address = "192.168.2.1";
-    int port = 10004;
-
-    expectSocketOpen(file_descriptor);
-    expectSocketBind(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);
-    expectSocketClose(file_descriptor);
-
-    Socket_Open(socket);
-
-    LONGS_EQUAL( SOCKET_SUCCESS, Socket_Bind(socket, ip_address, port) );
     STRCMP_EQUAL( ip_address, Socket_GetIpAddress(socket) );
     LONGS_EQUAL( port, Socket_GetPort(socket) );
 
@@ -451,92 +385,4 @@ TEST(Socket, it_can_receive_from_a_socket)
     LONGS_EQUAL( number_of_bytes_read, Socket_Receive(socket, receive_buffer, receive_buffer_length) );
 
     Socket_Close(socket);
-}
-
-// Listen
-TEST(Socket, it_can_fail_to_listen_on_a_socket)
-{
-    const char * ip_address = "192.168.2.1";
-    int port = 8888;
-    int backlog = 3;
-
-    expectSocketOpen(file_descriptor);
-    expectSocketBind(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);    //TODO any ip address
-    expectSocketListen(file_descriptor, backlog, UNIX_SOCKET_FAIL);
-    expectSocketClose(file_descriptor);
-
-    Socket_Open(socket);
-    Socket_Bind(socket, ip_address, port);
-
-    LONGS_EQUAL( SOCKET_FAIL, Socket_Listen(socket, backlog) );
-
-    Socket_Close(socket);
-}
-
-TEST(Socket, it_can_to_listen_on_a_socket)
-{
-    const char * ip_address = "192.168.2.1";
-    int port = 8888;
-    int backlog = 3;
-
-    expectSocketOpen(file_descriptor);
-    expectSocketBind(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);    //TODO any ip address
-    expectSocketListen(file_descriptor, backlog, UNIX_SOCKET_SUCCESS);
-    expectSocketClose(file_descriptor);
-
-    Socket_Open(socket);
-    Socket_Bind(socket, ip_address, port);
-
-    LONGS_EQUAL( SOCKET_SUCCESS, Socket_Listen(socket, backlog) );
-
-    Socket_Close(socket);
-}
-
-// Accept
-TEST(Socket, it_can_fail_to_accept_a_socket_connection)
-{
-    const char * ip_address = "192.168.2.1";
-    int port = 8888;
-    int backlog = 3;
-
-    expectSocketOpen(file_descriptor);
-    expectSocketBind(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);    //TODO any ip address
-    expectSocketListen(file_descriptor, backlog, UNIX_SOCKET_SUCCESS);
-    expectSocketAccept(file_descriptor, UNIX_SOCKET_FAIL);
-    expectSocketClose(file_descriptor);
-
-    Socket_Open(socket);
-    Socket_Bind(socket, ip_address, port);
-    Socket_Listen(socket, backlog);
-
-    POINTERS_EQUAL( NULL, Socket_Accept(socket) );
-
-    Socket_Close(socket);
-}
-
-TEST(Socket, it_can_accept_a_socket_connection)
-{
-    Socket new_socket;
-    int new_file_descriptor = 44;
-    const char * ip_address = "192.168.2.1";
-    int port = 8888;
-    int backlog = 3;
-
-    expectSocketOpen(file_descriptor);
-    expectSocketBind(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);    //TODO any ip address
-    expectSocketListen(file_descriptor, backlog, UNIX_SOCKET_SUCCESS);
-    expectSocketAccept(file_descriptor, new_file_descriptor);
-    expectSocketClose(file_descriptor);
-
-    Socket_Open(socket);
-    Socket_Bind(socket, ip_address, port);
-    Socket_Listen(socket, backlog);
-
-    new_socket = Socket_Accept(socket);
-    LONGS_EQUAL( new_file_descriptor, Socket_GetFileDescriptor(new_socket) );
-
-    // Should we verify the client address and client address length here?
-
-    Socket_Close(socket);
-    Socket_Destroy(&new_socket);
 }

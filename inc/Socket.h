@@ -24,12 +24,6 @@ int Socket_GetFileDescriptor(Socket);
 const char * Socket_GetIpAddress(Socket);
 int Socket_GetPort(Socket);
 
-// This is for servers only.
-int Socket_Bind(Socket, const char * ip_address, int port);
-int Socket_Listen(Socket, int backlog);
-// Returns a handle to the client socket.
-Socket Socket_Accept(Socket);
-
 // This is for clients only.
 int Socket_Connect(Socket, const char * ip_address, int port);
 
@@ -42,5 +36,8 @@ typedef enum
     SOCKET_IMMEDIATELY_REUSE_SOCKET
 } SocketOption;
 int Socket_SetOption(Socket, SocketOption);
+
+#include "SocketPrivate.h"
+#include "SocketServer.h"
 
 #endif

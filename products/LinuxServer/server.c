@@ -1,11 +1,12 @@
 #include <stdio.h>
-#include "Socket.h"
+#include "SocketServer.h"
 #include <string.h>
 #include <pthread.h>
 #include <stdlib.h>
 
 void close_and_destroy_socket(Socket *socket)
-{ printf("Closing socket...\n");
+{
+    printf("Closing socket...\n");
     Socket_Close(*socket);
     Socket_Destroy(socket);
 }
