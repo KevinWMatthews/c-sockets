@@ -1,5 +1,5 @@
 #include "LinuxSocket.h"
-#include "LinuxSocketOs.h"
+#include <stdlib.h>
 
 typedef struct LinuxSocketStruct * LinuxSocket;
 typedef struct LinuxSocketStruct
@@ -21,18 +21,18 @@ void LinuxSocket_Destroy(Socket * self)
     *self = 0;
 }
 
-int LinuxSocket_Open(Socket self, LinuxSocketOptions options)
-{
-    int result = LINUX_SOCKET_FAIL;
+// int LinuxSocket_Open(Socket self, LinuxSocketOptions options)
+// {
+//     int result = LINUX_SOCKET_FAIL;
 
-    if (self == 0)
-    {
-        return LINUX_SOCKET_FAIL;
-    }
-    result = LinuxSocketOs_Open(options);
-    if (result >= 0)
-    {
-        return LINUX_SOCKET_SUCCESS;
-    }
-    return LINUX_SOCKET_FAIL;
-}
+//     if (self == 0)
+//     {
+//         return LINUX_SOCKET_FAIL;
+//     }
+//     result = LinuxSocketOs_Open(options);
+//     if (result >= 0)
+//     {
+//         return LINUX_SOCKET_SUCCESS;
+//     }
+//     return LINUX_SOCKET_FAIL;
+// }

@@ -1,12 +1,32 @@
 extern "C"
 {
 #include "LinuxSocket.h"
-#include "LinuxSocketOs.h"
 }
 
 #include "Test_LinuxSocket.h"
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
+
+/* Test List:
+ *  Create()
+ *      Create the interface
+ *
+ *  Destroy()
+ *      Double destroy
+ *      Figure out how to set the pointer to NULL.
+ *
+ *  Open()
+ *  Close()
+ *  Bind()
+ *  Connect()
+ *  Send()
+ *  Receive()
+ *  Listen()
+ *  Accept()
+ *  GetPort()
+ *  GetIpAddress()
+ *  GetFileDescriptor()
+ */
 
 TEST_GROUP(LinuxSocket)
 {
@@ -26,30 +46,13 @@ TEST_GROUP(LinuxSocket)
     }
 };
 
-/* Test List:
- *  Create()
- *
- *  Destroy()
- *
- *  Open()
- *  Close()
- *  Bind()
- *  Connect()
- *  Send()
- *  Receive()
- *  Listen()
- *  Accept()
- *  GetPort()
- *  GetIpAddress()
- *  GetFileDescriptor()
- */
-
 TEST(LinuxSocket, it_can_create_and_destroy_a_socket)
 {
-    LinuxSocket_Destroy(&socket);
+    //TODO
+    // POINTERS_EQUAL(NULL, socket);
 }
 
-TEST(LinuxSocket, it_fails_to_open_if_socket_is_null)
+TEST(LinuxSocket, it_can_handle_null_pointers)
 {
-    LONGS_EQUAL( LINUX_SOCKET_FAIL, LinuxSocket_Open(NULL, LINUX_SOCKET_IPV4) );
+    LinuxSocket_Destroy(&socket);
 }
