@@ -15,6 +15,7 @@ Socket Socket_Create(void)
     // set the interface here depending on the interface type
     interface.open = UnixSocket_Open;
     interface.close = UnixSocket_Close;
+    interface.send = UnixSocket_Send;
     self->interface = &interface;
     return self;
 }
@@ -91,22 +92,19 @@ int Socket_GetPort(Socket self)
 
 int Socket_Send(Socket self, const char * message, unsigned int message_length)
 {
-    int file_descriptor = SOCKET_FAIL;
     if (self == 0)
-    {
         return SOCKET_NULL_POINTER;
-    }
-    if (message == 0)
-    {
+    if (self->interface == 0)
         return SOCKET_NULL_POINTER;
-    }
-    if (message_length == 0)
-    {
-        return SOCKET_FAIL;
-    }
+    if (self->interface->send == 0)
+        return SOCKET_NULL_POINTER;
 
-    file_descriptor = self->file_descriptor;
-    return UnixSocket_Send(file_descriptor, message, message_length);
+    if (message == 0)
+        return SOCKET_NULL_POINTER;
+    if (message_length == 0)
+        return SOCKET_FAIL;
+
+    return self->interface->send(self->file_descriptor, message, message_length);
 }
 
 int Socket_Receive(Socket self, char * buffer, unsigned int buffer_length)
