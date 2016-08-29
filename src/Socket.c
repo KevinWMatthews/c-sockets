@@ -2,9 +2,7 @@
 #include "UnixSocket.h"
 #include <stdlib.h>
 
-static SocketInterfaceStruct interface;
-
-Socket Socket_Create(void)
+Socket Socket_Create(SocketInterface interface)
 {
     Socket self = calloc( 1, sizeof(*self) );
     if (self == 0)
@@ -12,12 +10,7 @@ Socket Socket_Create(void)
         return 0;
     }
     self->port = SOCKET_INVALID_PORT;
-    // set the interface here depending on the interface type
-    interface.open = UnixSocket_Open;
-    interface.close = UnixSocket_Close;
-    interface.send = UnixSocket_Send;
-    interface.receive = UnixSocket_Receive;
-    self->interface = &interface;
+    self->interface = interface;
     return self;
 }
 

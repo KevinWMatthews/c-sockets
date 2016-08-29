@@ -2,7 +2,7 @@ extern "C"
 {
 #include "Socket.h"
 #include "SocketServer.h"
-#include "UnixSocket.h" // This is a bad sign.j
+#include "DummySocket.h"
 }
 
 #include "Test_Socket.h"
@@ -22,8 +22,8 @@ TEST_GROUP(Socket)
         mock().strictOrder();
         file_descriptor = 42;
         file_descriptor2 = 43;
-        socket = Socket_Create();
-        socket2 = Socket_Create();
+        socket = DummySocket_Create();
+        socket2 = DummySocket_Create();
     }
 
     void teardown()
@@ -36,6 +36,8 @@ TEST_GROUP(Socket)
 };
 
 /* Test List:
+ *  Create:
+ *      Null interface
  *  SetOption:
  *      Should this belong in individual socket libraries? Probably....
  *
@@ -77,7 +79,7 @@ TEST(Socket, it_can_handle_null_pointers)
 // Open
 TEST(Socket, it_can_fail_to_open_a_socket)
 {
-    expectSocketOpen(UNIX_SOCKET_FAIL);
+    expectSocketOpen(DUMMY_SOCKET_FAIL);
     LONGS_EQUAL( SOCKET_FAIL, Socket_Open(socket) );
     LONGS_EQUAL( SOCKET_INVALID_FILE_DESCRIPTOR, Socket_GetFileDescriptor(socket) );
 }
@@ -128,27 +130,27 @@ TEST(Socket, it_can_close_several_sockets)
 }
 
 // Set options
-TEST(Socket, it_can_fail_to_set_a_socket_option)
-{
-    expectSocketOpen(file_descriptor);
-    expectSocketSetOption(file_descriptor, UNIX_SOCKET_IMMEDIATELY_REUSE_SOCKET, UNIX_SOCKET_FAIL);
-    expectSocketClose(file_descriptor);
+// IGNORE_TEST(Socket, it_can_fail_to_set_a_socket_option)
+// {
+//     expectSocketOpen(file_descriptor);
+//     expectSocketSetOption(file_descriptor, UNIX_SOCKET_IMMEDIATELY_REUSE_SOCKET, DUMMY_SOCKET_FAIL);
+//     expectSocketClose(file_descriptor);
 
-    Socket_Open(socket);
-    LONGS_EQUAL( SOCKET_FAIL, Socket_SetOption(socket, SOCKET_IMMEDIATELY_REUSE_SOCKET) );
-    Socket_Close(socket);
-}
+//     Socket_Open(socket);
+//     LONGS_EQUAL( SOCKET_FAIL, Socket_SetOption(socket, SOCKET_IMMEDIATELY_REUSE_SOCKET) );
+//     Socket_Close(socket);
+// }
 
-TEST(Socket, it_can_set_socket_option_immediate_reuse)
-{
-    expectSocketOpen(file_descriptor);
-    expectSocketSetOption(file_descriptor, UNIX_SOCKET_IMMEDIATELY_REUSE_SOCKET, UNIX_SOCKET_SUCCESS);
-    expectSocketClose(file_descriptor);
+// IGNORE_TEST(Socket, it_can_set_socket_option_immediate_reuse)
+// {
+//     expectSocketOpen(file_descriptor);
+//     expectSocketSetOption(file_descriptor, UNIX_SOCKET_IMMEDIATELY_REUSE_SOCKET, DUMMY_SOCKET_SUCCESS);
+//     expectSocketClose(file_descriptor);
 
-    Socket_Open(socket);
-    LONGS_EQUAL( SOCKET_SUCCESS, Socket_SetOption(socket, SOCKET_IMMEDIATELY_REUSE_SOCKET) );
-    Socket_Close(socket);
-}
+//     Socket_Open(socket);
+//     LONGS_EQUAL( SOCKET_SUCCESS, Socket_SetOption(socket, SOCKET_IMMEDIATELY_REUSE_SOCKET) );
+//     Socket_Close(socket);
+// }
 
 // Connect
 TEST(Socket, it_can_fail_to_connect_to_a_socket)
@@ -157,7 +159,7 @@ TEST(Socket, it_can_fail_to_connect_to_a_socket)
     int port = 10004;
 
     expectSocketOpen(file_descriptor);
-    expectSocketConnect(file_descriptor, ip_address, port, UNIX_SOCKET_FAIL);
+    expectSocketConnect(file_descriptor, ip_address, port, DUMMY_SOCKET_FAIL);
     expectSocketClose(file_descriptor);
 
     Socket_Open(socket);
@@ -185,7 +187,7 @@ TEST(Socket, it_can_connect_to_a_socket)
     int port = 10004;
 
     expectSocketOpen(file_descriptor);
-    expectSocketConnect(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);
+    expectSocketConnect(file_descriptor, ip_address, port, DUMMY_SOCKET_SUCCESS);
     expectSocketClose(file_descriptor);
 
     Socket_Open(socket);
@@ -210,7 +212,7 @@ TEST(Socket, it_has_no_ip_address_and_port_after_closing_a_socket)
     int port = 10004;
 
     expectSocketOpen(file_descriptor);
-    expectSocketBind(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);
+    expectSocketBind(file_descriptor, ip_address, port, DUMMY_SOCKET_SUCCESS);
     expectSocketClose(file_descriptor);
 
     Socket_Open(socket);
@@ -231,8 +233,8 @@ TEST(Socket, it_can_fail_send_data_to_a_socket)
     unsigned int message_length = sizeof(message);
 
     expectSocketOpen(file_descriptor);
-    expectSocketConnect(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);
-    expectSocketSend(file_descriptor, message, message_length, UNIX_SOCKET_FAIL);
+    expectSocketConnect(file_descriptor, ip_address, port, DUMMY_SOCKET_SUCCESS);
+    expectSocketSend(file_descriptor, message, message_length, DUMMY_SOCKET_FAIL);
     expectSocketClose(file_descriptor);
 
     Socket_Open(socket);
@@ -251,7 +253,7 @@ TEST(Socket, it_will_not_send_a_null_message)
     unsigned int message_length = sizeof(message);
 
     expectSocketOpen(file_descriptor);
-    expectSocketConnect(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);
+    expectSocketConnect(file_descriptor, ip_address, port, DUMMY_SOCKET_SUCCESS);
     expectSocketClose(file_descriptor);
 
     Socket_Open(socket);
@@ -270,7 +272,7 @@ TEST(Socket, it_will_not_send_a_zero_length_message)
     unsigned int message_length = 0;
 
     expectSocketOpen(file_descriptor);
-    expectSocketConnect(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);
+    expectSocketConnect(file_descriptor, ip_address, port, DUMMY_SOCKET_SUCCESS);
     expectSocketClose(file_descriptor);
 
     Socket_Open(socket);
@@ -290,7 +292,7 @@ TEST(Socket, it_can_send_data_to_a_socket)
     int number_of_bytes_sent = 1;
 
     expectSocketOpen(file_descriptor);
-    expectSocketConnect(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);
+    expectSocketConnect(file_descriptor, ip_address, port, DUMMY_SOCKET_SUCCESS);
     expectSocketSend(file_descriptor, message, message_length, number_of_bytes_sent);
     expectSocketClose(file_descriptor);
 
@@ -311,8 +313,8 @@ TEST(Socket, it_can_fail_to_receive_from_a_socket)
     unsigned int receive_buffer_length = 9;
 
     expectSocketOpen(file_descriptor);
-    expectSocketConnect(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);
-    expectSocketReceive(file_descriptor, receive_buffer, receive_buffer_length, UNIX_SOCKET_FAIL);
+    expectSocketConnect(file_descriptor, ip_address, port, DUMMY_SOCKET_SUCCESS);
+    expectSocketReceive(file_descriptor, receive_buffer, receive_buffer_length, DUMMY_SOCKET_FAIL);
     expectSocketClose(file_descriptor);
 
     Socket_Open(socket);
@@ -330,7 +332,7 @@ TEST(Socket, it_will_not_receive_with_a_null_buffer)
     unsigned int receive_buffer_length = 9;
 
     expectSocketOpen(file_descriptor);
-    expectSocketConnect(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);
+    expectSocketConnect(file_descriptor, ip_address, port, DUMMY_SOCKET_SUCCESS);
     expectSocketClose(file_descriptor);
 
     Socket_Open(socket);
@@ -349,7 +351,7 @@ TEST(Socket, it_will_not_receive_if_buffer_length_is_zero)
     unsigned int receive_buffer_length = 0;
 
     expectSocketOpen(file_descriptor);
-    expectSocketConnect(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);
+    expectSocketConnect(file_descriptor, ip_address, port, DUMMY_SOCKET_SUCCESS);
     expectSocketClose(file_descriptor);
 
     Socket_Open(socket);
@@ -369,7 +371,7 @@ TEST(Socket, it_can_receive_from_a_socket)
     int number_of_bytes_read = 1;
 
     expectSocketOpen(file_descriptor);
-    expectSocketConnect(file_descriptor, ip_address, port, UNIX_SOCKET_SUCCESS);
+    expectSocketConnect(file_descriptor, ip_address, port, DUMMY_SOCKET_SUCCESS);
     expectSocketReceive(file_descriptor, receive_buffer, receive_buffer_length, number_of_bytes_read);
     expectSocketClose(file_descriptor);
 

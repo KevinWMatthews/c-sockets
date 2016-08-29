@@ -3,23 +3,26 @@
 
 #include "Socket.h"
 
-typedef struct SocketInterfaceStruct * SocketInterface;
-
 // ? Might want to add an options void pointer.
-// Will eventually need to return a struct, probably.
+// Will eventually need to change the file descriptor from an in to a struct, probably.
 typedef int (*SocketOpen)(void);
-// Will eventually need to accept a file descriptor struct, probably.
 typedef void (*SocketClose)(int);
-// Will eventually need to accept a file descriptor struct, probably.
 typedef int (*SocketSend)(int file_descriptor, const char * message, unsigned int message_length);
-// Will eventually need to accept a file descriptor struct, probably.
 typedef int (*SocketReceive)(int file_descriptor, char * buffer, unsigned int buffer_length);
+typedef int (*SocketConnect)(int file_descriptor, const char * ip_address, int port);
+typedef int (*SocketBind)(int file_descriptor, const char * ip_address, int port);
+typedef int (*SocketAccept)(int file_descriptor);
+typedef int (*SocketListen)(int file_descriptor, int backlog);
 typedef struct SocketInterfaceStruct
 {
     SocketOpen open;
     SocketClose close;
     SocketSend send;
     SocketReceive receive;
+    SocketConnect connect;
+    SocketBind bind;
+    SocketAccept accept;
+    SocketListen listen;
 } SocketInterfaceStruct;
 
 typedef struct SocketStruct

@@ -6,11 +6,13 @@ int Socket_Bind(Socket self, const char * ip_address, int port)
     int result = SOCKET_FAIL;
 
     if (self == 0)
-    {
         return SOCKET_NULL_POINTER;
-    }
+    if (self->interface == 0)
+        return SOCKET_NULL_POINTER;
+    if (self->interface->bind == 0)
+        return SOCKET_NULL_POINTER;
 
-    result = UnixSocket_Bind(self->file_descriptor, ip_address, port);
+    result = self->interface->bind(self->file_descriptor, ip_address, port);
     if (result < 0)
     {
         return SOCKET_FAIL;
@@ -23,28 +25,32 @@ int Socket_Bind(Socket self, const char * ip_address, int port)
 int Socket_Listen(Socket self, int backlog)
 {
     if (self == 0)
-    {
         return SOCKET_NULL_POINTER;
-    }
-    return UnixSocket_Listen(self->file_descriptor, backlog);
+    if (self->interface == 0)
+        return SOCKET_NULL_POINTER;
+    if (self->interface->listen == 0)
+        return SOCKET_NULL_POINTER;
+    return self->interface->listen(self->file_descriptor, backlog);
 }
 
 Socket Socket_Accept(Socket self)
 {
     Socket new_socket = {0};
-    int file_descriptor = UNIX_SOCKET_FAIL;
+    int new_file_descriptor = UNIX_SOCKET_FAIL;
 
     if (self == 0)
-    {
         return 0;
-    }
+    if (self->interface == 0)
+        return 0;
+    if (self->interface->accept == 0)
+        return 0;
 
-    file_descriptor = UnixSocket_Accept(self->file_descriptor);
-    if (file_descriptor < 0)
+    new_file_descriptor = self->interface->accept(self->file_descriptor);
+    if (new_file_descriptor < 0)
     {
         return 0;
     }
-    new_socket = Socket_Create();
-    new_socket->file_descriptor = file_descriptor;
+    new_socket = Socket_Create(self->interface);    // Both sockets must have the same interface?
+    new_socket->file_descriptor = new_file_descriptor;
     return new_socket;
 }

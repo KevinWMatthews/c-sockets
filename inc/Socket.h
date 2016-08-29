@@ -2,8 +2,9 @@
 #define SOCKET_INCLUDED
 
 typedef struct SocketStruct * Socket;
+typedef struct SocketInterfaceStruct * SocketInterface;
 
-Socket Socket_Create(void);
+Socket Socket_Create(SocketInterface);
 void Socket_Destroy(Socket *);
 
 typedef enum

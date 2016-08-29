@@ -4,19 +4,19 @@
 
 void expectSocketOpen(int file_descriptor_or_error_code)
 {
-    mock().expectOneCall("UnixSocket_Open")
+    mock().expectOneCall("DummySocket_Open")
         .andReturnValue(file_descriptor_or_error_code);
 }
 
 void expectSocketClose(int file_descriptor)
 {
-    mock().expectOneCall("UnixSocket_Close")
+    mock().expectOneCall("DummySocket_Close")
         .withParameter("file_descriptor", file_descriptor);
 }
 
 void expectSocketConnect(int file_descriptor, const char * ip_address, int port, int result)
 {
-    mock().expectOneCall("UnixSocket_Connect")
+    mock().expectOneCall("DummySocket_Connect")
         .withParameter("file_descriptor", file_descriptor)
         .withParameter("ip_address", ip_address)
         .withParameter("port", port)
@@ -25,7 +25,7 @@ void expectSocketConnect(int file_descriptor, const char * ip_address, int port,
 
 void expectSocketBind(int file_descriptor, const char * ip_address, int port, int result)
 {
-    mock().expectOneCall("UnixSocket_Bind")
+    mock().expectOneCall("DummySocket_Bind")
         .withParameter("file_descriptor", file_descriptor)
         .withParameter("ip_address", ip_address)
         .withParameter("port", port)
@@ -34,7 +34,7 @@ void expectSocketBind(int file_descriptor, const char * ip_address, int port, in
 
 void expectSocketSend(int file_descriptor, const char * message, unsigned int message_length, int result)
 {
-    mock().expectOneCall("UnixSocket_Send")
+    mock().expectOneCall("DummySocket_Send")
         .withParameter("file_descriptor", file_descriptor)
         .withParameter("message", message)
         .withParameter("message_length", message_length)
@@ -43,7 +43,7 @@ void expectSocketSend(int file_descriptor, const char * message, unsigned int me
 
 void expectSocketReceive(int file_descriptor, char * buffer, unsigned int buffer_length, int result)
 {
-    mock().expectOneCall("UnixSocket_Receive")
+    mock().expectOneCall("DummySocket_Receive")
         .withParameter("file_descriptor", file_descriptor)
         .withParameter("buffer", buffer)
         .withParameter("buffer_length", buffer_length)
@@ -52,7 +52,7 @@ void expectSocketReceive(int file_descriptor, char * buffer, unsigned int buffer
 
 void expectSocketListen(int file_descriptor, int backlog, int result)
 {
-    mock().expectOneCall("UnixSocket_Listen")
+    mock().expectOneCall("DummySocket_Listen")
         .withParameter("file_descriptor", file_descriptor)
         .withParameter("backlog", backlog)
         .andReturnValue(result);
@@ -60,7 +60,7 @@ void expectSocketListen(int file_descriptor, int backlog, int result)
 
 void expectSocketAccept(int file_descriptor, int result)
 {
-    mock().expectOneCall("UnixSocket_Accept")
+    mock().expectOneCall("DummySocket_Accept")
         .withParameter("file_descriptor", file_descriptor)
         .andReturnValue(result);
 }

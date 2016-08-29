@@ -3,6 +3,7 @@ extern "C"
 #include "Socket.h"
 #include "SocketServer.h"
 #include "UnixSocket.h" // This is a bad sign.j
+#include "DummySocket.h"
 }
 
 #include "Test_Socket.h"
@@ -43,7 +44,7 @@ TEST_GROUP(SocketServer)
     {
         mock().strictOrder();
         file_descriptor = 66;
-        socket = Socket_Create();
+        socket = DummySocket_Create();
     }
 
     void teardown()
