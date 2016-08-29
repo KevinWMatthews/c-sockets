@@ -36,3 +36,21 @@ void LinuxSocket_Destroy(Socket * self)
 //     }
 //     return LINUX_SOCKET_FAIL;
 // }
+
+//TODO convert to LinuxSocket module
+// int Socket_SetOption(Socket self, SocketOption option)
+// {
+//     UnixSocketOption unix_option = 0;
+//     if (self == 0)
+//     {
+//         return SOCKET_NULL_POINTER;
+//     }
+
+//     switch (option)
+//     {
+//         case SOCKET_IMMEDIATELY_REUSE_SOCKET:
+//             unix_option = UNIX_SOCKET_IMMEDIATELY_REUSE_SOCKET;
+//     }
+
+//     return UnixSocket_SetOption(self->file_descriptor, unix_option);
+// }

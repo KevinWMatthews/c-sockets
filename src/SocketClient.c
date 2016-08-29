@@ -1,5 +1,4 @@
 #include "SocketClient.h"
-#include "UnixSocket.h"
 
 int Socket_Connect(Socket self, const char * ip_address, int port)
 {

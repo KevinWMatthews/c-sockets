@@ -1,5 +1,4 @@
 #include "Socket.h"
-#include "UnixSocket.h"
 #include <stdlib.h>
 
 Socket Socket_Create(SocketInterface interface)
@@ -116,21 +115,4 @@ int Socket_Receive(Socket self, char * buffer, unsigned int buffer_length)
         return SOCKET_FAIL;
 
     return self->interface->receive(self->file_descriptor, buffer, buffer_length);
-}
-
-int Socket_SetOption(Socket self, SocketOption option)
-{
-    UnixSocketOption unix_option = 0;
-    if (self == 0)
-    {
-        return SOCKET_NULL_POINTER;
-    }
-
-    switch (option)
-    {
-        case SOCKET_IMMEDIATELY_REUSE_SOCKET:
-            unix_option = UNIX_SOCKET_IMMEDIATELY_REUSE_SOCKET;
-    }
-
-    return UnixSocket_SetOption(self->file_descriptor, unix_option);
 }

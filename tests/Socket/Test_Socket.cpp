@@ -38,8 +38,6 @@ TEST_GROUP(Socket)
 /* Test List:
  *  Create:
  *      Null interface
- *  SetOption:
- *      Should this belong in individual socket libraries? Probably....
  *
  *  GetIpAddress:
  *
@@ -70,7 +68,6 @@ TEST(Socket, it_can_handle_null_pointers)
     POINTERS_EQUAL( NULL, Socket_GetIpAddress(NULL) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_GetPort(NULL) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Open(NULL) );
-    LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_SetOption(NULL, SOCKET_IMMEDIATELY_REUSE_SOCKET) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Send(NULL, "msg", 3) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Receive(NULL, buffer, 10) );
     Socket_Close(NULL);
@@ -128,29 +125,6 @@ TEST(Socket, it_can_close_several_sockets)
     LONGS_EQUAL( SOCKET_INVALID_FILE_DESCRIPTOR, Socket_GetFileDescriptor(socket) );
     LONGS_EQUAL( SOCKET_INVALID_FILE_DESCRIPTOR, Socket_GetFileDescriptor(socket2) );
 }
-
-// Set options
-// IGNORE_TEST(Socket, it_can_fail_to_set_a_socket_option)
-// {
-//     expectSocketOpen(file_descriptor);
-//     expectSocketSetOption(file_descriptor, UNIX_SOCKET_IMMEDIATELY_REUSE_SOCKET, DUMMY_SOCKET_FAIL);
-//     expectSocketClose(file_descriptor);
-
-//     Socket_Open(socket);
-//     LONGS_EQUAL( SOCKET_FAIL, Socket_SetOption(socket, SOCKET_IMMEDIATELY_REUSE_SOCKET) );
-//     Socket_Close(socket);
-// }
-
-// IGNORE_TEST(Socket, it_can_set_socket_option_immediate_reuse)
-// {
-//     expectSocketOpen(file_descriptor);
-//     expectSocketSetOption(file_descriptor, UNIX_SOCKET_IMMEDIATELY_REUSE_SOCKET, DUMMY_SOCKET_SUCCESS);
-//     expectSocketClose(file_descriptor);
-
-//     Socket_Open(socket);
-//     LONGS_EQUAL( SOCKET_SUCCESS, Socket_SetOption(socket, SOCKET_IMMEDIATELY_REUSE_SOCKET) );
-//     Socket_Close(socket);
-// }
 
 // Connect
 TEST(Socket, it_can_fail_to_connect_to_a_socket)

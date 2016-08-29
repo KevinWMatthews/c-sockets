@@ -1,5 +1,4 @@
 #include "SocketServer.h"
-#include "UnixSocket.h"
 
 int Socket_Bind(Socket self, const char * ip_address, int port)
 {
@@ -36,7 +35,7 @@ int Socket_Listen(Socket self, int backlog)
 Socket Socket_Accept(Socket self)
 {
     Socket new_socket = {0};
-    int new_file_descriptor = UNIX_SOCKET_FAIL;
+    int new_file_descriptor = SOCKET_INVALID_FILE_DESCRIPTOR;
 
     if (self == 0)
         return 0;

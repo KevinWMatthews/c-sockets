@@ -28,13 +28,6 @@ int Socket_GetPort(Socket);
 int Socket_Send(Socket, const char * message, unsigned int message_length);
 int Socket_Receive(Socket, char * buffer, unsigned int buffer_length);
 
-// This should belong in the UnixSocket module.
-typedef enum
-{
-    SOCKET_IMMEDIATELY_REUSE_SOCKET
-} SocketOption;
-int Socket_SetOption(Socket, SocketOption);
-
 #include "SocketPrivate.h"
 #include "SocketServer.h"
 #include "SocketClient.h"

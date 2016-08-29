@@ -65,10 +65,10 @@ void expectSocketAccept(int file_descriptor, int result)
         .andReturnValue(result);
 }
 
-void expectSocketSetOption(int file_descriptor, int option, int result)
-{
-    mock().expectOneCall("UnixSocket_SetOption")
-        .withParameter("file_descriptor", file_descriptor)
-        .withParameter("option", option)
-        .andReturnValue(result);
-}
+// void expectSocketSetOption(int file_descriptor, int option, int result)
+// {
+//     mock().expectOneCall("UnixSocket_SetOption")
+//         .withParameter("file_descriptor", file_descriptor)
+//         .withParameter("option", option)
+//         .andReturnValue(result);
+// }
