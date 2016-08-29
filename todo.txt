@@ -1,3 +1,6 @@
+Might want to add an options void pointer to SocketOpen.
+Will eventually need to change the file descriptor from an in to a struct, probably.
+
 LinuxSocket should be a wrapper around the Socket module.
 We'll somehow tell Socket to use UnixSocket.
     Socket will contain function pointers:
