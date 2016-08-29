@@ -1,16 +1,14 @@
 #include "Socket.h"
 #include <stdlib.h>
 
-Socket Socket_Create(SocketInterface interface)
+void Socket_Initialize(Socket self)
 {
-    Socket self = calloc( 1, sizeof(*self) );
     if (self == 0)
-    {
-        return 0;
-    }
+        return;
+
+    self->file_descriptor = SOCKET_INVALID_FILE_DESCRIPTOR;
+    self->ip_address = 0;
     self->port = SOCKET_INVALID_PORT;
-    self->interface = interface;
-    return self;
 }
 
 void Socket_Destroy(Socket * self)

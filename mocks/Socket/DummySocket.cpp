@@ -102,7 +102,6 @@ Socket DummySocket_Create(void)
     }
     populate_interface(interface);
     self->base.interface = interface;
-    self->base.port = SOCKET_INVALID_PORT;
-    self->base.file_descriptor = SOCKET_INVALID_FILE_DESCRIPTOR;
+    Socket_Initialize(&self->base);
     return (Socket)self;
 }

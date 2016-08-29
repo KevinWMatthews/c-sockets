@@ -6,6 +6,8 @@
 /*
  * All wrappers modules must implement this interface.
  */
+// Call this on the base Socket immediately after creating any socket.
+void Socket_Initialize(Socket);
 
 /*
  * Client and server calls
@@ -58,7 +60,6 @@ typedef struct SocketInterfaceStruct
 typedef struct SocketStruct
 {
     SocketInterface interface;
-    SocketOpen open;
     int file_descriptor;
     const char * ip_address;
     int port;
