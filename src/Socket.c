@@ -2,6 +2,8 @@
 #include "UnixSocket.h"
 #include <stdlib.h>
 
+static SocketInterfaceStruct interface;
+
 Socket Socket_Create(void)
 {
     Socket self = calloc( 1, sizeof(*self) );
@@ -10,6 +12,9 @@ Socket Socket_Create(void)
         return 0;
     }
     self->port = SOCKET_INVALID_PORT;
+    // set the interface here depending on the interface type
+    interface.open = UnixSocket_Open;
+    self->interface = &interface;
     return self;
 }
 
@@ -27,10 +32,13 @@ int Socket_Open(Socket self)
 {
     int file_descriptor = 0;
     if (self == 0)
-    {
         return SOCKET_NULL_POINTER;
-    }
-    file_descriptor = UnixSocket_Open();
+    if (self->interface == 0)
+        return SOCKET_NULL_POINTER;
+    if (self->interface->open == 0)
+        return SOCKET_NULL_POINTER;
+
+    file_descriptor = self->interface->open();
     self->file_descriptor = file_descriptor;
     if (self->file_descriptor < 0)
     {
