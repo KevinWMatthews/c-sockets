@@ -115,3 +115,85 @@ int Socket_Receive(Socket self, char * buffer, unsigned int buffer_length)
 
     return self->interface->receive(self->file_descriptor, buffer, buffer_length);
 }
+
+// Client only.
+int Socket_Connect(Socket self, const char * ip_address, int port)
+{
+    int result = SOCKET_FAIL;
+
+    if (self == 0)
+        return SOCKET_NULL_POINTER;
+    if (self->interface == 0)
+        return SOCKET_NULL_POINTER;
+    if (self->interface->connect == 0)
+        return SOCKET_NULL_POINTER;
+
+    if (ip_address == 0)
+        return SOCKET_NULL_POINTER;
+
+    result = self->interface->connect(self->file_descriptor, ip_address, port);
+    if ( result < 0 )
+    {
+        return result;
+    }
+    self->ip_address = ip_address;
+    self->port = port;
+    return SOCKET_SUCCESS;
+}
+
+// Server only.
+int Socket_Bind(Socket self, const char * ip_address, int port)
+{
+    int result = SOCKET_FAIL;
+
+    if (self == 0)
+        return SOCKET_NULL_POINTER;
+    if (self->interface == 0)
+        return SOCKET_NULL_POINTER;
+    if (self->interface->bind == 0)
+        return SOCKET_NULL_POINTER;
+
+    result = self->interface->bind(self->file_descriptor, ip_address, port);
+    if (result < 0)
+    {
+        return SOCKET_FAIL;
+    }
+    self->ip_address = ip_address;
+    self->port = port;
+    return result;
+}
+
+int Socket_Listen(Socket self, int backlog)
+{
+    if (self == 0)
+        return SOCKET_NULL_POINTER;
+    if (self->interface == 0)
+        return SOCKET_NULL_POINTER;
+    if (self->interface->listen == 0)
+        return SOCKET_NULL_POINTER;
+    return self->interface->listen(self->file_descriptor, backlog);
+}
+
+Socket Socket_Accept(Socket self)
+{
+    Socket new_socket = {0};
+    int new_file_descriptor = SOCKET_INVALID_FILE_DESCRIPTOR;
+
+    if (self == 0)
+        return 0;
+    if (self->interface == 0)
+        return 0;
+    if (self->interface->accept == 0)
+        return 0;
+    if (self->interface->create == 0)
+        return 0;
+
+    new_file_descriptor = self->interface->accept(self->file_descriptor);
+    if (new_file_descriptor < 0)
+    {
+        return 0;
+    }
+    new_socket = self->interface->create();
+    new_socket->file_descriptor = new_file_descriptor;
+    return new_socket;
+}

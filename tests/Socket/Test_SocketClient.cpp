@@ -1,7 +1,6 @@
 extern "C"
 {
 #include "Socket.h"
-#include "SocketClient.h"
 #include "DummySocket.h"
 }
 

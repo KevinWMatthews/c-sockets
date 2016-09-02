@@ -27,8 +27,15 @@ int Socket_GetPort(Socket);
 int Socket_Send(Socket, const char * message, unsigned int message_length);
 int Socket_Receive(Socket, char * buffer, unsigned int buffer_length);
 
+// Client only.
+int Socket_Connect(Socket, const char * ip_address, int port);
+
+// Server only.
+int Socket_Bind(Socket, const char * ip_address, int port);
+int Socket_Listen(Socket, int backlog);
+// Returns a handle to the client socket.
+Socket Socket_Accept(Socket);
+
 #include "SocketPrivate.h"
-#include "SocketServer.h"
-#include "SocketClient.h"
 
 #endif
