@@ -1,3 +1,7 @@
+Should the UbuntuSystem include be public (in LinuxSocket.h?) or should we include this in the test file?
+I think only in the test file. The tests already need to dig into the LinuxSocket to see that we're calling UbuntuSystem. This is another manifestation of that dependency.
+
+
 Might want to add an options void pointer to SocketOpen.
 Will eventually need to change the file descriptor from an in to a struct, probably.
 

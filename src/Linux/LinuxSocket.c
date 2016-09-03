@@ -1,5 +1,6 @@
 #include "LinuxSocket.h"
-#include "UnixSocket.h"
+#include "UnixSocket.h" //TODO change this to UbuntuSystem
+#include "UbuntuSystem.h"
 #include <stdlib.h>
 
 typedef struct LinuxSocketStruct
@@ -44,4 +45,9 @@ int LinuxSocket_SetOption(Socket self, LinuxSocketOption option)
     }
 
     return UnixSocket_SetOption(self->file_descriptor, unix_option);
+}
+
+int LinuxSocket_Open(Socket self, LinuxSocketOptions options)
+{
+    return UbuntuSystem_Open(UBUNTU_SYSTEM_UNIX_SOCKET);
 }
