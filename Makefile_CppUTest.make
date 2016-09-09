@@ -12,6 +12,7 @@ SILENCE = @
 CFLAGS += -Wall
 ifeq ($(FATAL_COMPILER_ERRORS),Y)
 	CFLAGS += -Wfatal-errors
+	CFLAGS += -Wextra
 endif
 
 ifeq ($(DEBUG),Y)
@@ -145,6 +146,9 @@ $(OBJECT_DIR)/%.o: %.c
 filelist:
 	@echo $(TEST_OBJ)
 	@echo $(TEST_DEP)
+
+flags:
+	@echo $(INCLUDE_FLAGS)
 
 clean:
 	$(SILENCE)$(QUIET)$(REMOVE) $(TARGET)

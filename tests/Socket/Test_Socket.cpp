@@ -1,13 +1,12 @@
 extern "C"
 {
-#include "UnixSocket.h"
+#include "Socket.h"
 }
 
-#include "Test_UnixSocket.h"
+#include "Test_Socket.h"
 #include "CppUTest/TestHarness.h"
 
-
-TEST_GROUP(UnixSocket)
+TEST_GROUP(Socket)
 {
     void setup()
     {
@@ -18,7 +17,7 @@ TEST_GROUP(UnixSocket)
     }
 };
 
-TEST(UnixSocket, it_can_fail)
+TEST(Socket, it_can_fail)
 {
     FAIL("Start here.");
 }

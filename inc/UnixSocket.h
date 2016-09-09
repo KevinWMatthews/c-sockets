@@ -1,4 +1,0 @@
-#ifndef UNIX_SOCKET_INCLUDED
-#define UNIX_SOCKET_INCLUDED
-
-#endif
