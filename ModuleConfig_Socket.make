@@ -3,7 +3,7 @@
 #############################
 #ROOT_DIRECTORY=
 SRC_DIRS = src
-INC_DIRS = inc
+INC_DIRS = inc src_platform
 TEST_DIRS = tests/$(TEST_MODULE)
 MOCK_DIRS = mocks/$(TEST_MODULE)
 BUILD_DIR = build

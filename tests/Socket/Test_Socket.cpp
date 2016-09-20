@@ -1,10 +1,12 @@
 extern "C"
 {
 #include "Socket.h"
+#include "SocketSystemLayer.h"
 }
 
 #include "Test_Socket.h"
 #include "CppUTest/TestHarness.h"
+#include "CppUTestExt/MockSupport.h"
 
 TEST_GROUP(Socket)
 {
@@ -12,12 +14,15 @@ TEST_GROUP(Socket)
 
     void setup()
     {
+        mock().strictOrder();
         socket = Socket_Create();
     }
 
     void teardown()
     {
-        Socket_Destroy(socket);
+        Socket_Destroy(&socket);
+        mock().checkExpectations();
+        mock().clear();
     }
 };
 
@@ -28,10 +33,9 @@ TEST_GROUP(Socket)
  *  Destroy:
  *      Null pointers.
  *      Double destroy.
+ *      Do we need to check *self == 0?
  *
  *  Open:
- *      Can fail.
- *      Will not crash with null pointer.
  *
  *  Close:
  *      Can fail.
@@ -84,10 +88,29 @@ TEST(Socket, it_can_create_and_destroy_a_socket)
 
 TEST(Socket, it_can_destroy_a_socket_twice)
 {
-    Socket_Destroy(socket);
+    Socket_Destroy(&socket);
 }
 
 TEST(Socket, it_can_handle_null_pointers)
 {
     Socket_Destroy(NULL);
+    LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_GetDescriptor(NULL) );
+}
+
+TEST(Socket, it_can_fail_to_open_a_socket)
+{
+    mock().expectOneCall("SocketSystemLayer_Open")
+        .andReturnValue(SOCKET_SYSTEM_LAYER_FAIL);
+    LONGS_EQUAL( SOCKET_FAIL, Socket_Open(socket) );
+    LONGS_EQUAL( SOCKET_INVALID_DESCRIPTOR, Socket_GetDescriptor(socket) );
+}
+
+TEST(Socket, it_can_open_a_socket)
+{
+    int socket_descriptor = 42;
+
+    mock().expectOneCall("SocketSystemLayer_Open")
+        .andReturnValue(socket_descriptor);
+    LONGS_EQUAL( SOCKET_SUCCESS, Socket_Open(socket) );
+    LONGS_EQUAL( socket_descriptor, Socket_GetDescriptor(socket) );
 }
