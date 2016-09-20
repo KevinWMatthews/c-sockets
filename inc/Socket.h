@@ -8,9 +8,9 @@ void Socket_Destroy(Socket *);
 
 typedef enum
 {
-    SOCKET_INVALID_DESCRIPTOR = -3,
-    SOCKET_NULL_POINTER = -2,
-    SOCKET_FAIL = -1,
+    SOCKET_NULL_POINTER = -3,
+    SOCKET_FAIL = -2,
+    SOCKET_INVALID_DESCRIPTOR = -1,
     SOCKET_SUCCESS = 0
 } SocketReturnCode;
 int Socket_Open(Socket);

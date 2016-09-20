@@ -11,11 +11,13 @@ extern "C"
 TEST_GROUP(Socket)
 {
     Socket socket;
+    int socket_descriptor;
 
     void setup()
     {
         mock().strictOrder();
         socket = Socket_Create();
+        socket_descriptor = 42;
     }
 
     void teardown()
@@ -111,7 +113,6 @@ TEST(Socket, it_can_handle_null_pointers)
 // Open
 TEST(Socket, it_can_open_a_socket)
 {
-    int socket_descriptor = 42;
     expectSocketOpen(socket_descriptor);
 
     LONGS_EQUAL( SOCKET_SUCCESS, Socket_Open(socket) );
@@ -128,10 +129,25 @@ TEST(Socket, it_can_fail_to_open_a_socket)
     LONGS_EQUAL( SOCKET_INVALID_DESCRIPTOR, Socket_GetDescriptor(socket) );
 }
 
+TEST(Socket, it_can_open_several_sockets)
+{
+    Socket socket2 = Socket_Create();
+    int socket_descriptor2 = 66;
+    expectSocketOpen(socket_descriptor);
+    expectSocketOpen(socket_descriptor2);
+
+    Socket_Open(socket);
+    Socket_Open(socket2);
+
+    LONGS_EQUAL( socket_descriptor, Socket_GetDescriptor(socket) );
+    LONGS_EQUAL( socket_descriptor2, Socket_GetDescriptor(socket2) );
+
+    Socket_Destroy(&socket2);
+}
+
 // Close
 TEST(Socket, it_can_close_a_socket)
 {
-    int socket_descriptor = 43;
     expectSocketOpen(socket_descriptor);
     expectSocketClose(socket_descriptor, SOCKET_SYSTEM_LAYER_SUCCESS);
     Socket_Open(socket);
@@ -139,4 +155,24 @@ TEST(Socket, it_can_close_a_socket)
     Socket_Close(socket);
 
     LONGS_EQUAL( SOCKET_INVALID_DESCRIPTOR, Socket_GetDescriptor(socket) );
+}
+
+TEST(Socket, it_can_close_several_sockets)
+{
+    Socket socket2 = Socket_Create();
+    int socket_descriptor2 = 66;
+    expectSocketOpen(socket_descriptor);
+    expectSocketOpen(socket_descriptor2);
+    expectSocketClose(socket_descriptor, SOCKET_SYSTEM_LAYER_FAIL);
+    expectSocketClose(socket_descriptor2, SOCKET_SYSTEM_LAYER_FAIL);
+    Socket_Open(socket);
+    Socket_Open(socket2);
+
+    Socket_Close(socket);
+    Socket_Close(socket2);
+
+    LONGS_EQUAL( SOCKET_INVALID_DESCRIPTOR, Socket_GetDescriptor(socket) );
+    LONGS_EQUAL( SOCKET_INVALID_DESCRIPTOR, Socket_GetDescriptor(socket2) );
+
+    Socket_Destroy(&socket2);
 }
