@@ -24,6 +24,19 @@ TEST_GROUP(Socket)
         mock().checkExpectations();
         mock().clear();
     }
+
+    void expectSocketOpen(int socket_descriptor_or_error_code)
+    {
+        mock().expectOneCall("SocketSystemLayer_Open")
+            .andReturnValue(socket_descriptor_or_error_code);
+    }
+
+    void expectSocketClose(int socket_descriptor, int return_code)
+    {
+        mock().expectOneCall("SocketSystemLayer_Close")
+            .withParameter("descriptor", socket_descriptor)
+            .andReturnValue(return_code);
+    }
 };
 
 /*
@@ -38,8 +51,6 @@ TEST_GROUP(Socket)
  *  Open:
  *
  *  Close:
- *      Can fail.
- *      Will not crash with null pointer.
  *
  *  Connect (client only):
  *      Can fail.
@@ -95,12 +106,12 @@ TEST(Socket, it_can_handle_null_pointers)
 {
     Socket_Destroy(NULL);
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_GetDescriptor(NULL) );
+    Socket_Close(NULL);
 }
 
 TEST(Socket, it_can_fail_to_open_a_socket)
 {
-    mock().expectOneCall("SocketSystemLayer_Open")
-        .andReturnValue(SOCKET_SYSTEM_LAYER_FAIL);
+    expectSocketOpen(SOCKET_SYSTEM_LAYER_FAIL);
     LONGS_EQUAL( SOCKET_FAIL, Socket_Open(socket) );
     LONGS_EQUAL( SOCKET_INVALID_DESCRIPTOR, Socket_GetDescriptor(socket) );
 }
@@ -109,8 +120,18 @@ TEST(Socket, it_can_open_a_socket)
 {
     int socket_descriptor = 42;
 
-    mock().expectOneCall("SocketSystemLayer_Open")
-        .andReturnValue(socket_descriptor);
+    expectSocketOpen(socket_descriptor);
     LONGS_EQUAL( SOCKET_SUCCESS, Socket_Open(socket) );
     LONGS_EQUAL( socket_descriptor, Socket_GetDescriptor(socket) );
+}
+
+TEST(Socket, it_can_close_a_socket)
+{
+    int socket_descriptor = 43;
+
+    expectSocketOpen(socket_descriptor);
+    expectSocketClose(socket_descriptor, SOCKET_SYSTEM_LAYER_SUCCESS);
+    Socket_Open(socket);
+    Socket_Close(socket);
+    LONGS_EQUAL( SOCKET_INVALID_DESCRIPTOR, Socket_GetDescriptor(socket) );
 }

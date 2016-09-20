@@ -14,6 +14,7 @@ typedef enum
     SOCKET_SUCCESS = 0
 } SocketReturnCode;
 int Socket_Open(Socket);
+void Socket_Close(Socket);
 int Socket_GetDescriptor(Socket);
 
 #endif

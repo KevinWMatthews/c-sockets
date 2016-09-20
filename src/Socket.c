@@ -1,9 +1,11 @@
 #include "Socket.h"
 #include "SocketSystemLayer.h"
 
+#define RETURN_IF_NULL(pointer) \
+    if ( (pointer) == 0 ) { return; }
+
 #define RETURN_VALUE_IF_NULL(pointer, value) \
-    if ( (pointer) == 0 ) \
-        return (value);
+    if ( (pointer) == 0 ) { return (value); }
 
 typedef struct SocketStruct
 {
@@ -36,6 +38,14 @@ int Socket_Open(Socket self)
         return SOCKET_FAIL;
     }
     return SOCKET_SUCCESS;
+}
+
+void Socket_Close(Socket self)
+{
+    RETURN_IF_NULL(self);
+
+    SocketSystemLayer_Close(self->socket_descriptor);
+    self->socket_descriptor = SOCKET_INVALID_DESCRIPTOR;
 }
 
 int Socket_GetDescriptor(Socket self)
