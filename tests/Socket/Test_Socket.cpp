@@ -44,8 +44,6 @@ TEST_GROUP(Socket)
  *  Create:
  *
  *  Destroy:
- *      Null pointers.
- *      Double destroy.
  *      Do we need to check *self == 0?
  *
  *  Open:
@@ -93,6 +91,7 @@ TEST_GROUP(Socket)
  *      Will not crash with null pointer.
  */
 
+// Create and destroy
 TEST(Socket, it_can_create_and_destroy_a_socket)
 {
 }
@@ -109,29 +108,35 @@ TEST(Socket, it_can_handle_null_pointers)
     Socket_Close(NULL);
 }
 
-TEST(Socket, it_can_fail_to_open_a_socket)
-{
-    expectSocketOpen(SOCKET_SYSTEM_LAYER_FAIL);
-    LONGS_EQUAL( SOCKET_FAIL, Socket_Open(socket) );
-    LONGS_EQUAL( SOCKET_INVALID_DESCRIPTOR, Socket_GetDescriptor(socket) );
-}
-
+// Open
 TEST(Socket, it_can_open_a_socket)
 {
     int socket_descriptor = 42;
-
     expectSocketOpen(socket_descriptor);
+
     LONGS_EQUAL( SOCKET_SUCCESS, Socket_Open(socket) );
+
     LONGS_EQUAL( socket_descriptor, Socket_GetDescriptor(socket) );
 }
 
+TEST(Socket, it_can_fail_to_open_a_socket)
+{
+    expectSocketOpen(SOCKET_SYSTEM_LAYER_FAIL);
+
+    LONGS_EQUAL( SOCKET_FAIL, Socket_Open(socket) );
+
+    LONGS_EQUAL( SOCKET_INVALID_DESCRIPTOR, Socket_GetDescriptor(socket) );
+}
+
+// Close
 TEST(Socket, it_can_close_a_socket)
 {
     int socket_descriptor = 43;
-
     expectSocketOpen(socket_descriptor);
     expectSocketClose(socket_descriptor, SOCKET_SYSTEM_LAYER_SUCCESS);
     Socket_Open(socket);
+
     Socket_Close(socket);
+
     LONGS_EQUAL( SOCKET_INVALID_DESCRIPTOR, Socket_GetDescriptor(socket) );
 }
