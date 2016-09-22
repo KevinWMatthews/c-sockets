@@ -36,6 +36,8 @@ void Socket_Destroy(Socket * self)
 int Socket_Open(Socket self)
 {
     RETURN_VALUE_IF_NULL(self, SOCKET_NULL_POINTER);
+    if (self->socket_descriptor != SOCKET_INVALID_DESCRIPTOR)
+        return SOCKET_ALREADY_OPEN;
 
     self->socket_descriptor = SocketSystemLayer_Open();
     if (self->socket_descriptor == SOCKET_SYSTEM_LAYER_FAIL)
@@ -48,6 +50,8 @@ int Socket_Open(Socket self)
 void Socket_Close(Socket self)
 {
     RETURN_IF_NULL(self);
+    if (self->socket_descriptor == SOCKET_INVALID_DESCRIPTOR)
+        return;
 
     SocketSystemLayer_Close(self->socket_descriptor);
     self->socket_descriptor = SOCKET_INVALID_DESCRIPTOR;

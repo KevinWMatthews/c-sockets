@@ -67,7 +67,7 @@ TEST_GROUP(Socket)
  *      Do we need to check *self == 0?
  *
  *  Open:
- *      Can not open a socket twice (must close first).
+ *      Do all open tests need to close the socket as well?
  *
  *  Close:
  *
@@ -179,6 +179,15 @@ TEST(Socket, it_can_open_several_sockets)
     Socket_Destroy(&socket2);
 }
 
+TEST(Socket, it_can_not_open_the_same_socket_twice)
+{
+    expectSocketOpen(socket_descriptor);
+    Socket_Open(socket);
+
+    LONGS_EQUAL( SOCKET_ALREADY_OPEN, Socket_Open(socket) );
+    LONGS_EQUAL( socket_descriptor, Socket_GetDescriptor(socket) );
+}
+
 // Close
 TEST(Socket, it_can_close_a_socket)
 {
@@ -209,6 +218,19 @@ TEST(Socket, it_can_close_several_sockets)
     CHECK_SOCKET_RESET(socket2);
 
     Socket_Destroy(&socket2);
+}
+
+TEST(Socket, it_will_not_close_a_socket_twice)
+{
+    expectSocketOpen(socket_descriptor);
+    // Note that there is only one call to the close.
+    expectSocketClose(socket_descriptor, SOCKET_SYSTEM_LAYER_SUCCESS);
+    Socket_Open(socket);
+    Socket_Close(socket);
+
+    Socket_Close(socket);
+
+    CHECK_SOCKET_RESET(socket);
 }
 
 // Bind
