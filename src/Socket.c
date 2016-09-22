@@ -54,3 +54,13 @@ int Socket_GetDescriptor(Socket self)
 
     return self->socket_descriptor;
 }
+
+const char * Socket_GetIpAddress(Socket self)
+{
+    return SOCKET_INVALID_IP_ADDRESS;
+}
+
+int Socket_GetPort(Socket self)
+{
+    return SOCKET_INVALID_PORT;
+}

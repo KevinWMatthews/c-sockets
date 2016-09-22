@@ -108,6 +108,8 @@ TEST(Socket, it_can_handle_null_pointers)
     Socket_Destroy(NULL);
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_GetDescriptor(NULL) );
     Socket_Close(NULL);
+    Socket_GetIpAddress(NULL);
+    Socket_GetPort(NULL);
 }
 
 // Open
@@ -176,3 +178,33 @@ TEST(Socket, it_can_close_several_sockets)
 
     Socket_Destroy(&socket2);
 }
+
+// Get IP Address
+TEST(Socket, it_has_no_ip_address_and_port_after_opening)
+{
+    expectSocketOpen(socket_descriptor);
+    expectSocketClose(socket_descriptor, SOCKET_SYSTEM_LAYER_SUCCESS);
+    Socket_Open(socket);
+
+    POINTERS_EQUAL( SOCKET_INVALID_IP_ADDRESS, Socket_GetIpAddress(socket) );
+    LONGS_EQUAL( SOCKET_INVALID_PORT, Socket_GetPort(socket) );
+
+    Socket_Close(socket);
+}
+
+// Bind
+// IGNORE_TEST(Socket, it_can_fail_to_bind)
+// {
+//     const char * ip_address = "192.168.2.1";
+//     int port = 10004;
+
+//     expectSocketOpen(socket_descriptor);
+//     expectSocketClose(socket_descriptor);
+//     Socket_Open(socket);
+
+//     LONGS_EQUAL( SOCKET_FAIL, Socket_Bind(socket, ip_address, port) );
+//     POINTERS_EQUAL( NULL, Socket_GetIpAddress(socket) );
+//     LONGS_EQUAL( SOCKET_INVALID_PORT, Socket_GetPort(socket) );
+
+//     Socket_Close(socket);
+// }
