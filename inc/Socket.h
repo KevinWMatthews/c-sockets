@@ -3,6 +3,8 @@
 
 typedef struct SocketStruct * Socket;
 
+// Returns a pointer to a socket on success.
+// Returns 0 if a Socket can not be created.
 Socket Socket_Create(void);
 void Socket_Destroy(Socket *);
 
@@ -14,6 +16,7 @@ typedef enum
 } SocketReturnCode;
 int Socket_Open(Socket);
 void Socket_Close(Socket);
+int Socket_Bind(Socket, const char * ip_address, int port);
 
 enum
 {

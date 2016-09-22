@@ -17,3 +17,12 @@ int SocketSystemLayer_Close(int descriptor)
         .withParameter("descriptor", descriptor);
     return mock().intReturnValue();
 }
+
+int SocketSystemLayer_Bind(int descriptor, const char * ip_address, int port)
+{
+    mock().actualCall("SocketSystemLayer_Bind")
+        .withParameter("descriptor", descriptor)
+        .withParameter("ip_address", ip_address)
+        .withParameter("port", port);
+    return mock().intReturnValue();
+}

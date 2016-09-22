@@ -10,12 +10,18 @@
 typedef struct SocketStruct
 {
     int socket_descriptor;
+    const char * ip_address;
+    int port;
 } SocketStruct;
 
 Socket Socket_Create(void)
 {
     Socket self = calloc( 1, sizeof(*self) );
+    RETURN_VALUE_IF_NULL(self, 0);
 
+    self->socket_descriptor = SOCKET_INVALID_DESCRIPTOR;
+    self->ip_address = SOCKET_INVALID_IP_ADDRESS;
+    self->port = SOCKET_INVALID_PORT;
     return self;
 }
 
@@ -34,7 +40,6 @@ int Socket_Open(Socket self)
     self->socket_descriptor = SocketSystemLayer_Open();
     if (self->socket_descriptor == SOCKET_SYSTEM_LAYER_FAIL)
     {
-        self->socket_descriptor = SOCKET_INVALID_DESCRIPTOR;
         return SOCKET_FAIL;
     }
     return SOCKET_SUCCESS;
@@ -46,6 +51,22 @@ void Socket_Close(Socket self)
 
     SocketSystemLayer_Close(self->socket_descriptor);
     self->socket_descriptor = SOCKET_INVALID_DESCRIPTOR;
+    self->ip_address = SOCKET_INVALID_IP_ADDRESS;
+    self->port = SOCKET_INVALID_PORT;
+}
+
+int Socket_Bind(Socket self, const char * ip_address, int port)
+{
+    int return_code = SOCKET_SYSTEM_LAYER_FAIL;
+    RETURN_VALUE_IF_NULL(self, SOCKET_NULL_POINTER);
+    return_code = SocketSystemLayer_Bind(self->socket_descriptor, ip_address, port);
+    if ( return_code < 0 )
+    {
+        return SOCKET_FAIL;
+    }
+    self->ip_address = ip_address;
+    self->port = port;
+    return SOCKET_SUCCESS;
 }
 
 int Socket_GetDescriptor(Socket self)
@@ -57,10 +78,12 @@ int Socket_GetDescriptor(Socket self)
 
 const char * Socket_GetIpAddress(Socket self)
 {
-    return SOCKET_INVALID_IP_ADDRESS;
+    RETURN_VALUE_IF_NULL(self, SOCKET_INVALID_IP_ADDRESS);
+    return self->ip_address;
 }
 
 int Socket_GetPort(Socket self)
 {
-    return SOCKET_INVALID_PORT;
+    RETURN_VALUE_IF_NULL(self, SOCKET_INVALID_PORT);
+    return self->port;
 }
