@@ -64,7 +64,11 @@ int Socket_Bind(Socket self, const char * ip_address, int port)
     int return_code = SOCKET_SYSTEM_LAYER_FAIL;
     RETURN_VALUE_IF_NULL(self, SOCKET_NULL_POINTER);
     return_code = SocketSystemLayer_Bind(self->socket_descriptor, ip_address, port);
-    if ( return_code < 0 )
+    if ( return_code == SOCKET_SYSTEM_LAYER_ADDRESS_IN_USE )
+    {
+        return SOCKET_ADDRESS_IN_USE;
+    }
+    else if ( return_code < 0 )
     {
         return SOCKET_FAIL;
     }

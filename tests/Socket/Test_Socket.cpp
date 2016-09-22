@@ -241,11 +241,22 @@ TEST(Socket, it_can_bind_to_a_specific_ip_address_and_port)
 
     expectSocketOpen(socket_descriptor);
     expectSocketBind(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
-    expectSocketClose(socket_descriptor, SOCKET_SYSTEM_LAYER_SUCCESS);
     Socket_Open(socket);
 
     LONGS_EQUAL( SOCKET_SUCCESS, Socket_Bind(socket, ip_address, port) );
     CHECK_SOCKET_ADDRESS_AND_PORT(socket, ip_address, port);
+}
+
+TEST(Socket, closing_a_bound_socket_resets_ip_address_and_port)
+{
+    const char * ip_address = "192.168.2.1";
+    int port = 10004;
+
+    expectSocketOpen(socket_descriptor);
+    expectSocketBind(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketClose(socket_descriptor, SOCKET_SYSTEM_LAYER_SUCCESS);
+    Socket_Open(socket);
+    Socket_Bind(socket, ip_address, port);
 
     Socket_Close(socket);
     CHECK_SOCKET_RESET(socket);
@@ -255,6 +266,21 @@ TEST(Socket, it_can_bind_to_a_specific_ip_address_and_port)
 // {
 //     // TODO
 // }
+
+TEST(Socket, it_can_not_bind_to_an_address_and_port_twice)
+{
+    const char * ip_address = "192.168.2.1";
+    int port = 10004;
+
+    expectSocketOpen(socket_descriptor);
+    expectSocketBind(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketBind(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_ADDRESS_IN_USE);
+    Socket_Open(socket);
+    Socket_Bind(socket, ip_address, port);
+
+    LONGS_EQUAL( SOCKET_ADDRESS_IN_USE, Socket_Bind(socket, ip_address, port) );
+    CHECK_SOCKET_ADDRESS_AND_PORT(socket, ip_address, port);
+}
 
 TEST(Socket, it_can_fail_to_bind)
 {
