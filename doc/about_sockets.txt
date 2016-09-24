@@ -1,0 +1,16 @@
+sockets.txt
+
+internet sockets, unix sockets, etc
+There are several kinds of internet sockets:
+    stream sockets
+    datagram sockets
+    raw sockets
+
+Stream sockets:
+    Two-way, connection-based data stream.
+    Data arrives in order.
+    Use TCP/IP (Transmission Control Protocol/Internet Protocol) for transmitting data.
+
+Datagram sockets:
+    Connectionless. Just send the data, and that's it.
+    Uses UDP (User Datagram Protocol) for transmitting data.
