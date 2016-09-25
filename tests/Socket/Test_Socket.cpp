@@ -49,6 +49,13 @@ TEST_GROUP(Socket)
             .andReturnValue(return_code);
     }
 
+    void expectSocketListen(int socket_descriptor, int return_code)
+    {
+        mock().expectOneCall("SocketSystemLayer_Listen")
+            .withParameter("descriptor", socket_descriptor)
+            .withParameter("backlog", 0)
+            .andReturnValue(return_code);
+    }
 };
 
 #define CHECK_SOCKET_RESET(socket) \
@@ -79,8 +86,6 @@ TEST_GROUP(Socket)
  *      Bind to any address.
  *
  *  Listen (server only):
- *      Can fail.
- *      Will not crash with null pointer.
  *
  *  Accept (server only):
  *      Can fail.
@@ -130,6 +135,7 @@ TEST(Socket, it_can_handle_null_pointers)
     Socket_Close(NULL);
     POINTERS_EQUAL( SOCKET_INVALID_IP_ADDRESS, Socket_GetIpAddress(NULL) );
     LONGS_EQUAL( SOCKET_INVALID_PORT, Socket_GetPort(NULL) );
+    LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Listen(NULL) );
 }
 
 TEST(Socket, bind_can_accept_null_pointers)
@@ -297,4 +303,33 @@ TEST(Socket, it_can_fail_to_bind)
     CHECK_SOCKET_ADDRESS_AND_PORT(socket, SOCKET_INVALID_IP_ADDRESS, SOCKET_INVALID_PORT);
 
     Socket_Close(socket);
+}
+
+// Listen
+TEST(Socket, it_can_listen)
+{
+    const char * ip_address = "192.168.2.1";
+    int port = 10004;
+
+    expectSocketOpen(socket_descriptor);
+    expectSocketBind(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketListen(socket_descriptor, SOCKET_SYSTEM_LAYER_SUCCESS);
+    Socket_Open(socket);
+    Socket_Bind(socket, ip_address, port);
+
+    LONGS_EQUAL( SOCKET_SUCCESS, Socket_Listen(socket) );
+}
+
+TEST(Socket, it_can_fail_to_listen)
+{
+    const char * ip_address = "192.168.2.1";
+    int port = 10004;
+
+    expectSocketOpen(socket_descriptor);
+    expectSocketBind(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketListen(socket_descriptor, SOCKET_SYSTEM_LAYER_FAIL);
+    Socket_Open(socket);
+    Socket_Bind(socket, ip_address, port);
+
+    LONGS_EQUAL( SOCKET_FAIL, Socket_Listen(socket) );
 }

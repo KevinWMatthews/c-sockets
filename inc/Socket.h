@@ -19,6 +19,7 @@ typedef enum
 int Socket_Open(Socket);
 void Socket_Close(Socket);
 int Socket_Bind(Socket, const char * ip_address, int port);
+int Socket_Listen(Socket);
 
 enum
 {

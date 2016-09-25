@@ -26,3 +26,11 @@ int SocketSystemLayer_Bind(int descriptor, const char * ip_address, int port)
         .withParameter("port", port);
     return mock().intReturnValue();
 }
+
+int SocketSystemLayer_Listen(int descriptor, int backlog)
+{
+    mock().actualCall("SocketSystemLayer_Listen")
+        .withParameter("descriptor", descriptor)
+        .withParameter("backlog", backlog);
+    return mock().intReturnValue();
+}
