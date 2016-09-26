@@ -10,6 +10,7 @@ void Socket_Destroy(Socket *);
 
 typedef enum
 {
+    SOCKET_INVALID_BUFFER = -5,
     SOCKET_ADDRESS_IN_USE = -4,
     SOCKET_ALREADY_OPEN = -3,
     SOCKET_NULL_POINTER = -2,
@@ -38,6 +39,15 @@ enum
     SOCKET_INVALID_DESCRIPTOR = -1,
 };
 int Socket_GetDescriptor(Socket);
+
+/*
+ * Receive a message from the given socket.
+ * Copy this message into the buffer.
+ * You must specify the buffer length (without null terminator).
+ * On success, returns the length of the message received.
+ * On failure, returns < 0.
+ */
+int Socket_Receive(Socket, char * buffer, unsigned int buffer_length);
 
 enum
 {

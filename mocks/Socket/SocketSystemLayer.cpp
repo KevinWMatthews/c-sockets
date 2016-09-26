@@ -50,3 +50,12 @@ int SocketSystemLayer_Connect(int descriptor, const char * ip_address, int port)
         .withParameter("port", port);
     return mock().intReturnValue();
 }
+
+int SocketSystemLayer_Receive(int descriptor, char * buffer, unsigned int buffer_length)
+{
+    mock().actualCall("SocketSystemLayer_Receive")
+        .withParameter("descriptor", descriptor)
+        .withParameter("buffer", buffer)
+        .withParameter("buffer_length", buffer_length);
+    return mock().intReturnValue();
+}

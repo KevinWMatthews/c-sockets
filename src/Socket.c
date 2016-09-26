@@ -128,3 +128,17 @@ int Socket_Connect(Socket self, const char * ip_address, int port)
         return SOCKET_FAIL;
     return SOCKET_SUCCESS;
 }
+
+int Socket_Receive(Socket self, char * buffer, unsigned int buffer_length)
+{
+    int return_code = SOCKET_SYSTEM_LAYER_FAIL;
+    RETURN_VALUE_IF_NULL(self, SOCKET_NULL_POINTER);
+    RETURN_VALUE_IF_NULL(buffer, SOCKET_INVALID_BUFFER);
+    if (buffer_length == 0)
+        return SOCKET_INVALID_BUFFER;
+
+    return_code = SocketSystemLayer_Receive(self->socket_descriptor, buffer, buffer_length);
+    if (return_code < 0)
+        return SOCKET_FAIL;
+    return return_code;
+}
