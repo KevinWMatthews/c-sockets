@@ -2,7 +2,8 @@
 SILENCE = @
 
 ALL_PRODUCTS =	\
-				Server
+				Server \
+				Client
 
 ALL_TEST_MODULES = \
 					Socket

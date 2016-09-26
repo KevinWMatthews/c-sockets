@@ -4,7 +4,6 @@
 #ROOT_DIRECTORY=
 SRC_DIRS = src src_platform products/$(PRODUCT)
 INC_DIRS = inc src_platform products/$(PRODUCT)
-TEST_DIRS = tests/$(TEST_MODULE)
 BUILD_DIR = build
 OBJECT_DIR = obj
 
