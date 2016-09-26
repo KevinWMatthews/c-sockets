@@ -49,6 +49,14 @@ int Socket_GetDescriptor(Socket);
  */
 int Socket_Receive(Socket, char * buffer, unsigned int buffer_length);
 
+/*
+ * Send a message to the given socket.
+ * Messge length does not include the null terminator.
+ * On success, returns the number of characters in the message that was sent (not including null terminator).
+ * On failure, returns < 0.
+ */
+int Socket_Send(Socket, char * message, unsigned int message_length);
+
 enum
 {
     SOCKET_INVALID_IP_ADDRESS = 0

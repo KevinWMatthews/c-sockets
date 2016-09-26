@@ -81,6 +81,15 @@ TEST_GROUP(Socket)
             .withParameter("buffer_length", buffer_length)
             .andReturnValue(return_code);
     }
+
+    void expectSocketSend(int socket_descriptor, char * message, unsigned int message_length, int return_code)
+    {
+        mock().expectOneCall("SocketSystemLayer_Send")
+            .withParameter("descriptor", socket_descriptor)
+            .withParameter("message", message)
+            .withParameter("message_length", message_length)
+            .andReturnValue(return_code);
+    }
 };
 
 #define CHECK_SOCKET_RESET(socket) \
@@ -484,4 +493,71 @@ TEST(Socket, can_not_receive_from_a_null_socket)
     unsigned int message_length = sizeof(message_buffer) - 1;
 
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Receive(NULL, message_buffer, message_length) );
+}
+
+// Send
+TEST(Socket, it_can_send_data_to_a_socket)
+{
+    const char * ip_address = "192.168.2.1";
+    int port = 10004;
+    char message[] = "A";
+    unsigned int message_length = sizeof(message);
+    int number_of_bytes_sent = 1;
+
+    expectSocketOpen(socket_descriptor);
+    expectSocketConnect(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketSend(socket_descriptor, message, message_length, number_of_bytes_sent);
+
+    Socket_Open(socket);
+    Socket_Connect(socket, ip_address, port);
+
+    LONGS_EQUAL( number_of_bytes_sent, Socket_Send(socket, message, message_length) );
+}
+
+TEST(Socket, it_can_fail_send_data_to_a_socket)
+{
+    const char * ip_address = "192.168.2.1";
+    int port = 10004;
+    char message[] = "Hello";
+    unsigned int message_length = sizeof(message);
+
+    expectSocketOpen(socket_descriptor);
+    expectSocketConnect(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketSend(socket_descriptor, message, message_length, SOCKET_SYSTEM_LAYER_FAIL);
+
+    Socket_Open(socket);
+    Socket_Connect(socket, ip_address, port);
+
+    LONGS_EQUAL( SOCKET_FAIL, Socket_Send(socket, message, message_length) );
+}
+
+TEST(Socket, it_will_not_send_a_null_message)
+{
+    const char * ip_address = "192.168.2.1";
+    int port = 10004;
+    unsigned int message_length = 7;
+
+    expectSocketOpen(socket_descriptor);
+    expectSocketConnect(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+
+    Socket_Open(socket);
+    Socket_Connect(socket, ip_address, port);
+
+    LONGS_EQUAL( SOCKET_INVALID_BUFFER, Socket_Send(socket, NULL, message_length) );
+}
+
+TEST(Socket, it_will_not_send_a_zero_length_message)
+{
+    const char * ip_address = "192.168.2.1";
+    int port = 10004;
+    char message[] = "Hello";
+    unsigned int message_length = 0;
+
+    expectSocketOpen(socket_descriptor);
+    expectSocketConnect(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+
+    Socket_Open(socket);
+    Socket_Connect(socket, ip_address, port);
+
+    LONGS_EQUAL( SOCKET_INVALID_BUFFER, Socket_Send(socket, message, message_length) );
 }

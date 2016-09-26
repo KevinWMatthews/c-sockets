@@ -142,3 +142,16 @@ int Socket_Receive(Socket self, char * buffer, unsigned int buffer_length)
         return SOCKET_FAIL;
     return return_code;
 }
+
+int Socket_Send(Socket self, char * message, unsigned int message_length)
+{
+    int return_code = SOCKET_SYSTEM_LAYER_FAIL;
+    RETURN_VALUE_IF_NULL(message, SOCKET_INVALID_BUFFER);
+    if (message_length == 0)
+        return SOCKET_INVALID_BUFFER;
+
+    return_code = SocketSystemLayer_Send(self->socket_descriptor, message, message_length);
+    if (return_code < 0)
+        return SOCKET_FAIL;
+    return return_code;
+}
