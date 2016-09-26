@@ -111,6 +111,7 @@ TEST_GROUP(Socket)
  *      Do all open tests need to close the socket as well?
  *
  *  Close:
+ *      Return error code on failure?
  *
  *  Connect (client only):
  *      Sanitize IP address and port.
