@@ -26,6 +26,13 @@ int Socket_Listen(Socket);
 // On failure, returns a null pointer.
 Socket Socket_Accept(Socket);
 
+/*
+ * Pass a client socket and the IP address and port that you
+ * wish to connect to.
+ * Returns SOCKET_RETURN_CODE
+ */
+int Socket_Connect(Socket, const char * ip_address, int port);
+
 enum
 {
     SOCKET_INVALID_DESCRIPTOR = -1,

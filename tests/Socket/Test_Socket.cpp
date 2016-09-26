@@ -63,6 +63,15 @@ TEST_GROUP(Socket)
             .withParameter("descriptor", server_socket_descriptor)
             .andReturnValue(client_socket_descriptor);
     }
+
+    void expectSocketConnect(int socket_descriptor, const char *ip_address, int port, int return_code)
+    {
+        mock().expectOneCall("SocketSystemLayer_Connect")
+            .withParameter("descriptor", socket_descriptor)
+            .withParameter("ip_address", ip_address)
+            .withParameter("port", port)
+            .andReturnValue(return_code);
+    }
 };
 
 #define CHECK_SOCKET_RESET(socket) \
@@ -86,8 +95,7 @@ TEST_GROUP(Socket)
  *  Close:
  *
  *  Connect (client only):
- *      Can fail.
- *      Will not crash with null pointer.
+ *      Sanitize IP address and port.
  *
  *  Bind (server only):
  *      Bind to any address.
@@ -142,6 +150,7 @@ TEST(Socket, it_can_handle_null_pointers)
     LONGS_EQUAL( SOCKET_INVALID_PORT, Socket_GetPort(NULL) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Listen(NULL) );
     LONGS_EQUAL( NULL, Socket_Accept(NULL) );
+    LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Connect(NULL, "192.168.2.1", 8888) );
 }
 
 TEST(Socket, bind_can_accept_null_pointers)
@@ -357,4 +366,38 @@ TEST(Socket, it_can_fail_to_accept)
     Socket_Listen(socket);
 
     LONGS_EQUAL( NULL, Socket_Accept(socket) );
+}
+
+// Connect
+TEST(Socket, it_can_connect_to_a_socket)
+{
+    const char * ip_address = "192.168.2.1";
+    int port = 10004;
+
+    expectSocketOpen(socket_descriptor);
+    expectSocketConnect(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    Socket_Open(socket);
+
+    LONGS_EQUAL( SOCKET_SUCCESS, Socket_Connect(socket, ip_address, port) );
+}
+
+TEST(Socket, connect_ip_address_can_not_be_null)
+{
+    int port = 10004;
+
+    expectSocketOpen(socket_descriptor);
+    Socket_Open(socket);
+
+    LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Connect(socket, NULL, port) );
+}
+
+TEST(Socket, it_can_fail_to_connect_to_a_socket)
+{
+    const char * ip_address = "192.168.2.1";
+    int port = 10004;
+
+    expectSocketOpen(socket_descriptor);
+    expectSocketConnect(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_FAIL);
+    Socket_Open(socket);
+    LONGS_EQUAL( SOCKET_FAIL, Socket_Connect(socket, ip_address, port) );
 }

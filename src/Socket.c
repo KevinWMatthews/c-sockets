@@ -115,3 +115,15 @@ Socket Socket_Accept(Socket self)
     SocketSystemLayer_Accept(self->socket_descriptor);
     return 0;
 }
+
+int Socket_Connect(Socket self, const char * ip_address, int port)
+{
+    int return_code = SOCKET_SYSTEM_LAYER_FAIL;
+    RETURN_VALUE_IF_NULL(self, SOCKET_NULL_POINTER);
+    RETURN_VALUE_IF_NULL(ip_address, SOCKET_NULL_POINTER);
+
+    return_code = SocketSystemLayer_Connect(self->socket_descriptor, ip_address, port);
+    if (return_code < 0)
+        return SOCKET_FAIL;
+    return SOCKET_SUCCESS;
+}

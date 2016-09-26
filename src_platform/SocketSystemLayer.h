@@ -12,5 +12,6 @@ int SocketSystemLayer_Close(int);
 int SocketSystemLayer_Bind(int descriptor, const char * ip_address, int port);
 int SocketSystemLayer_Listen(int descriptor, int backlog);
 int SocketSystemLayer_Accept(int descriptor);
+int SocketSystemLayer_Connect(int descriptor, const char * ip_address, int port);
 
 #endif
