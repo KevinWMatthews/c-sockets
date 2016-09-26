@@ -8,6 +8,9 @@ Clean up socket system layer:
         It is/should be stored with the Socket in a higher layer.
         It should probably be another argument....
 
+Allow flags in Send().
+Allow flags in Receive().
+
 Write some demo programs and see if they can connect!
 Create send() and receive() to make sure that it really works. :)
 

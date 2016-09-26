@@ -62,3 +62,14 @@ int SocketSystemLayer_Connect(int descriptor, const char * ip_address, int port)
     socket.sin_port = htons(port);
     return connect( descriptor, (struct sockaddr *)&socket, sizeof(socket) );
 }
+
+int SocketSystemLayer_Send(int descriptor, const char * message, unsigned int message_length)
+{
+    // MSG_NOSIGNAL suppresses SIGPIPE signal and lets the user handle the error.
+    return send(descriptor, message, message_length, MSG_NOSIGNAL);
+}
+
+int SocketSystemLayer_Receive(int descriptor, char * buffer, unsigned int buffer_length)
+{
+    return recv(descriptor, buffer, buffer_length, 0);
+}
