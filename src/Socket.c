@@ -1,5 +1,6 @@
 #include "Socket.h"
 #include "SocketSystemLayer.h"
+#include <stdlib.h>
 
 #define RETURN_IF_NULL(pointer) \
     if ( (pointer) == 0 ) { return; }

@@ -1,7 +1,8 @@
 # Set to @ to keep this makefile quiet
 SILENCE = @
 
-ALL_PRODUCTS =
+ALL_PRODUCTS =	\
+				Server
 
 ALL_TEST_MODULES = \
 					Socket
