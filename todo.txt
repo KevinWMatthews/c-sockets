@@ -1,1 +1,10 @@
+Clean up socket system layer:
+    Extract converting address and port.
+    Figure out how to get sin_family (AF_INET) as an argument. It must be configurable.
+        It is/should be stored with the Socket in a higher layer.
+        It should probably be another argument....
+
+Write some demo programs and see if they can connect!
+Create send() and receive() to make sure that it really works. :)
+
 Make a distclean option. Remove build, obj, all build directories.
