@@ -124,24 +124,19 @@ TEST_GROUP(Socket)
  *  Accept (server only):
  *
  *  Send:
- *      Can fail.
- *      Will not crash with null pointer.
+ *      Add flags.
  *
  *  Receive:
- *      Can fail.
- *      Will not crash with null pointer.
+ *      Add flags.
  *
- *  Get handle [file descriptor]:
+ *  GetDescriptor]:
  *      Can fail.
- *      Will not crash with null pointer.
  *
- *  Get IP address:
+ *  GetIpAddress:
  *      Can fail.
- *      Will not crash with null pointer.
  *
- *  Get port:
+ *  GetPort:
  *      Can fail.
- *      Will not crash with null pointer.
  *
  *  Set option:
  *      Can fail.
