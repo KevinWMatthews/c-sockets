@@ -21,6 +21,11 @@ void Socket_Close(Socket);
 int Socket_Bind(Socket, const char * ip_address, int port);
 int Socket_Listen(Socket);
 
+// Pass a server socket that is going to accept a connection.
+// On success, returns a pointer to the client socket that it connected to.
+// On failure, returns a null pointer.
+Socket Socket_Accept(Socket);
+
 enum
 {
     SOCKET_INVALID_DESCRIPTOR = -1,

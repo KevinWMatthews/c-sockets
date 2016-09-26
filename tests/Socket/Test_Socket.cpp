@@ -56,6 +56,13 @@ TEST_GROUP(Socket)
             .withParameter("backlog", 0)
             .andReturnValue(return_code);
     }
+
+    void expectSocketAccept(int server_socket_descriptor, int client_socket_descriptor)
+    {
+        mock().expectOneCall("SocketSystemLayer_Accept")
+            .withParameter("descriptor", server_socket_descriptor)
+            .andReturnValue(client_socket_descriptor);
+    }
 };
 
 #define CHECK_SOCKET_RESET(socket) \
@@ -88,8 +95,6 @@ TEST_GROUP(Socket)
  *  Listen (server only):
  *
  *  Accept (server only):
- *      Can fail.
- *      Will not crash with null pointer.
  *
  *  Send:
  *      Can fail.
@@ -136,6 +141,7 @@ TEST(Socket, it_can_handle_null_pointers)
     POINTERS_EQUAL( SOCKET_INVALID_IP_ADDRESS, Socket_GetIpAddress(NULL) );
     LONGS_EQUAL( SOCKET_INVALID_PORT, Socket_GetPort(NULL) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Listen(NULL) );
+    LONGS_EQUAL( NULL, Socket_Accept(NULL) );
 }
 
 TEST(Socket, bind_can_accept_null_pointers)
@@ -332,4 +338,23 @@ TEST(Socket, it_can_fail_to_listen)
     Socket_Bind(socket, ip_address, port);
 
     LONGS_EQUAL( SOCKET_FAIL, Socket_Listen(socket) );
+}
+
+// Accept
+TEST(Socket, it_can_fail_to_accept)
+{
+    int new_socket_descriptor = 66;
+    const char * ip_address = "192.168.2.1";
+    int port = 10004;
+
+    expectSocketOpen(socket_descriptor);
+    expectSocketBind(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketListen(socket_descriptor, SOCKET_SYSTEM_LAYER_FAIL);
+    expectSocketAccept(socket_descriptor, new_socket_descriptor);
+
+    Socket_Open(socket);
+    Socket_Bind(socket, ip_address, port);
+    Socket_Listen(socket);
+
+    LONGS_EQUAL( NULL, Socket_Accept(socket) );
 }

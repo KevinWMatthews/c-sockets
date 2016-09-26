@@ -34,3 +34,10 @@ int SocketSystemLayer_Listen(int descriptor, int backlog)
         .withParameter("backlog", backlog);
     return mock().intReturnValue();
 }
+
+int SocketSystemLayer_Accept(int descriptor)
+{
+    mock().actualCall("SocketSystemLayer_Accept")
+        .withParameter("descriptor", descriptor);
+    return mock().intReturnValue();
+}

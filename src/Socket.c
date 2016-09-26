@@ -108,3 +108,10 @@ int Socket_Listen(Socket self)
         return SOCKET_FAIL;
     return SOCKET_SUCCESS;
 }
+
+Socket Socket_Accept(Socket self)
+{
+    RETURN_VALUE_IF_NULL(self, 0);
+    SocketSystemLayer_Accept(self->socket_descriptor);
+    return 0;
+}
