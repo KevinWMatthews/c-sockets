@@ -3,6 +3,7 @@
 #include <string.h>
 #include <pthread.h>
 #include <stdlib.h>
+#include <errno.h>
 
 static void close_and_destroy_socket(Socket *socket)
 {
@@ -19,7 +20,7 @@ static void * socket_handler_thread(void * client_socket)
 
     if ( Socket_Send( socket, confirm_connection, strlen(confirm_connection) ) < 0 )
     {
-        printf("Send failed!\n");
+        perror("Send failed");
         close_and_destroy_socket(&socket);
         exit(EXIT_FAILURE);
         return NULL;
@@ -29,10 +30,12 @@ static void * socket_handler_thread(void * client_socket)
     {
         memset( buffer, 0, sizeof(buffer) );
         Socket_Receive( socket, buffer, sizeof(buffer) );
-        printf("Received data from client. Sending response to client...\n");
+        printf("Received data from client:\n");
+        printf("%s\n", buffer);
+        printf("Sending response to client...\n");
         if ( Socket_Send(socket, buffer, sizeof(buffer) ) < 0 )
         {
-            printf("Send failed!\n");
+            perror("Send failed");
             close_and_destroy_socket(&socket);
             exit(EXIT_FAILURE);
             return NULL;
@@ -62,7 +65,7 @@ int main(void)
     printf("Opening socket...\n");
     if ( Socket_Open(server_socket) < 0 )
     {
-        printf("Open failed!\n");
+        perror("Open failed");
         Socket_Destroy(&server_socket);
         return 1;
     }
@@ -70,7 +73,7 @@ int main(void)
     printf("Binding socket...\n");
     if ( Socket_Bind(server_socket, "127.0.0.1", 8888) < 0 )
     {
-        printf("Bind failed!\n");
+        perror("Bind failed");
         close_and_destroy_socket(&server_socket);
         return 1;
     }
@@ -78,7 +81,7 @@ int main(void)
     printf("Listening on socket...\n");
     if ( Socket_Listen(server_socket) < 0 ) //TODO experiment with the backlog?
     {
-        printf("Listen failed!\n");
+        perror("Listen failed");
         close_and_destroy_socket(&server_socket);
         return 1;
     }
@@ -90,7 +93,7 @@ int main(void)
         client_socket = Socket_Accept(server_socket);
         if (!client_socket)
         {
-            printf("Accept failed!\n");
+            perror("Accept failed");
             close_and_destroy_socket(&server_socket);
             return 1;
         }
