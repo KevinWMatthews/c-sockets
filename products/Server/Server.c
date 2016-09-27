@@ -50,6 +50,11 @@ static void * socket_handler_thread(void * client_socket)
 int main(void)
 {
     Socket server_socket = 0;
+    SocketSettingsStruct server_socket_settings = {
+        .domain = SOCKET_DOMAIN_IPV4,
+        .type = SOCKET_TYPE_STREAM,
+        .protocol = SOCKET_PROTOCOL_DEFAULT
+    };
     Socket client_socket = 0;
 
     printf("Server starting up...\n");
@@ -63,7 +68,7 @@ int main(void)
     }
 
     printf("Opening socket...\n");
-    if ( Socket_Open(server_socket) < 0 )
+    if ( Socket_Open(server_socket, &server_socket_settings) < 0 )
     {
         perror("Open failed");
         Socket_Destroy(&server_socket);

@@ -5,9 +5,12 @@ extern "C"
 
 #include "CppUTestExt/MockSupport.h"
 
-int SocketSystemLayer_Open(void)
+int SocketSystemLayer_Open(int domain, int type, int protocol)
 {
-    mock().actualCall("SocketSystemLayer_Open");
+    mock().actualCall("SocketSystemLayer_Open")
+        .withParameter("domain", domain)
+        .withParameter("type", type)
+        .withParameter("protocol", protocol);
     return mock().intReturnValue();
 }
 

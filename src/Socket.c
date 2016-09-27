@@ -34,17 +34,62 @@ void Socket_Destroy(Socket * self)
     *self = 0;
 }
 
-int Socket_Open(Socket self)
+static int convert_socket_domain(SocketDomain domain)
 {
+    switch (domain)
+    {
+        case SOCKET_DOMAIN_IPV4:
+            return SOCKET_SYSTEM_DOMAIN_IPV4;
+    }
+    return SOCKET_INVALID_SETTING;
+}
+
+static int convert_socket_type(SocketType type)
+{
+    switch (type)
+    {
+        case SOCKET_TYPE_STREAM:
+            return SOCKET_SYSTEM_TYPE_STREAM;
+    }
+    return SOCKET_INVALID_SETTING;
+}
+
+static int convert_socket_protocol(SocketProtocol protocol)
+{
+    switch (protocol)
+    {
+        case SOCKET_PROTOCOL_DEFAULT:
+            return SOCKET_SYSTEM_PROTOCOL_DEFAULT;
+    }
+    return SOCKET_INVALID_SETTING;
+}
+
+int Socket_Open(Socket self, SocketSettings settings)
+{
+    int system_domain = -1;
+    int system_type = -1;
+    int system_protocol = -1;
+
     RETURN_VALUE_IF_NULL(self, SOCKET_NULL_POINTER);
+    RETURN_VALUE_IF_NULL(settings, SOCKET_NULL_POINTER);
     if (self->socket_descriptor != SOCKET_INVALID_DESCRIPTOR)
         return SOCKET_ALREADY_OPEN;
 
-    self->socket_descriptor = SocketSystemLayer_Open();
-    if (self->socket_descriptor == SOCKET_SYSTEM_LAYER_FAIL)
-    {
+    system_domain = convert_socket_domain(settings->domain);
+    if (system_domain == SOCKET_INVALID_SETTING)
+        return SOCKET_INVALID_SETTING;
+
+    system_type = convert_socket_type(settings->type);
+    if (system_type == SOCKET_INVALID_SETTING)
+        return SOCKET_INVALID_SETTING;
+
+    system_protocol = convert_socket_protocol(settings->protocol);
+    if (system_protocol == SOCKET_INVALID_SETTING)
+        return SOCKET_INVALID_SETTING;
+
+    self->socket_descriptor = SocketSystemLayer_Open(system_domain, system_type, system_protocol);
+    if (self->socket_descriptor < 0)
         return SOCKET_FAIL;
-    }
     return SOCKET_SUCCESS;
 }
 

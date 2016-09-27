@@ -1,27 +1,11 @@
 #include "SocketSystemLayer.h"
-#include <sys/types.h>
-#include <sys/socket.h>
 #include <unistd.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-
-typedef enum
+int SocketSystemLayer_Open(int domain, int type, int protocol)
 {
-    SOCKET_SYSTEM_DOMAIN_IPV4 = AF_INET
-} SocketSystemLayer_Domain;
-typedef enum
-{
-    SOCKET_SYSTEM_TYPE_STREAM = SOCK_STREAM
-} SocketSystemLayer_Type;
-typedef enum
-{
-    SOCKET_SYSTEM_PROTOCOL_DEFAULT = 0
-} SocketSystemLayer_Protocol;
-
-int SocketSystemLayer_Open(void)
-{
-    return socket(SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
+    return socket(domain, type, protocol);
 }
 
 int SocketSystemLayer_Close(int descriptor)

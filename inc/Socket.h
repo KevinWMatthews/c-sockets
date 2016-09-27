@@ -9,6 +9,7 @@ typedef struct SocketStruct * Socket;
 
 typedef enum
 {
+    SOCKET_INVALID_SETTING = -6,
     SOCKET_INVALID_BUFFER = -5,
     SOCKET_ADDRESS_IN_USE = -4,
     SOCKET_ALREADY_OPEN = -3,
@@ -28,12 +29,33 @@ Socket Socket_Create(void);
  */
 void Socket_Destroy(Socket *);
 
+typedef enum
+{
+    SOCKET_DOMAIN_IPV4 = 0
+} SocketDomain;
+typedef enum
+{
+    SOCKET_TYPE_STREAM = 0
+} SocketType;
+typedef enum
+{
+    SOCKET_PROTOCOL_DEFAULT = 0
+} SocketProtocol;
+typedef struct SocketSettingsStruct * SocketSettings;
+typedef struct SocketSettingsStruct
+{
+    SocketDomain domain;
+    SocketType type;
+    SocketProtocol protocol;
+} SocketSettingsStruct;
 /*
- * Open the given socket and track the file descriptor.
+ * Open and configure the given socket and track the file descriptor.
+ * You must configure the settings when the socket is opened.
+ * Other options can be set later.
  * On success, returns 0.
  * On failure, returns < 0.
  */
-int Socket_Open(Socket);
+int Socket_Open(Socket self, SocketSettings settings);
 
 /*
  * Close the given socket.
