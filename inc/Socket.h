@@ -3,6 +3,10 @@
 
 typedef struct SocketStruct * Socket;
 
+#ifndef NULL
+#define NULL 0
+#endif
+
 typedef enum
 {
     SOCKET_INVALID_BUFFER = -5,

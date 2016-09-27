@@ -364,16 +364,36 @@ TEST(Socket, it_can_fail_to_listen)
 }
 
 // Accept
-TEST(Socket, it_can_fail_to_accept)
+TEST(Socket, a_server_can_accpet_a_connection)
 {
+    Socket new_socket = {0};
     int new_socket_descriptor = 66;
     const char * ip_address = "192.168.2.1";
     int port = 10004;
 
     expectSocketOpen(socket_descriptor);
     expectSocketBind(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
-    expectSocketListen(socket_descriptor, SOCKET_SYSTEM_LAYER_FAIL);
+    expectSocketListen(socket_descriptor, SOCKET_SYSTEM_LAYER_SUCCESS);
     expectSocketAccept(socket_descriptor, new_socket_descriptor);
+
+    Socket_Open(socket);
+    Socket_Bind(socket, ip_address, port);
+    Socket_Listen(socket);
+
+    new_socket = Socket_Accept(socket);
+    LONGS_EQUAL( new_socket_descriptor, Socket_GetDescriptor(new_socket) );
+    Socket_Destroy(&new_socket);
+}
+
+TEST(Socket, it_can_fail_to_accept)
+{
+    const char * ip_address = "192.168.2.1";
+    int port = 10004;
+
+    expectSocketOpen(socket_descriptor);
+    expectSocketBind(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketListen(socket_descriptor, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketAccept(socket_descriptor, SOCKET_SYSTEM_LAYER_FAIL);
 
     Socket_Open(socket);
     Socket_Bind(socket, ip_address, port);

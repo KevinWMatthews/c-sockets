@@ -18,7 +18,7 @@ typedef struct SocketStruct
 Socket Socket_Create(void)
 {
     Socket self = calloc( 1, sizeof(*self) );
-    RETURN_VALUE_IF_NULL(self, 0);
+    RETURN_VALUE_IF_NULL(self, NULL);
 
     self->socket_descriptor = SOCKET_INVALID_DESCRIPTOR;
     self->ip_address = SOCKET_INVALID_IP_ADDRESS;
@@ -112,9 +112,18 @@ int Socket_Listen(Socket self)
 
 Socket Socket_Accept(Socket self)
 {
-    RETURN_VALUE_IF_NULL(self, 0);
-    SocketSystemLayer_Accept(self->socket_descriptor);
-    return 0;
+    Socket client_socket = {0};
+    int return_code = SOCKET_SYSTEM_LAYER_FAIL;
+    RETURN_VALUE_IF_NULL(self, NULL);
+
+    return_code = SocketSystemLayer_Accept(self->socket_descriptor);
+    if ( return_code < 0 )
+        return NULL;
+
+    client_socket = Socket_Create();
+    RETURN_VALUE_IF_NULL(client_socket, NULL);
+    client_socket->socket_descriptor = return_code;
+    return client_socket;
 }
 
 int Socket_Connect(Socket self, const char * ip_address, int port)
