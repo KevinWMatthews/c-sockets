@@ -50,6 +50,8 @@ static int convert_socket_type(SocketType type)
     {
         case SOCKET_TYPE_STREAM:
             return SOCKET_SYSTEM_TYPE_STREAM;
+        case SOCKET_TYPE_DATAGRAM:
+            return SOCKET_SYSTEM_TYPE_DATAGRAM;
     }
     return SOCKET_INVALID_SETTING;
 }
@@ -60,6 +62,10 @@ static int convert_socket_protocol(SocketProtocol protocol)
     {
         case SOCKET_PROTOCOL_DEFAULT:
             return SOCKET_SYSTEM_PROTOCOL_DEFAULT;
+        case SOCKET_PROTOCOL_TCP:
+            return SOCKET_SYSTEM_PROTOCOL_TCP;
+        case SOCKET_PROTOCOL_UDP:
+            return SOCKET_SYSTEM_PROTOCOL_UDP;
     }
     return SOCKET_INVALID_SETTING;
 }

@@ -118,6 +118,7 @@ TEST_GROUP(Socket)
  *
  *  Open:
  *      Do all open tests need to close the socket as well?
+ *      UDP must work with default protocol.
  *
  *  Close:
  *      Return error code on failure?
@@ -188,6 +189,32 @@ TEST(Socket, bind_can_accept_null_pointers)
 TEST(Socket, it_can_open_a_socket)
 {
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
+
+    LONGS_EQUAL( SOCKET_SUCCESS, Socket_Open(socket, socket_settings) );
+
+    LONGS_EQUAL( socket_descriptor, Socket_GetDescriptor(socket) );
+    CHECK_SOCKET_ADDRESS_AND_PORT(socket, SOCKET_INVALID_IP_ADDRESS, SOCKET_INVALID_PORT);
+}
+
+TEST(Socket, it_can_open_a_tcp_socket)
+{
+    socket_settings_struct.domain = SOCKET_DOMAIN_IPV4;
+    socket_settings_struct.type = SOCKET_TYPE_STREAM;
+    socket_settings_struct.protocol = SOCKET_PROTOCOL_TCP;
+    expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_TCP);
+
+    LONGS_EQUAL( SOCKET_SUCCESS, Socket_Open(socket, socket_settings) );
+
+    LONGS_EQUAL( socket_descriptor, Socket_GetDescriptor(socket) );
+    CHECK_SOCKET_ADDRESS_AND_PORT(socket, SOCKET_INVALID_IP_ADDRESS, SOCKET_INVALID_PORT);
+}
+
+TEST(Socket, it_can_open_a_udp_socket)
+{
+    socket_settings_struct.domain = SOCKET_DOMAIN_IPV4;
+    socket_settings_struct.type = SOCKET_TYPE_DATAGRAM;
+    socket_settings_struct.protocol = SOCKET_PROTOCOL_UDP;
+    expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_DATAGRAM, SOCKET_SYSTEM_PROTOCOL_UDP);
 
     LONGS_EQUAL( SOCKET_SUCCESS, Socket_Open(socket, socket_settings) );
 

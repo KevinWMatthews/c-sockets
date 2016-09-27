@@ -3,6 +3,7 @@
 
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
 
 typedef enum
 {
@@ -17,11 +18,14 @@ typedef enum
 } SocketSystemLayerDomain;
 typedef enum
 {
-    SOCKET_SYSTEM_TYPE_STREAM = SOCK_STREAM
+    SOCKET_SYSTEM_TYPE_STREAM = SOCK_STREAM,
+    SOCKET_SYSTEM_TYPE_DATAGRAM = SOCK_DGRAM
 } SocketSystemLayerType;
 typedef enum
 {
-    SOCKET_SYSTEM_PROTOCOL_DEFAULT = 0
+    SOCKET_SYSTEM_PROTOCOL_DEFAULT = 0,
+    SOCKET_SYSTEM_PROTOCOL_TCP = IPPROTO_TCP,
+    SOCKET_SYSTEM_PROTOCOL_UDP = IPPROTO_UDP
 } SocketSystemLayerProtocol;
 int SocketSystemLayer_Open(int domain, int type, int protocol);
 int SocketSystemLayer_Close(int);

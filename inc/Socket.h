@@ -35,11 +35,14 @@ typedef enum
 } SocketDomain;
 typedef enum
 {
-    SOCKET_TYPE_STREAM = 0
+    SOCKET_TYPE_STREAM = 0,
+    SOCKET_TYPE_DATAGRAM = 1
 } SocketType;
 typedef enum
 {
-    SOCKET_PROTOCOL_DEFAULT = 0
+    SOCKET_PROTOCOL_DEFAULT = 0,
+    SOCKET_PROTOCOL_TCP = 1,
+    SOCKET_PROTOCOL_UDP = 2
 } SocketProtocol;
 typedef struct SocketSettingsStruct * SocketSettings;
 typedef struct SocketSettingsStruct
