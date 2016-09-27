@@ -7,6 +7,7 @@ INC_DIRS = inc src_platform products/$(PRODUCT)
 TEST_DIRS = tests/$(TEST_MODULE)
 BUILD_DIR = build
 OBJECT_DIR = obj
+LIBRARIES = pthread
 
 # Pass project configuration to the submake
 export SRC_DIRS
