@@ -6,6 +6,11 @@ Refactor setting Open() expectations. Create helper methods to:
     Set TCP socket.
     Set UDP socket.
 
+Come up with a different way to parse program options:
+    Getopt (try this first?).
+    Argp
+These are both GNU C library modules.
+
 Clean up socket system layer:
     Extract converting address and port.
     Figure out how to get sin_family (AF_INET) as an argument. It must be configurable.
