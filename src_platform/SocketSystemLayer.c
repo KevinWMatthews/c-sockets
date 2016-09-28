@@ -12,6 +12,12 @@ int SocketSystemLayer_Close(int descriptor)
     return close(descriptor);
 }
 
+int SocketSystemLayer_SetOptions(int descriptor, int option_level, int option_name,
+        void * option_value, int option_length)
+{
+    return setsockopt(descriptor, option_level, option_name, option_value, option_length);
+}
+
 int SocketSystemLayer_Bind(int descriptor, const char * ip_address, int port)
 {
     struct sockaddr_in socket;

@@ -99,6 +99,24 @@ int Socket_Open(Socket self, SocketSettings settings)
     return SOCKET_SUCCESS;
 }
 
+int Socket_SetOptions(Socket self, SocketOptions options)
+{
+    const int option_value = 1;
+    int return_code = SOCKET_SYSTEM_LAYER_FAIL;
+
+    RETURN_VALUE_IF_NULL(self, SOCKET_NULL_POINTER);
+    RETURN_VALUE_IF_NULL(options, SOCKET_NULL_POINTER);
+    return_code = SocketSystemLayer_SetOptions(
+            self->socket_descriptor,
+            SOCKET_SYSTEM_OPTION_LEVEL_SOCKET,
+            SOCKET_SYSTEM_OPTION_BROADCAST,
+            (void *)&option_value,
+            sizeof(int) );
+    if (return_code < 0)
+        return SOCKET_FAIL;
+    return SOCKET_SUCCESS;
+}
+
 void Socket_Close(Socket self)
 {
     RETURN_IF_NULL(self);

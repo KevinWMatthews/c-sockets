@@ -60,6 +60,20 @@ typedef struct SocketSettingsStruct
  */
 int Socket_Open(Socket self, SocketSettings settings);
 
+typedef enum
+{
+    SOCKET_UDP_BROADCAST = 0
+} SocketOptionName;
+typedef struct SocketOptionsStruct * SocketOptions;
+typedef struct SocketOptionsStruct
+{
+    SocketOptionName option_name;
+} SocketOptionsStruct;
+/*
+ * Set options for the given socket.
+ */
+int Socket_SetOptions(Socket self, SocketOptions options);
+
 /*
  * Close the given socket.
  */

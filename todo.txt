@@ -2,6 +2,10 @@ Rethink and recompare new tests to old.
     Should we close after tests?
     Should we split test files?
 
+Refactor setting Open() expectations. Create helper methods to:
+    Set TCP socket.
+    Set UDP socket.
+
 Clean up socket system layer:
     Extract converting address and port.
     Figure out how to get sin_family (AF_INET) as an argument. It must be configurable.

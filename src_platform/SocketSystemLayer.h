@@ -36,4 +36,16 @@ int SocketSystemLayer_Connect(int descriptor, const char * ip_address, int port)
 int SocketSystemLayer_Send(int descriptor, const char * message, unsigned int message_length);
 int SocketSystemLayer_Receive(int descriptor, char * buffer, unsigned int buffer_length);
 
+typedef enum
+{
+    SOCKET_SYSTEM_OPTION_LEVEL_SOCKET = SOL_SOCKET
+} SocketSystemLayer_OptionLevel;
+
+typedef enum
+{
+    SOCKET_SYSTEM_OPTION_BROADCAST = SO_BROADCAST
+} SocketSystemLayer_OptionName;
+int SocketSystemLayer_SetOptions(int descriptor, int option_level, int option_name,
+        void * option_value, int option_length);
+
 #endif

@@ -14,6 +14,22 @@ int SocketSystemLayer_Open(int domain, int type, int protocol)
     return mock().intReturnValue();
 }
 
+int SocketSystemLayer_SetOptions(int descriptor, int option_level, int option_name,
+        void * option_value, int option_length)
+{
+    // setsockopt() forces us to pass the option value as a pointer.
+    // This is generally (hopefully always!!) an int.
+    // I don't really want to compare pointers; I just need to verify that
+    // the variable pointed to by option value is set to 1.
+    mock().actualCall("SocketSystemLayer_SetOptions")
+        .withParameter("descriptor", descriptor)
+        .withParameter("option_level", option_level)
+        .withParameter("option_name", option_name)
+        .withParameter("option_value", *(int *)option_value)
+        .withParameter("option_length", option_length);
+    return mock().intReturnValue();
+}
+
 int SocketSystemLayer_Close(int descriptor)
 {
     mock().actualCall("SocketSystemLayer_Close")

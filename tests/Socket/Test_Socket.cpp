@@ -42,6 +42,18 @@ TEST_GROUP(Socket)
             .andReturnValue(socket_descriptor_or_error_code);
     }
 
+    void expectSetOption(int socket_descriptor, int option_level, int option_name, int return_code)
+    {
+        int option_value = 1;
+        mock().expectOneCall("SocketSystemLayer_SetOptions")
+            .withParameter("descriptor", socket_descriptor)
+            .withParameter("option_level", option_level)
+            .withParameter("option_name", option_name)
+            .withParameter("option_value", option_value)
+            .withParameter("option_length", sizeof(option_value))
+            .andReturnValue(return_code);
+    }
+
     void expectSocketClose(int socket_descriptor, int return_code)
     {
         mock().expectOneCall("SocketSystemLayer_Close")
@@ -150,7 +162,8 @@ TEST_GROUP(Socket)
  *
  *  Set option:
  *      Can fail.
- *      Will not crash with null pointer.
+ *      Can set UDP Broadcast.
+ *      Can set TCP Reuse Immediately.
  */
 
 // Create and destroy
@@ -274,6 +287,44 @@ TEST(Socket, open_will_fail_with_null_socket)
 TEST(Socket, open_will_fail_with_null_settings)
 {
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Open(socket, NULL) );
+}
+
+// SetSocketOptions
+TEST(Socket, it_can_set_broadcast_option_for_udp_sockets)
+{
+    socket_settings->type = SOCKET_TYPE_DATAGRAM;
+    SocketOptionsStruct options = {
+        .option_name = SOCKET_UDP_BROADCAST
+    };
+
+    expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_DATAGRAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
+    expectSetOption(socket_descriptor, SOCKET_SYSTEM_OPTION_LEVEL_SOCKET, SOCKET_SYSTEM_OPTION_BROADCAST, SOCKET_SYSTEM_LAYER_SUCCESS);
+
+    Socket_Open(socket, socket_settings);
+
+    LONGS_EQUAL( SOCKET_SUCCESS, Socket_SetOptions(socket, &options) );
+}
+
+TEST(Socket, set_options_fails_if_system_layer_fails)
+{
+    SocketOptionsStruct options;
+    expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
+    expectSetOption(socket_descriptor, SOCKET_SYSTEM_OPTION_LEVEL_SOCKET, SOCKET_SYSTEM_OPTION_BROADCAST, SOCKET_SYSTEM_LAYER_FAIL);
+
+    Socket_Open(socket, socket_settings);
+
+    LONGS_EQUAL( SOCKET_FAIL, Socket_SetOptions(socket, &options) );
+}
+
+TEST(Socket, set_options_fails_with_a_null_socket)
+{
+    SocketOptionsStruct options;
+    LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_SetOptions(NULL, &options) );
+}
+
+TEST(Socket, set_options_fails_with_null_options)
+{
+    LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_SetOptions(socket, NULL) );
 }
 
 // Close
