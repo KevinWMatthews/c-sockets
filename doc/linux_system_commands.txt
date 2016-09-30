@@ -1,0 +1,9 @@
+    When reading from Stream sockets,
+use recv(); it's simple and does the trick.
+
+    When reading from Datagram sockets,
+use recvfrom(); it contains a struct sockadr * that will tell you who sent the data.
+
+recvfrom() is blocking unless you configure it otherwise.
+recv() is blocking unless you configure it otherwise.
+recv() will return 0 when the connection is closed. Remember, you can't close a Datagram socket because it is connectionless.
