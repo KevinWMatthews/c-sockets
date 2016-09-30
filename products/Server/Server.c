@@ -4,6 +4,42 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <unistd.h>
+
+
+typedef struct ProgramOptionsStruct * ProgramOptions;
+typedef struct ProgramOptionsStruct
+{
+    char ip_address[16];
+    int port;
+} ProgramOptionsStruct;
+
+static void parse_options(ProgramOptions options, int argc, char * argv[])
+{
+    int i = 0;
+    char port[6] = {0};
+
+    if (options == 0)
+    {
+        printf("%s was passed a null pointer!\n", __func__);
+        return;
+    }
+
+    for (i = 0; i < argc; i++)
+    {
+        if ( strcmp(argv[i], "--ip-address") == 0 )
+        {
+            i++;
+            strcpy(options->ip_address, argv[i]);
+        }
+        if ( strcmp(argv[i], "--port") == 0 )
+        {
+            i++;
+            strcpy(port, argv[i]);
+            options->port = atoi(port);
+        }
+    }
+}
 
 static void close_and_destroy_socket(Socket *socket)
 {
@@ -17,6 +53,7 @@ static void * socket_handler_thread(void * client_socket)
     Socket socket = *(Socket *)client_socket;
     char * confirm_connection = "The server has accepted the connection.\n";
     char buffer[2000] = {0};
+    int return_code = SOCKET_FAIL;
 
     if ( Socket_Send( socket, confirm_connection, strlen(confirm_connection) ) < 0 )
     {
@@ -29,10 +66,20 @@ static void * socket_handler_thread(void * client_socket)
     while (1)
     {
         memset( buffer, 0, sizeof(buffer) );
-        Socket_Receive( socket, buffer, sizeof(buffer) );
-        printf("Received data from client:\n");
+        return_code = Socket_Receive( socket, buffer, sizeof(buffer) );
+        if (return_code < 0)
+        {
+            perror("Receive failure");
+            pthread_exit( (void *)&return_code );
+        }
+        else if (return_code == 0)
+        {
+            printf("Socket closed!\n");
+            pthread_exit( (void *)&return_code );
+        }
+        printf( "Received message from %s:%d, %d:\n", Socket_GetIpAddress(socket), Socket_GetPort(socket), Socket_GetDescriptor(socket) );
         printf("%s\n", buffer);
-        printf("Sending response to client...\n");
+        printf("Sending response to client... ");
         if ( Socket_Send(socket, buffer, sizeof(buffer) ) < 0 )
         {
             perror("Send failed");
@@ -40,14 +87,15 @@ static void * socket_handler_thread(void * client_socket)
             exit(EXIT_FAILURE);
             return NULL;
         }
-        printf("Message sent\n");
+        printf("message sent.\n");
     }
 
-    exit(EXIT_FAILURE);
+    return_code = 0;
+    pthread_exit( (void *)&return_code );
     return NULL;
 }
 
-int main(void)
+int main(int argc, char * argv[])
 {
     Socket server_socket = 0;
     SocketSettingsStruct server_socket_settings = {
@@ -56,8 +104,14 @@ int main(void)
         .protocol = SOCKET_PROTOCOL_DEFAULT
     };
     Socket client_socket = 0;
+    ProgramOptionsStruct user_options = {
+        .ip_address = "127.0.0.1",
+        .port = 8888
+    };
 
-    printf("Server starting up...\n");
+    parse_options(&user_options, argc, argv);
+
+    printf("Starting server at %s:%d...\n", user_options.ip_address, user_options.port);
 
     printf("Creating server socket...\n");
     server_socket = Socket_Create();
@@ -76,7 +130,7 @@ int main(void)
     }
 
     printf("Binding socket...\n");
-    if ( Socket_Bind(server_socket, "127.0.0.1", 8888) < 0 )
+    if ( Socket_Bind(server_socket, user_options.ip_address, user_options.port) < 0 )
     {
         perror("Bind failed");
         close_and_destroy_socket(&server_socket);
@@ -92,7 +146,7 @@ int main(void)
     }
 
     printf("Waiting to accept a connection...\n");
-    printf("To connect to this socket, open a new terminal window and type:\ntelnet localhost 8888\n");
+    printf("To connect to this socket, open a new terminal window and type:\ntelnet %s %d\n", user_options.ip_address, user_options.port);
     do
     {
         client_socket = Socket_Accept(server_socket);
@@ -108,11 +162,11 @@ int main(void)
             if ( pthread_create( &thread_handle, NULL, socket_handler_thread, (void *)&client_socket) < 0)
             {
                 printf("Failed to create thread\n");
-                // TODO How to close all of the sockets?
                 close_and_destroy_socket(&server_socket);
                 close_and_destroy_socket(&client_socket);
                 return 1;
             }
+            pthread_detach(thread_handle);
         }
         printf("Connection accepted.\n");
     } while (1);
