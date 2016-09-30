@@ -43,7 +43,8 @@ typedef enum
 
 typedef enum
 {
-    SOCKET_SYSTEM_OPTION_BROADCAST = SO_BROADCAST
+    SOCKET_SYSTEM_OPTION_BROADCAST = SO_BROADCAST,
+    SOCKET_SYSTEM_OPTION_REUSE_ADDRESS = SO_REUSEADDR
 } SocketSystemLayer_OptionName;
 int SocketSystemLayer_SetOptions(int descriptor, int option_level, int option_name,
         void * option_value, int option_length);

@@ -9,6 +9,7 @@ typedef struct SocketStruct * Socket;
 
 typedef enum
 {
+    SOCKET_INVALID_OPTION = -7,
     SOCKET_INVALID_SETTING = -6,
     SOCKET_INVALID_BUFFER = -5,
     SOCKET_ADDRESS_IN_USE = -4,
@@ -62,7 +63,8 @@ int Socket_Open(Socket self, SocketSettings settings);
 
 typedef enum
 {
-    SOCKET_UDP_BROADCAST = 0
+    SOCKET_UDP_BROADCAST = 0,
+    SOCKET_REUSE_ADDRESS = 1
 } SocketOptionName;
 typedef struct SocketOptionsStruct * SocketOptions;
 typedef struct SocketOptionsStruct

@@ -1,6 +1,7 @@
 #include "Socket.h"
 #include "SocketSystemLayer.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 #define RETURN_IF_NULL(pointer) \
     if ( (pointer) == 0 ) { return; }
@@ -102,14 +103,27 @@ int Socket_Open(Socket self, SocketSettings settings)
 int Socket_SetOptions(Socket self, SocketOptions options)
 {
     const int option_value = 1;
+    int option_name = -1;
     int return_code = SOCKET_SYSTEM_LAYER_FAIL;
 
     RETURN_VALUE_IF_NULL(self, SOCKET_NULL_POINTER);
     RETURN_VALUE_IF_NULL(options, SOCKET_NULL_POINTER);
+
+    switch (options->option_name)
+    {
+        case SOCKET_UDP_BROADCAST:
+            option_name = SOCKET_SYSTEM_OPTION_BROADCAST;
+            break;
+        case SOCKET_REUSE_ADDRESS:
+            option_name = SOCKET_SYSTEM_OPTION_REUSE_ADDRESS;
+            break;
+        default:
+            return SOCKET_INVALID_OPTION;
+    }
     return_code = SocketSystemLayer_SetOptions(
             self->socket_descriptor,
             SOCKET_SYSTEM_OPTION_LEVEL_SOCKET,
-            SOCKET_SYSTEM_OPTION_BROADCAST,
+            option_name,
             (void *)&option_value,
             sizeof(int) );
     if (return_code < 0)
