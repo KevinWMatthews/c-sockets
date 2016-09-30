@@ -4,7 +4,8 @@ SILENCE = @
 ALL_PRODUCTS =	\
 				Server \
 				Client \
-				UdpListener
+				UdpListener \
+				TcpServer
 
 ALL_TEST_MODULES = \
 					Socket
