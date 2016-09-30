@@ -24,3 +24,7 @@ Write some demo programs and see if they can connect!
 Create send() and receive() to make sure that it really works. :)
 
 Make a distclean option. Remove build, obj, all build directories.
+
+Figure out why moving Server to ./ would prevent Server from being build.
+
+Handle signals in products. Ctrl+C, etc.
