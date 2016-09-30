@@ -2,7 +2,7 @@
 SILENCE = @
 
 ALL_PRODUCTS =	\
-				Server \
+				ServerDemo \
 				Client \
 				UdpListener \
 				TcpServer
