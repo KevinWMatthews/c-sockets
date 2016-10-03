@@ -46,7 +46,7 @@ int main(int argc, char * argv[])
         .protocol = SOCKET_PROTOCOL_UDP
     };
     SocketOptionsStruct socket_options = {
-        .option_name = SOCKET_UDP_BROADCAST
+        .option_name = SOCKET_OPTION_UDP_BROADCAST
     };
     ProgramOptionsStruct user_options = {
         .ip_address = "127.0.0.1",

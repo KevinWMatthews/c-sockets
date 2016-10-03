@@ -111,10 +111,10 @@ int Socket_SetOptions(Socket self, SocketOptions options)
 
     switch (options->option_name)
     {
-        case SOCKET_UDP_BROADCAST:
+        case SOCKET_OPTION_UDP_BROADCAST:
             option_name = SOCKET_SYSTEM_OPTION_BROADCAST;
             break;
-        case SOCKET_REUSE_ADDRESS:
+        case SOCKET_OPTION_REUSE_ADDRESS:
             option_name = SOCKET_SYSTEM_OPTION_REUSE_ADDRESS;
             break;
         default:

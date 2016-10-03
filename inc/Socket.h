@@ -63,8 +63,8 @@ int Socket_Open(Socket self, SocketSettings settings);
 
 typedef enum
 {
-    SOCKET_UDP_BROADCAST = 0,
-    SOCKET_REUSE_ADDRESS = 1
+    SOCKET_OPTION_UDP_BROADCAST = 0,
+    SOCKET_OPTION_REUSE_ADDRESS = 1
 } SocketOptionName;
 typedef struct SocketOptionsStruct * SocketOptions;
 typedef struct SocketOptionsStruct
@@ -73,6 +73,9 @@ typedef struct SocketOptionsStruct
 } SocketOptionsStruct;
 /*
  * Set options for the given socket.
+ * Options should be set after the socket is opened (you need a file descriptor)
+ * and before it is bound (options are set in place at bind).
+ * There is no provision to set several options simultaneously.
  */
 int Socket_SetOptions(Socket self, SocketOptions options);
 

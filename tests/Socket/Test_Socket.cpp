@@ -294,7 +294,7 @@ TEST(Socket, it_can_set_broadcast_option_for_udp_sockets)
 {
     socket_settings->type = SOCKET_TYPE_DATAGRAM;
     SocketOptionsStruct options = {
-        .option_name = SOCKET_UDP_BROADCAST
+        .option_name = SOCKET_OPTION_UDP_BROADCAST
     };
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_DATAGRAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
@@ -308,7 +308,7 @@ TEST(Socket, it_can_set_broadcast_option_for_udp_sockets)
 TEST(Socket, it_can_set_reuse_socket_address)
 {
     SocketOptionsStruct options = {
-        .option_name = SOCKET_REUSE_ADDRESS
+        .option_name = SOCKET_OPTION_REUSE_ADDRESS
     };
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
     expectSetOption(socket_descriptor, SOCKET_SYSTEM_OPTION_LEVEL_SOCKET, SOCKET_SYSTEM_OPTION_REUSE_ADDRESS, SOCKET_SYSTEM_LAYER_SUCCESS);
@@ -331,7 +331,7 @@ TEST(Socket, set_options_fails_if_invalid_options)
 TEST(Socket, set_options_fails_if_system_layer_fails)
 {
     SocketOptionsStruct options = {
-        .option_name = SOCKET_UDP_BROADCAST
+        .option_name = SOCKET_OPTION_UDP_BROADCAST
     };
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
     expectSetOption(socket_descriptor, SOCKET_SYSTEM_OPTION_LEVEL_SOCKET, SOCKET_SYSTEM_OPTION_BROADCAST, SOCKET_SYSTEM_LAYER_FAIL);
