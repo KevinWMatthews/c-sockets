@@ -103,6 +103,9 @@ int main(int argc, char * argv[])
         .type = SOCKET_TYPE_STREAM,
         .protocol = SOCKET_PROTOCOL_DEFAULT
     };
+    SocketOptionsStruct server_socket_options = {
+        .option_name = SOCKET_OPTION_REUSE_ADDRESS
+    };
     Socket client_socket = 0;
     ProgramOptionsStruct user_options = {
         .ip_address = "127.0.0.1",
@@ -126,6 +129,14 @@ int main(int argc, char * argv[])
     {
         perror("Open failed");
         Socket_Destroy(&server_socket);
+        return 1;
+    }
+
+    printf("Setting socket options...\n");
+    if ( Socket_SetOptions(server_socket, &server_socket_options) < 0 )
+    {
+        perror("SetOptions failed");
+        close_and_destroy_socket(&server_socket);
         return 1;
     }
 
