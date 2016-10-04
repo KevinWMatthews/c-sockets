@@ -86,9 +86,10 @@ TEST_GROUP(Socket)
             .andReturnValue(client_socket_descriptor);
     }
 
-    void expectSocketConnect(int socket_descriptor, const char *ip_address, int port, int return_code)
+    void expectSocketConnect(int socket_descriptor, int domain, const char *ip_address, int port, int return_code)
     {
         mock().expectOneCall("SocketSystemLayer_Connect")
+            .withParameter("domain", domain)
             .withParameter("descriptor", socket_descriptor)
             .withParameter("ip_address", ip_address)
             .withParameter("port", port)
@@ -547,7 +548,7 @@ TEST(Socket, it_can_connect_to_a_socket)
     int port = 10004;
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
-    expectSocketConnect(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
     Socket_Open(socket, socket_settings);
 
     LONGS_EQUAL( SOCKET_SUCCESS, Socket_Connect(socket, ip_address, port) );
@@ -569,7 +570,7 @@ TEST(Socket, it_can_fail_to_connect_to_a_socket)
     int port = 10004;
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
-    expectSocketConnect(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_FAIL);
+    expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_FAIL);
     Socket_Open(socket, socket_settings);
     LONGS_EQUAL( SOCKET_FAIL, Socket_Connect(socket, ip_address, port) );
 }
@@ -584,7 +585,7 @@ TEST(Socket, it_can_receive_from_a_socket)
     int number_of_bytes_read = 1;
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
-    expectSocketConnect(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
     expectSocketReceive(socket_descriptor, receive_buffer, receive_buffer_length, number_of_bytes_read);
 
     Socket_Open(socket, socket_settings);
@@ -601,7 +602,7 @@ TEST(Socket, it_can_fail_to_receive)
     unsigned int receive_buffer_length = sizeof(receive_buffer) - 1;
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
-    expectSocketConnect(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
     expectSocketReceive(socket_descriptor, receive_buffer, receive_buffer_length, SOCKET_SYSTEM_LAYER_FAIL);
 
     Socket_Open(socket, socket_settings);
@@ -617,7 +618,7 @@ TEST(Socket, it_will_not_receive_with_a_receive_null_buffer)
     unsigned int receive_buffer_length = 10;
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
-    expectSocketConnect(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
 
     Socket_Open(socket, socket_settings);
     Socket_Connect(socket, ip_address, port);
@@ -633,7 +634,7 @@ TEST(Socket, it_will_not_receive_if_buffer_length_is_zero)
     unsigned int receive_buffer_length = 0;
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
-    expectSocketConnect(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
 
     Socket_Open(socket, socket_settings);
     Socket_Connect(socket, ip_address, port);
@@ -659,7 +660,7 @@ TEST(Socket, it_can_send_data_to_a_socket)
     int number_of_bytes_sent = 1;
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
-    expectSocketConnect(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
     expectSocketSend(socket_descriptor, message, message_length, number_of_bytes_sent);
 
     Socket_Open(socket, socket_settings);
@@ -676,7 +677,7 @@ TEST(Socket, it_can_fail_send_data_to_a_socket)
     unsigned int message_length = sizeof(message);
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
-    expectSocketConnect(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
     expectSocketSend(socket_descriptor, message, message_length, SOCKET_SYSTEM_LAYER_FAIL);
 
     Socket_Open(socket, socket_settings);
@@ -692,7 +693,7 @@ TEST(Socket, it_will_not_send_a_null_message)
     unsigned int message_length = 7;
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
-    expectSocketConnect(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
 
     Socket_Open(socket, socket_settings);
     Socket_Connect(socket, ip_address, port);
@@ -708,7 +709,7 @@ TEST(Socket, it_will_not_send_a_zero_length_message)
     unsigned int message_length = 0;
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
-    expectSocketConnect(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
 
     Socket_Open(socket, socket_settings);
     Socket_Connect(socket, ip_address, port);

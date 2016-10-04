@@ -44,13 +44,16 @@ int SocketSystemLayer_Accept(int descriptor)
     return accept(descriptor, 0, 0);
 }
 
-int SocketSystemLayer_Connect(int descriptor, const char * ip_address, int port)
+int SocketSystemLayer_Connect(int descriptor, int domain, const char * ip_address, int port)
 {
     struct sockaddr_in socket;
-    socket.sin_family = AF_INET;    //TODO this is hard-coded and should be an argument!
-    //TODO extract packaging the address and port. Bind() does this too.
+    // family and domain seem to be used interchangably.
+    // The original reason for the distinction seems to never have been realized in practice.
+    socket.sin_family = domain;
     socket.sin_addr.s_addr = inet_addr(ip_address);
     socket.sin_port = htons(port);
+    // We defined an internet socket (sockaddr_in) instead of a standard socket(sockaddr).
+    // Conveniently, their pointers can be typecast.
     return connect( descriptor, (struct sockaddr *)&socket, sizeof(socket) );
 }
 

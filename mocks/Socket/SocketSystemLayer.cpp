@@ -62,9 +62,10 @@ int SocketSystemLayer_Accept(int descriptor)
     return mock().intReturnValue();
 }
 
-int SocketSystemLayer_Connect(int descriptor, const char * ip_address, int port)
+int SocketSystemLayer_Connect(int descriptor, int domain, const char * ip_address, int port)
 {
     mock().actualCall("SocketSystemLayer_Connect")
+        .withParameter("domain", domain)
         .withParameter("descriptor", descriptor)
         .withParameter("ip_address", ip_address)
         .withParameter("port", port);

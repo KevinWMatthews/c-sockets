@@ -32,7 +32,7 @@ int SocketSystemLayer_Close(int);
 int SocketSystemLayer_Bind(int descriptor, int domain, const char * ip_address, int port);
 int SocketSystemLayer_Listen(int descriptor, int backlog);
 int SocketSystemLayer_Accept(int descriptor);
-int SocketSystemLayer_Connect(int descriptor, const char * ip_address, int port);
+int SocketSystemLayer_Connect(int descriptor, int domain, const char * ip_address, int port);
 int SocketSystemLayer_Send(int descriptor, const char * message, unsigned int message_length);
 int SocketSystemLayer_Receive(int descriptor, char * buffer, unsigned int buffer_length);
 

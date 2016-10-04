@@ -12,10 +12,13 @@ Come up with a different way to parse program options:
 These are both GNU C library modules.
 
 Clean up socket system layer:
-    Extract converting address and port.
-    Figure out how to get sin_family (AF_INET) as an argument. It must be configurable.
-        It is/should be stored with the Socket in a higher layer.
-        It should probably be another argument....
+    Add documentation.
+    Clear stored socket settings?
+        domain
+    Store other SocketSettings?
+        type
+        protocol
+    Extract converting address and port ( inet_addr(), htons() ).
 
 Allow flags in Send().
 Allow flags in Receive().
@@ -28,10 +31,3 @@ Make a distclean option. Remove build, obj, all build directories.
 Figure out why moving Server to ./ would prevent Server from being build.
 
 Handle signals in products. Ctrl+C, etc.
-
-Clear hidden socket variables?
-    domain
-
-Should we stored other SocketSettings:
-    type
-    protocol
