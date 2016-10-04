@@ -12,6 +12,7 @@
 typedef struct SocketStruct
 {
     int socket_descriptor;
+    SocketSystemLayerDomain domain; // Also referred to as family.
     const char * ip_address;
     int port;
 } SocketStruct;
@@ -85,6 +86,7 @@ int Socket_Open(Socket self, SocketSettings settings)
     system_domain = convert_socket_domain(settings->domain);
     if (system_domain == SOCKET_INVALID_SETTING)
         return SOCKET_INVALID_SETTING;
+    self->domain = system_domain;
 
     system_type = convert_socket_type(settings->type);
     if (system_type == SOCKET_INVALID_SETTING)
@@ -147,7 +149,7 @@ int Socket_Bind(Socket self, const char * ip_address, int port)
 {
     int return_code = SOCKET_SYSTEM_LAYER_FAIL;
     RETURN_VALUE_IF_NULL(self, SOCKET_NULL_POINTER);
-    return_code = SocketSystemLayer_Bind(self->socket_descriptor, ip_address, port);
+    return_code = SocketSystemLayer_Bind(self->socket_descriptor, self->domain, ip_address, port);
     if ( return_code == SOCKET_SYSTEM_LAYER_ADDRESS_IN_USE )
     {
         return SOCKET_ADDRESS_IN_USE;

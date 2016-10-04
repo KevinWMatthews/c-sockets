@@ -37,9 +37,10 @@ int SocketSystemLayer_Close(int descriptor)
     return mock().intReturnValue();
 }
 
-int SocketSystemLayer_Bind(int descriptor, const char * ip_address, int port)
+int SocketSystemLayer_Bind(int descriptor, int domain, const char * ip_address, int port)
 {
     mock().actualCall("SocketSystemLayer_Bind")
+        .withParameter("domain", domain)
         .withParameter("descriptor", descriptor)
         .withParameter("ip_address", ip_address)
         .withParameter("port", port);

@@ -61,9 +61,10 @@ TEST_GROUP(Socket)
             .andReturnValue(return_code);
     }
 
-    void expectSocketBind(int socket_descriptor, const char *ip_address, int port, int return_code)
+    void expectSocketBind(int socket_descriptor, int domain, const char *ip_address, int port, int return_code)
     {
         mock().expectOneCall("SocketSystemLayer_Bind")
+            .withParameter("domain", domain)
             .withParameter("descriptor", socket_descriptor)
             .withParameter("ip_address", ip_address)
             .withParameter("port", port)
@@ -412,7 +413,7 @@ TEST(Socket, it_can_bind_to_a_specific_ip_address_and_port)
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
 
-    expectSocketBind(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketBind(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
     Socket_Open(socket, socket_settings);
 
     LONGS_EQUAL( SOCKET_SUCCESS, Socket_Bind(socket, ip_address, port) );
@@ -425,7 +426,7 @@ TEST(Socket, closing_a_bound_socket_resets_ip_address_and_port)
     int port = 10004;
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT); 
-    expectSocketBind(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketBind(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
     expectSocketClose(socket_descriptor, SOCKET_SYSTEM_LAYER_SUCCESS);
     Socket_Open(socket, socket_settings);
     Socket_Bind(socket, ip_address, port);
@@ -445,8 +446,8 @@ TEST(Socket, it_can_not_bind_to_an_address_and_port_twice)
     int port = 10004;
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
-    expectSocketBind(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
-    expectSocketBind(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_ADDRESS_IN_USE);
+    expectSocketBind(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketBind(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_ADDRESS_IN_USE);
     Socket_Open(socket, socket_settings);
     Socket_Bind(socket, ip_address, port);
 
@@ -460,7 +461,7 @@ TEST(Socket, it_can_fail_to_bind)
     int port = 10004;
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
-    expectSocketBind(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_FAIL);
+    expectSocketBind(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_FAIL);
     expectSocketClose(socket_descriptor, SOCKET_SYSTEM_LAYER_SUCCESS);
     Socket_Open(socket, socket_settings);
 
@@ -478,7 +479,7 @@ TEST(Socket, it_can_listen)
     int port = 10004;
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
-    expectSocketBind(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketBind(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
     expectSocketListen(socket_descriptor, SOCKET_SYSTEM_LAYER_SUCCESS);
     Socket_Open(socket, socket_settings);
     Socket_Bind(socket, ip_address, port);
@@ -492,7 +493,7 @@ TEST(Socket, it_can_fail_to_listen)
     int port = 10004;
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
-    expectSocketBind(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketBind(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
     expectSocketListen(socket_descriptor, SOCKET_SYSTEM_LAYER_FAIL);
     Socket_Open(socket, socket_settings);
     Socket_Bind(socket, ip_address, port);
@@ -509,7 +510,7 @@ TEST(Socket, a_server_can_accpet_a_connection)
     int port = 10004;
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
-    expectSocketBind(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketBind(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
     expectSocketListen(socket_descriptor, SOCKET_SYSTEM_LAYER_SUCCESS);
     expectSocketAccept(socket_descriptor, new_socket_descriptor);
 
@@ -528,7 +529,7 @@ TEST(Socket, it_can_fail_to_accept)
     int port = 10004;
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
-    expectSocketBind(socket_descriptor, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketBind(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
     expectSocketListen(socket_descriptor, SOCKET_SYSTEM_LAYER_SUCCESS);
     expectSocketAccept(socket_descriptor, SOCKET_SYSTEM_LAYER_FAIL);
 

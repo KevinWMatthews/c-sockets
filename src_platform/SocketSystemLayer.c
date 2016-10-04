@@ -18,10 +18,12 @@ int SocketSystemLayer_SetOptions(int descriptor, int option_level, int option_na
     return setsockopt(descriptor, option_level, option_name, option_value, option_length);
 }
 
-int SocketSystemLayer_Bind(int descriptor, const char * ip_address, int port)
+int SocketSystemLayer_Bind(int descriptor, int domain, const char * ip_address, int port)
 {
     struct sockaddr_in socket;
-    socket.sin_family = AF_INET;    //TODO this is hard-coded and should be an argument!
+    // family and domain seem to be used interchangably.
+    // The original reason for the distinction seems to never have been realized in practice.
+    socket.sin_family = domain;
     socket.sin_addr.s_addr = inet_addr(ip_address);
     socket.sin_port = htons(port);
     // We defined an internet socket (sockaddr_in) instead of a standard socket(sockaddr).

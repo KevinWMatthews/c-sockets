@@ -29,7 +29,7 @@ typedef enum
 } SocketSystemLayerProtocol;
 int SocketSystemLayer_Open(int domain, int type, int protocol);
 int SocketSystemLayer_Close(int);
-int SocketSystemLayer_Bind(int descriptor, const char * ip_address, int port);
+int SocketSystemLayer_Bind(int descriptor, int domain, const char * ip_address, int port);
 int SocketSystemLayer_Listen(int descriptor, int backlog);
 int SocketSystemLayer_Accept(int descriptor);
 int SocketSystemLayer_Connect(int descriptor, const char * ip_address, int port);
