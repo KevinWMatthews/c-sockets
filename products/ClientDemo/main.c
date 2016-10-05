@@ -75,7 +75,7 @@ int main(int argc, char * argv[])
     return_code = Socket_Open(client, &client_settings);
     if (return_code < 0)
     {
-        if (return_code == SOCKET_FAIL)
+        if (return_code == SOCKET_FAILED_SYSTEM_CALL)
             perror("System call to socket open failed");
         else
             printf("Socket_Open failed: %d.\n", return_code);
@@ -88,7 +88,7 @@ int main(int argc, char * argv[])
     return_code = Socket_Connect(client, user_options.ip_address, user_options.port);
     if (return_code < 0)
     {
-        if (return_code == SOCKET_FAIL)
+        if (return_code == SOCKET_FAILED_SYSTEM_CALL)
             perror("System call to socket connect failed");
         else
             printf("Socket_Connect failed: %d.\n", return_code);
@@ -100,7 +100,7 @@ int main(int argc, char * argv[])
     return_code = Socket_Receive( client, receive_buffer, sizeof(receive_buffer) );
     if (return_code < 0)
     {
-        if (return_code == SOCKET_FAIL)
+        if (return_code == SOCKET_FAILED_SYSTEM_CALL)
             perror("System call to socket receive failed");
         else
             printf("Socket_Receive failed: %d.\n", return_code);
@@ -118,7 +118,7 @@ int main(int argc, char * argv[])
         return_code = Socket_Send( client, message_buffer, sizeof(message_buffer) );
         if ( return_code < 0 )
         {
-            if (return_code == SOCKET_FAIL)
+            if (return_code == SOCKET_FAILED_SYSTEM_CALL)
                 perror("System call to socket send failed");
             else
                 printf("Socket_Send failed: %d.\n", return_code);
@@ -138,7 +138,7 @@ int main(int argc, char * argv[])
         }
         else if (return_code < 0)
         {
-            if (return_code == SOCKET_FAIL)
+            if (return_code == SOCKET_FAILED_SYSTEM_CALL)
                 perror("System call to socket receive failed");
             else
                 printf("Socket_Receive failed: %d.\n", return_code);

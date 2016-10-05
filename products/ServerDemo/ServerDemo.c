@@ -53,7 +53,7 @@ static void * socket_handler_thread(void * client_socket)
     Socket socket = *(Socket *)client_socket;
     char * confirm_connection = "The server has accepted the connection.\n";
     char buffer[2000] = {0};
-    int return_code = SOCKET_FAIL;
+    int return_code = SOCKET_FAILED_SYSTEM_CALL;
 
     if ( Socket_Send( socket, confirm_connection, strlen(confirm_connection) ) < 0 )
     {

@@ -241,7 +241,7 @@ TEST(Socket, it_can_fail_to_open_a_socket)
 {
     expectSocketOpen(SOCKET_SYSTEM_LAYER_FAIL, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
 
-    LONGS_EQUAL( SOCKET_FAIL, Socket_Open(socket, socket_settings) );
+    LONGS_EQUAL( SOCKET_FAILED_SYSTEM_CALL, Socket_Open(socket, socket_settings) );
 
     LONGS_EQUAL( SOCKET_INVALID_DESCRIPTOR, Socket_GetDescriptor(socket) );
     CHECK_SOCKET_ADDRESS_AND_PORT(socket, SOCKET_INVALID_IP_ADDRESS, SOCKET_INVALID_PORT);
@@ -340,7 +340,7 @@ TEST(Socket, set_options_fails_if_system_layer_fails)
 
     Socket_Open(socket, socket_settings);
 
-    LONGS_EQUAL( SOCKET_FAIL, Socket_SetOptions(socket, &options) );
+    LONGS_EQUAL( SOCKET_FAILED_SYSTEM_CALL, Socket_SetOptions(socket, &options) );
 }
 
 TEST(Socket, set_options_fails_with_a_null_socket)
@@ -466,7 +466,7 @@ TEST(Socket, it_can_fail_to_bind)
     expectSocketClose(socket_descriptor, SOCKET_SYSTEM_LAYER_SUCCESS);
     Socket_Open(socket, socket_settings);
 
-    LONGS_EQUAL( SOCKET_FAIL, Socket_Bind(socket, ip_address, port) );
+    LONGS_EQUAL( SOCKET_FAILED_SYSTEM_CALL, Socket_Bind(socket, ip_address, port) );
 
     CHECK_SOCKET_ADDRESS_AND_PORT(socket, SOCKET_INVALID_IP_ADDRESS, SOCKET_INVALID_PORT);
 
@@ -516,7 +516,7 @@ TEST(Socket, it_can_fail_to_listen)
     Socket_Open(socket, socket_settings);
     Socket_Bind(socket, ip_address, port);
 
-    LONGS_EQUAL( SOCKET_FAIL, Socket_Listen(socket, backlog) );
+    LONGS_EQUAL( SOCKET_FAILED_SYSTEM_CALL, Socket_Listen(socket, backlog) );
 }
 
 // Accept
@@ -591,7 +591,7 @@ TEST(Socket, it_can_fail_to_connect_to_a_socket)
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
     expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_FAIL);
     Socket_Open(socket, socket_settings);
-    LONGS_EQUAL( SOCKET_FAIL, Socket_Connect(socket, ip_address, port) );
+    LONGS_EQUAL( SOCKET_FAILED_SYSTEM_CALL, Socket_Connect(socket, ip_address, port) );
 }
 
 // Receive
@@ -627,7 +627,7 @@ TEST(Socket, it_can_fail_to_receive)
     Socket_Open(socket, socket_settings);
     Socket_Connect(socket, ip_address, port);
 
-    LONGS_EQUAL( SOCKET_FAIL, Socket_Receive(socket, receive_buffer, receive_buffer_length) );
+    LONGS_EQUAL( SOCKET_FAILED_SYSTEM_CALL, Socket_Receive(socket, receive_buffer, receive_buffer_length) );
 }
 
 TEST(Socket, it_will_not_receive_with_a_receive_null_buffer)
@@ -702,7 +702,7 @@ TEST(Socket, it_can_fail_send_data_to_a_socket)
     Socket_Open(socket, socket_settings);
     Socket_Connect(socket, ip_address, port);
 
-    LONGS_EQUAL( SOCKET_FAIL, Socket_Send(socket, message, message_length) );
+    LONGS_EQUAL( SOCKET_FAILED_SYSTEM_CALL, Socket_Send(socket, message, message_length) );
 }
 
 TEST(Socket, it_will_not_send_a_null_message)

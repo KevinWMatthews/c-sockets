@@ -7,6 +7,12 @@ typedef struct SocketStruct * Socket;
 #define NULL 0
 #endif
 
+/*
+ * If the return code == SOCKET_FAILED_SYSTEM_CALL, the underlying system call returned an error code.
+ * Query errno and/or use perror to discover why the system call failed.
+ * If the return code != SOCKET_FAILED_SYSTEM_CALL, the Socket wrapper layer failed.
+ * Parse the return code directly; a system call may or may not have been executed.
+ */
 typedef enum
 {
     SOCKET_INVALID_OPTION = -7,
@@ -15,7 +21,7 @@ typedef enum
     SOCKET_ADDRESS_IN_USE = -4,
     SOCKET_ALREADY_OPEN = -3,
     SOCKET_NULL_POINTER = -2,
-    SOCKET_FAIL = -1,
+    SOCKET_FAILED_SYSTEM_CALL = -1,
     SOCKET_SUCCESS = 0
 } SocketReturnCode;
 
@@ -89,7 +95,7 @@ void Socket_Close(Socket);
  * On success, returns 0.
  * On failure, returns < 0:
  *      SOCKET_ADDRESS_IN_USE if the socket has already been bound.
- *      SOCKET_FAIL on other failures.
+ *      SOCKET_FAILED_SYSTEM_CALL on other failures.
  */
 int Socket_Bind(Socket, const char * ip_address, int port);
 
@@ -127,8 +133,10 @@ int Socket_Connect(Socket, const char * ip_address, int port);
 int Socket_Receive(Socket, char * buffer, unsigned int buffer_length);
 
 /*
- * Send a message to the given socket.
- * Messge length does not include the null terminator.
+ * Send a message to the socket that the given socket is connected to.
+ * For client sockets only.
+ * Assumes that the given client socket is already connected to a server socket.
+ * Message length does not include the null terminator.
  * On success, returns the number of characters in the message that was sent (not including null terminator).
  * On failure, returns < 0.
  */

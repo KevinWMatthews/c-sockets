@@ -52,7 +52,7 @@ static void * socket_handler_thread(void * client_socket)
 {
     Socket socket = *(Socket *)client_socket;
     char buffer[2000] = {0};
-    int return_code = SOCKET_FAIL;
+    int return_code = SOCKET_FAILED_SYSTEM_CALL;
 
     while (1)
     {

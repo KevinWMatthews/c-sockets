@@ -98,7 +98,7 @@ int Socket_Open(Socket self, SocketSettings settings)
 
     self->socket_descriptor = SocketSystemLayer_Open(system_domain, system_type, system_protocol);
     if (self->socket_descriptor < 0)
-        return SOCKET_FAIL;
+        return SOCKET_FAILED_SYSTEM_CALL;
     return SOCKET_SUCCESS;
 }
 
@@ -129,7 +129,7 @@ int Socket_SetOptions(Socket self, SocketOptions options)
             (void *)&option_value,
             sizeof(int) );
     if (return_code < 0)
-        return SOCKET_FAIL;
+        return SOCKET_FAILED_SYSTEM_CALL;
     return SOCKET_SUCCESS;
 }
 
@@ -156,7 +156,7 @@ int Socket_Bind(Socket self, const char * ip_address, int port)
     }
     else if ( return_code < 0 )
     {
-        return SOCKET_FAIL;
+        return SOCKET_FAILED_SYSTEM_CALL;
     }
     self->ip_address = ip_address;
     self->port = port;
@@ -189,7 +189,7 @@ int Socket_Listen(Socket self, int backlog)
 
     return_code = SocketSystemLayer_Listen(self->socket_descriptor, backlog);
     if ( return_code < 0 )
-        return SOCKET_FAIL;
+        return SOCKET_FAILED_SYSTEM_CALL;
     return SOCKET_SUCCESS;
 }
 
@@ -217,7 +217,7 @@ int Socket_Connect(Socket self, const char * ip_address, int port)
 
     return_code = SocketSystemLayer_Connect(self->socket_descriptor, self->domain, ip_address, port);
     if (return_code < 0)
-        return SOCKET_FAIL;
+        return SOCKET_FAILED_SYSTEM_CALL;
     return SOCKET_SUCCESS;
 }
 
@@ -231,7 +231,7 @@ int Socket_Receive(Socket self, char * buffer, unsigned int buffer_length)
 
     return_code = SocketSystemLayer_Receive(self->socket_descriptor, buffer, buffer_length);
     if (return_code < 0)
-        return SOCKET_FAIL;
+        return SOCKET_FAILED_SYSTEM_CALL;
     return return_code;
 }
 
@@ -244,6 +244,6 @@ int Socket_Send(Socket self, char * message, unsigned int message_length)
 
     return_code = SocketSystemLayer_Send(self->socket_descriptor, message, message_length);
     if (return_code < 0)
-        return SOCKET_FAIL;
+        return SOCKET_FAILED_SYSTEM_CALL;
     return return_code;
 }
