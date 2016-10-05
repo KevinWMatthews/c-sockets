@@ -111,6 +111,7 @@ int main(int argc, char * argv[])
         .ip_address = "127.0.0.1",
         .port = 8888
     };
+    int backlog = 0;
 
     parse_options(&user_options, argc, argv);
 
@@ -149,7 +150,7 @@ int main(int argc, char * argv[])
     }
 
     printf("Listening on socket...\n");
-    if ( Socket_Listen(server_socket) < 0 ) //TODO experiment with the backlog?
+    if ( Socket_Listen(server_socket, backlog) < 0 )
     {
         perror("Listen failed");
         close_and_destroy_socket(&server_socket);

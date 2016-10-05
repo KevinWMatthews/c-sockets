@@ -71,11 +71,11 @@ TEST_GROUP(Socket)
             .andReturnValue(return_code);
     }
 
-    void expectSocketListen(int socket_descriptor, int return_code)
+    void expectSocketListen(int socket_descriptor, int backlog, int return_code)
     {
         mock().expectOneCall("SocketSystemLayer_Listen")
             .withParameter("descriptor", socket_descriptor)
-            .withParameter("backlog", 0)
+            .withParameter("backlog", backlog)
             .andReturnValue(return_code);
     }
 
@@ -187,7 +187,7 @@ TEST(Socket, it_can_handle_null_pointers)
     Socket_Close(NULL);
     POINTERS_EQUAL( SOCKET_INVALID_IP_ADDRESS, Socket_GetIpAddress(NULL) );
     LONGS_EQUAL( SOCKET_INVALID_PORT, Socket_GetPort(NULL) );
-    LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Listen(NULL) );
+    LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Listen(NULL, 0) );
     LONGS_EQUAL( NULL, Socket_Accept(NULL) );
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Connect(NULL, "192.168.2.1", 8888) );
 }
@@ -478,28 +478,45 @@ TEST(Socket, it_can_listen)
 {
     const char * ip_address = "192.168.2.1";
     int port = 10004;
+    int backlog = 0;
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
     expectSocketBind(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
-    expectSocketListen(socket_descriptor, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketListen(socket_descriptor, backlog, SOCKET_SYSTEM_LAYER_SUCCESS);
     Socket_Open(socket, socket_settings);
     Socket_Bind(socket, ip_address, port);
 
-    LONGS_EQUAL( SOCKET_SUCCESS, Socket_Listen(socket) );
+    LONGS_EQUAL( SOCKET_SUCCESS, Socket_Listen(socket, backlog) );
+}
+
+TEST(Socket, it_can_listen_with_a_custom_backlog)
+{
+    const char * ip_address = "192.168.2.1";
+    int port = 10004;
+    int backlog = 1;
+
+    expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
+    expectSocketBind(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketListen(socket_descriptor, backlog, SOCKET_SYSTEM_LAYER_SUCCESS);
+    Socket_Open(socket, socket_settings);
+    Socket_Bind(socket, ip_address, port);
+
+    LONGS_EQUAL( SOCKET_SUCCESS, Socket_Listen(socket, backlog) );
 }
 
 TEST(Socket, it_can_fail_to_listen)
 {
     const char * ip_address = "192.168.2.1";
     int port = 10004;
+    int backlog = 0;
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
     expectSocketBind(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
-    expectSocketListen(socket_descriptor, SOCKET_SYSTEM_LAYER_FAIL);
+    expectSocketListen(socket_descriptor, backlog, SOCKET_SYSTEM_LAYER_FAIL);
     Socket_Open(socket, socket_settings);
     Socket_Bind(socket, ip_address, port);
 
-    LONGS_EQUAL( SOCKET_FAIL, Socket_Listen(socket) );
+    LONGS_EQUAL( SOCKET_FAIL, Socket_Listen(socket, backlog) );
 }
 
 // Accept
@@ -509,15 +526,16 @@ TEST(Socket, a_server_can_accpet_a_connection)
     int new_socket_descriptor = 66;
     const char * ip_address = "192.168.2.1";
     int port = 10004;
+    int backlog = 0;
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
     expectSocketBind(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
-    expectSocketListen(socket_descriptor, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketListen(socket_descriptor, backlog, SOCKET_SYSTEM_LAYER_SUCCESS);
     expectSocketAccept(socket_descriptor, new_socket_descriptor);
 
     Socket_Open(socket, socket_settings);
     Socket_Bind(socket, ip_address, port);
-    Socket_Listen(socket);
+    Socket_Listen(socket, backlog);
 
     new_socket = Socket_Accept(socket);
     LONGS_EQUAL( new_socket_descriptor, Socket_GetDescriptor(new_socket) );
@@ -528,15 +546,16 @@ TEST(Socket, it_can_fail_to_accept)
 {
     const char * ip_address = "192.168.2.1";
     int port = 10004;
+    int backlog = 0;
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
     expectSocketBind(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
-    expectSocketListen(socket_descriptor, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketListen(socket_descriptor, backlog, SOCKET_SYSTEM_LAYER_SUCCESS);
     expectSocketAccept(socket_descriptor, SOCKET_SYSTEM_LAYER_FAIL);
 
     Socket_Open(socket, socket_settings);
     Socket_Bind(socket, ip_address, port);
-    Socket_Listen(socket);
+    Socket_Listen(socket, backlog);
 
     LONGS_EQUAL( NULL, Socket_Accept(socket) );
 }

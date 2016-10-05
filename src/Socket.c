@@ -182,14 +182,12 @@ int Socket_GetPort(Socket self)
     return self->port;
 }
 
-int Socket_Listen(Socket self)
+int Socket_Listen(Socket self, int backlog)
 {
     int return_code = SOCKET_SYSTEM_LAYER_FAIL;
     RETURN_VALUE_IF_NULL(self, SOCKET_NULL_POINTER);
 
-// I don't want to deal with the backlog right now.
-#define DEFAULT_BACKLOG 0
-    return_code = SocketSystemLayer_Listen(self->socket_descriptor, DEFAULT_BACKLOG);
+    return_code = SocketSystemLayer_Listen(self->socket_descriptor, backlog);
     if ( return_code < 0 )
         return SOCKET_FAIL;
     return SOCKET_SUCCESS;

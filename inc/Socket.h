@@ -99,7 +99,7 @@ int Socket_Bind(Socket, const char * ip_address, int port);
  * On success, returns 0.
  * On failure, returns < 0.
  */
-int Socket_Listen(Socket);
+int Socket_Listen(Socket, int backlog);
 
 /*
  * Command the given server Socket to connect to the first connection request.
