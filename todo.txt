@@ -1,3 +1,11 @@
+Add functions to get the source vs the destination IP address and port.
+    TCP Clients should return a NULL source address and port?
+    TCP Clients should return a valid destination if they have been connected.
+    TCP Servers should return a valid source if they have been bound.
+    TCP Servers should return a NULL if they have been not bound.
+    UDP Clients should return a NULL source address. Port?
+    etc. Figure this out.
+
 Rethink and recompare new tests to old.
     Should we close after tests?
     Should we split test files?
