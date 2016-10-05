@@ -11,6 +11,8 @@ Come up with a different way to parse program options:
     Argp
 These are both GNU C library modules.
 
+Does Connect() block at the system level? Update documentation accordingly.
+
 Clean up socket system layer:
     Add documentation.
     Clear stored socket settings?
