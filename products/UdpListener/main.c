@@ -45,9 +45,6 @@ int main(int argc, char * argv[])
         .type = SOCKET_TYPE_DATAGRAM,
         .protocol = SOCKET_PROTOCOL_UDP
     };
-    SocketOptionsStruct socket_options = {
-        .option_name = SOCKET_OPTION_UDP_BROADCAST
-    };
     ProgramOptionsStruct user_options = {
         .ip_address = "127.0.0.1",
         .port = 8888
@@ -56,10 +53,6 @@ int main(int argc, char * argv[])
     char buffer[2000] = {0};
 
     parse_options(&user_options, argc, argv);
-    // printf("Enter an IP address to listen to:\n");
-    // scanf("%s", ip_address);
-    // printf("Enter a port to listen to:\n");
-    // scanf("%d", &port);
 
     printf("Starting UDP listener on %s:%d...\n", user_options.ip_address, user_options.port);
 
@@ -75,15 +68,6 @@ int main(int argc, char * argv[])
     if ( Socket_Open(socket, &socket_settings) < 0 )
     {
         perror("Could not open socket");
-        Socket_Destroy(&socket);
-        return 1;
-    }
-
-    printf("Setting socket options...\n");
-    if ( Socket_SetOptions(socket, &socket_options) < 0 )
-    {
-        perror("Could not set socket options");
-        Socket_Close(socket);
         Socket_Destroy(&socket);
         return 1;
     }
@@ -110,6 +94,7 @@ int main(int argc, char * argv[])
     while (1)
     {
         memset( buffer, 0, sizeof(buffer) );
+        // The socket is bound so we can use the default receive.
         Socket_Receive( socket, buffer, sizeof(buffer) );
         printf("%s\n", buffer);
     }

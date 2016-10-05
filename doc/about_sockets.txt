@@ -11,6 +11,46 @@ Stream sockets:
     Data arrives in order.
     Use TCP/IP (Transmission Control Protocol/Internet Protocol) for transmitting data.
 
+    Clients:
+        Create the socket with socket().
+        Connect to a remote socket with connect().
+        Send data with send() or write().
+            send() has flags, write() does not. send() with flags set to 0 is equivalent to write().
+        Receive data with recv() or read().
+            ?
+        Close the socket with close().
+
+    Servers:
+        Create the socket with socket().
+        Bind to an address and port with bind().
+        Listen for incoming connections with listen().
+        Accept incoming connections with accept().
+        Receive data with recv() or read().
+            ?
+        Send data with send() or write().
+            send() has flags, write() does not. send() with flags set to 0 is equivalent to write().
+        Close the socket with close().
+
 Datagram sockets:
     Connectionless. Just send the data, and that's it.
     Uses UDP (User Datagram Protocol) for transmitting data.
+
+    Clients:
+        Create the socket with socket().
+        You can call connect() on a UDP socket but it is not necessary.
+            It does nothing on the remote end; it only conditions the local interface.
+            If you do this, the socket will only receive on the address and will send to this address by default.
+            This allows you to use recv() and send().
+        In general, receive and send data with recvfrom() and sendto().
+            You can use recv() and send() if connect() was called.
+        Close the socket with close().
+
+    Servers:
+        Create the socket with socket().
+        Bind to an address and port with bind().
+            You must call bind() on a UDP socket. Clients need a fixed port number to send to.
+        Receive data with recvfrom().
+            recv() is not allowed.
+        Send data with sendto().
+            send() is not allowed.
+        Close the socket with close().
