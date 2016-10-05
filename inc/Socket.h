@@ -97,31 +97,31 @@ void Socket_Close(Socket);
  *      SOCKET_ADDRESS_IN_USE if the socket has already been bound.
  *      SOCKET_FAILED_SYSTEM_CALL on other failures.
  */
-int Socket_Bind(Socket, const char * ip_address, int port);
+int SocketServer_Bind(Socket, const char * ip_address, int port);
 
 /*
- * Mark the socket as a 'passive socket' - it will accept incoming connections if Socket_Accept() is used.
+ * Mark the socket as a 'passive socket' - it will accept incoming connections if SocketServer_Accept() is used.
  * For connection-based sockets only.
  * On success, returns 0.
  * On failure, returns < 0.
  */
-int Socket_Listen(Socket, int backlog);
+int SocketServer_Listen(Socket, int backlog);
 
 /*
  * Command the given server Socket to connect to the first connection request.
  * For connection-based sockets only.
- * The socket must first be told to 'listen' using Socket_Listen().
+ * The socket must first be told to 'listen' using SocketServer_Listen().
  * On success, returns a pointer to the new client socket that the original server socket connected to.
  * On failure, returns a null pointer.
  */
-Socket Socket_Accept(Socket);
+Socket SocketServer_Accept(Socket);
 
 /*
  * Connect the given client Socket to a server at the the specified IP address and port.
  * On success, returns 0.
  * On failure, returns < 0.
  */
-int Socket_Connect(Socket, const char * ip_address, int port);
+int SocketClient_Connect(Socket, const char * ip_address, int port);
 
 /*
  * Receive a message from the given socket.

@@ -89,7 +89,7 @@ int main(int argc, char * argv[])
     }
 
     printf("Binding socket...\n");
-    if ( Socket_Bind(socket, user_options.ip_address, user_options.port) < 0 )
+    if ( SocketServer_Bind(socket, user_options.ip_address, user_options.port) < 0 )
     {
         perror("Could not bind socket");
         Socket_Close(socket);

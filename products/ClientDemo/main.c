@@ -85,13 +85,13 @@ int main(int argc, char * argv[])
         return 1;
     }
 
-    return_code = Socket_Connect(client, user_options.ip_address, user_options.port);
+    return_code = SocketClient_Connect(client, user_options.ip_address, user_options.port);
     if (return_code < 0)
     {
         if (return_code == SOCKET_FAILED_SYSTEM_CALL)
             perror("System call to socket connect failed");
         else
-            printf("Socket_Connect failed: %d.\n", return_code);
+            printf("SocketClient_Connect failed: %d.\n", return_code);
 
         close_and_destroy_socket(&client);
         return 1;

@@ -311,7 +311,7 @@ TEST(Socket, it_can_receive_from_a_socket)
     expectSocketReceive(socket_descriptor, receive_buffer, receive_buffer_length, number_of_bytes_read);
 
     Socket_Open(socket, socket_settings);
-    Socket_Connect(socket, ip_address, port);
+    SocketClient_Connect(socket, ip_address, port);
 
     LONGS_EQUAL( number_of_bytes_read, Socket_Receive(socket, receive_buffer, receive_buffer_length) );
 }
@@ -328,7 +328,7 @@ TEST(Socket, it_can_fail_to_receive)
     expectSocketReceive(socket_descriptor, receive_buffer, receive_buffer_length, SOCKET_SYSTEM_LAYER_FAIL);
 
     Socket_Open(socket, socket_settings);
-    Socket_Connect(socket, ip_address, port);
+    SocketClient_Connect(socket, ip_address, port);
 
     LONGS_EQUAL( SOCKET_FAILED_SYSTEM_CALL, Socket_Receive(socket, receive_buffer, receive_buffer_length) );
 }
@@ -343,7 +343,7 @@ TEST(Socket, it_will_not_receive_with_a_receive_null_buffer)
     expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
 
     Socket_Open(socket, socket_settings);
-    Socket_Connect(socket, ip_address, port);
+    SocketClient_Connect(socket, ip_address, port);
 
     LONGS_EQUAL( SOCKET_INVALID_BUFFER, Socket_Receive(socket, NULL, receive_buffer_length) );
 }
@@ -359,7 +359,7 @@ TEST(Socket, it_will_not_receive_if_buffer_length_is_zero)
     expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
 
     Socket_Open(socket, socket_settings);
-    Socket_Connect(socket, ip_address, port);
+    SocketClient_Connect(socket, ip_address, port);
 
     LONGS_EQUAL( SOCKET_INVALID_BUFFER, Socket_Receive(socket, receive_buffer, receive_buffer_length) );
 }
@@ -386,7 +386,7 @@ TEST(Socket, it_can_send_data_to_a_socket)
     expectSocketSend(socket_descriptor, message, message_length, number_of_bytes_sent);
 
     Socket_Open(socket, socket_settings);
-    Socket_Connect(socket, ip_address, port);
+    SocketClient_Connect(socket, ip_address, port);
 
     LONGS_EQUAL( number_of_bytes_sent, Socket_Send(socket, message, message_length) );
 }
@@ -403,7 +403,7 @@ TEST(Socket, it_can_fail_send_data_to_a_socket)
     expectSocketSend(socket_descriptor, message, message_length, SOCKET_SYSTEM_LAYER_FAIL);
 
     Socket_Open(socket, socket_settings);
-    Socket_Connect(socket, ip_address, port);
+    SocketClient_Connect(socket, ip_address, port);
 
     LONGS_EQUAL( SOCKET_FAILED_SYSTEM_CALL, Socket_Send(socket, message, message_length) );
 }
@@ -418,7 +418,7 @@ TEST(Socket, it_will_not_send_a_null_message)
     expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
 
     Socket_Open(socket, socket_settings);
-    Socket_Connect(socket, ip_address, port);
+    SocketClient_Connect(socket, ip_address, port);
 
     LONGS_EQUAL( SOCKET_INVALID_BUFFER, Socket_Send(socket, NULL, message_length) );
 }
@@ -434,7 +434,7 @@ TEST(Socket, it_will_not_send_a_zero_length_message)
     expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
 
     Socket_Open(socket, socket_settings);
-    Socket_Connect(socket, ip_address, port);
+    SocketClient_Connect(socket, ip_address, port);
 
     LONGS_EQUAL( SOCKET_INVALID_BUFFER, Socket_Send(socket, message, message_length) );
 }

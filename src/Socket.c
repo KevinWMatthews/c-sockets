@@ -145,7 +145,7 @@ void Socket_Close(Socket self)
     self->port = SOCKET_INVALID_PORT;
 }
 
-int Socket_Bind(Socket self, const char * ip_address, int port)
+int SocketServer_Bind(Socket self, const char * ip_address, int port)
 {
     int return_code = SOCKET_SYSTEM_LAYER_FAIL;
     RETURN_VALUE_IF_NULL(self, SOCKET_NULL_POINTER);
@@ -182,7 +182,7 @@ int Socket_GetPort(Socket self)
     return self->port;
 }
 
-int Socket_Listen(Socket self, int backlog)
+int SocketServer_Listen(Socket self, int backlog)
 {
     int return_code = SOCKET_SYSTEM_LAYER_FAIL;
     RETURN_VALUE_IF_NULL(self, SOCKET_NULL_POINTER);
@@ -193,7 +193,7 @@ int Socket_Listen(Socket self, int backlog)
     return SOCKET_SUCCESS;
 }
 
-Socket Socket_Accept(Socket self)
+Socket SocketServer_Accept(Socket self)
 {
     Socket client_socket = {0};
     int return_code = SOCKET_SYSTEM_LAYER_FAIL;
@@ -209,7 +209,7 @@ Socket Socket_Accept(Socket self)
     return client_socket;
 }
 
-int Socket_Connect(Socket self, const char * ip_address, int port)
+int SocketClient_Connect(Socket self, const char * ip_address, int port)
 {
     int return_code = SOCKET_SYSTEM_LAYER_FAIL;
     RETURN_VALUE_IF_NULL(self, SOCKET_NULL_POINTER);

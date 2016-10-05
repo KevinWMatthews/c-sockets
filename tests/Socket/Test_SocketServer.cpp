@@ -52,7 +52,7 @@ TEST(SocketServer, bind_can_accept_null_pointers)
     const char * ip_address = "192.168.0.1";
     int port = 12345;
 
-    Socket_Bind(NULL, ip_address, port);
+    SocketServer_Bind(NULL, ip_address, port);
 }
 
 TEST(SocketServer, it_can_bind_to_a_specific_ip_address_and_port)
@@ -65,7 +65,7 @@ TEST(SocketServer, it_can_bind_to_a_specific_ip_address_and_port)
     expectSocketBind(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
     Socket_Open(socket, socket_settings);
 
-    LONGS_EQUAL( SOCKET_SUCCESS, Socket_Bind(socket, ip_address, port) );
+    LONGS_EQUAL( SOCKET_SUCCESS, SocketServer_Bind(socket, ip_address, port) );
     CHECK_SOCKET_ADDRESS_AND_PORT(socket, ip_address, port);
 }
 
@@ -74,11 +74,11 @@ TEST(SocketServer, closing_a_bound_socket_resets_ip_address_and_port)
     const char * ip_address = "192.168.2.1";
     int port = 10004;
 
-    expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT); 
+    expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
     expectSocketBind(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
     expectSocketClose(socket_descriptor, SOCKET_SYSTEM_LAYER_SUCCESS);
     Socket_Open(socket, socket_settings);
-    Socket_Bind(socket, ip_address, port);
+    SocketServer_Bind(socket, ip_address, port);
 
     Socket_Close(socket);
     CHECK_SOCKET_RESET(socket);
@@ -98,9 +98,9 @@ TEST(SocketServer, it_can_not_bind_to_an_address_and_port_twice)
     expectSocketBind(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
     expectSocketBind(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_ADDRESS_IN_USE);
     Socket_Open(socket, socket_settings);
-    Socket_Bind(socket, ip_address, port);
+    SocketServer_Bind(socket, ip_address, port);
 
-    LONGS_EQUAL( SOCKET_ADDRESS_IN_USE, Socket_Bind(socket, ip_address, port) );
+    LONGS_EQUAL( SOCKET_ADDRESS_IN_USE, SocketServer_Bind(socket, ip_address, port) );
     CHECK_SOCKET_ADDRESS_AND_PORT(socket, ip_address, port);
 }
 
@@ -114,7 +114,7 @@ TEST(SocketServer, it_can_fail_to_bind)
     expectSocketClose(socket_descriptor, SOCKET_SYSTEM_LAYER_SUCCESS);
     Socket_Open(socket, socket_settings);
 
-    LONGS_EQUAL( SOCKET_FAILED_SYSTEM_CALL, Socket_Bind(socket, ip_address, port) );
+    LONGS_EQUAL( SOCKET_FAILED_SYSTEM_CALL, SocketServer_Bind(socket, ip_address, port) );
 
     CHECK_SOCKET_ADDRESS_AND_PORT(socket, SOCKET_INVALID_IP_ADDRESS, SOCKET_INVALID_PORT);
 
@@ -132,9 +132,9 @@ TEST(SocketServer, it_can_listen)
     expectSocketBind(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
     expectSocketListen(socket_descriptor, backlog, SOCKET_SYSTEM_LAYER_SUCCESS);
     Socket_Open(socket, socket_settings);
-    Socket_Bind(socket, ip_address, port);
+    SocketServer_Bind(socket, ip_address, port);
 
-    LONGS_EQUAL( SOCKET_SUCCESS, Socket_Listen(socket, backlog) );
+    LONGS_EQUAL( SOCKET_SUCCESS, SocketServer_Listen(socket, backlog) );
 }
 
 TEST(SocketServer, it_can_listen_with_a_custom_backlog)
@@ -147,9 +147,9 @@ TEST(SocketServer, it_can_listen_with_a_custom_backlog)
     expectSocketBind(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
     expectSocketListen(socket_descriptor, backlog, SOCKET_SYSTEM_LAYER_SUCCESS);
     Socket_Open(socket, socket_settings);
-    Socket_Bind(socket, ip_address, port);
+    SocketServer_Bind(socket, ip_address, port);
 
-    LONGS_EQUAL( SOCKET_SUCCESS, Socket_Listen(socket, backlog) );
+    LONGS_EQUAL( SOCKET_SUCCESS, SocketServer_Listen(socket, backlog) );
 }
 
 TEST(SocketServer, it_can_fail_to_listen)
@@ -162,14 +162,14 @@ TEST(SocketServer, it_can_fail_to_listen)
     expectSocketBind(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
     expectSocketListen(socket_descriptor, backlog, SOCKET_SYSTEM_LAYER_FAIL);
     Socket_Open(socket, socket_settings);
-    Socket_Bind(socket, ip_address, port);
+    SocketServer_Bind(socket, ip_address, port);
 
-    LONGS_EQUAL( SOCKET_FAILED_SYSTEM_CALL, Socket_Listen(socket, backlog) );
+    LONGS_EQUAL( SOCKET_FAILED_SYSTEM_CALL, SocketServer_Listen(socket, backlog) );
 }
 
 TEST(SocketServer, listen_can_handle_null_pointers)
 {
-    LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_Listen(NULL, 0) );
+    LONGS_EQUAL( SOCKET_NULL_POINTER, SocketServer_Listen(NULL, 0) );
 }
 
 // Accept
@@ -187,10 +187,10 @@ TEST(SocketServer, a_server_can_accpet_a_connection)
     expectSocketAccept(socket_descriptor, new_socket_descriptor);
 
     Socket_Open(socket, socket_settings);
-    Socket_Bind(socket, ip_address, port);
-    Socket_Listen(socket, backlog);
+    SocketServer_Bind(socket, ip_address, port);
+    SocketServer_Listen(socket, backlog);
 
-    new_socket = Socket_Accept(socket);
+    new_socket = SocketServer_Accept(socket);
     LONGS_EQUAL( new_socket_descriptor, Socket_GetDescriptor(new_socket) );
     Socket_Destroy(&new_socket);
 }
@@ -207,13 +207,13 @@ TEST(SocketServer, it_can_fail_to_accept)
     expectSocketAccept(socket_descriptor, SOCKET_SYSTEM_LAYER_FAIL);
 
     Socket_Open(socket, socket_settings);
-    Socket_Bind(socket, ip_address, port);
-    Socket_Listen(socket, backlog);
+    SocketServer_Bind(socket, ip_address, port);
+    SocketServer_Listen(socket, backlog);
 
-    LONGS_EQUAL( NULL, Socket_Accept(socket) );
+    LONGS_EQUAL( NULL, SocketServer_Accept(socket) );
 }
 
 TEST(SocketServer, accept_can_handle_null_pointers)
 {
-    LONGS_EQUAL( NULL, Socket_Accept(NULL) );
+    LONGS_EQUAL( NULL, SocketServer_Accept(NULL) );
 }

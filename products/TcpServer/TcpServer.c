@@ -123,7 +123,7 @@ int main(int argc, char * argv[])
     }
 
     printf("Binding socket...\n");
-    if ( Socket_Bind(server_socket, user_options.ip_address, user_options.port) < 0 )
+    if ( SocketServer_Bind(server_socket, user_options.ip_address, user_options.port) < 0 )
     {
         perror("Bind failed");
         close_and_destroy_socket(&server_socket);
@@ -131,7 +131,7 @@ int main(int argc, char * argv[])
     }
 
     printf("Listening on socket...\n");
-    if ( Socket_Listen(server_socket, backlog) < 0 )
+    if ( SocketServer_Listen(server_socket, backlog) < 0 )
     {
         perror("Listen failed");
         close_and_destroy_socket(&server_socket);
@@ -142,7 +142,7 @@ int main(int argc, char * argv[])
     printf("To connect to this socket, open a new terminal window and type:\ntelnet %s %d\n", user_options.ip_address, user_options.port);
     do
     {
-        client_socket = Socket_Accept(server_socket);
+        client_socket = SocketServer_Accept(server_socket);
         if (!client_socket)
         {
             perror("Accept failed");
