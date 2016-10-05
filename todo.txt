@@ -50,3 +50,5 @@ Figure out why moving Server to ./ would prevent Server from being build.
 Why is NULL public in Socket.h?
 
 Handle signals in products. Ctrl+C, etc.
+
+If we send a message in a buffer with 10 characters and 1990 nulls, how much data is sent over the network?
