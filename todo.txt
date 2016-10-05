@@ -1,3 +1,6 @@
+Create a UDP broadcast demo.
+    This may require implementing recvfrom() and sendto().
+
 Add functions to get the source vs the destination IP address and port.
     TCP Clients should return a NULL source address and port?
     TCP Clients should return a valid destination if they have been connected.
@@ -6,9 +9,16 @@ Add functions to get the source vs the destination IP address and port.
     UDP Clients should return a NULL source address. Port?
     etc. Figure this out.
 
+Consider forcing the user to use the API properly:
+    Connect is for Clients, Bind is for Servers, etc.
+        This would require opening a socket as a cliet or a server.
+        There are a variety of ways to do this, some of which are quite hairy. Leave this for later.
+    Accept is only for TCP, not UDP.
+    Connect can be used for UDP; read the docs.
+    Listen is for TCP, not UDP.
+
 Rethink and recompare new tests to old.
-    Should we close after tests?
-    Should we split test files?
+    Should we close the socket after tests?
 
 Refactor setting Open() expectations. Create helper methods to:
     Set TCP socket.
@@ -22,7 +32,7 @@ These are both GNU C library modules.
 Does Connect() block at the system level? Update documentation accordingly.
 
 Clean up socket system layer:
-    Add documentation.
+    Finish documentation.
     Clear stored socket settings?
         domain
     Store other SocketSettings?
@@ -33,11 +43,10 @@ Clean up socket system layer:
 Allow flags in Send().
 Allow flags in Receive().
 
-Write some demo programs and see if they can connect!
-Create send() and receive() to make sure that it really works. :)
-
 Make a distclean option. Remove build, obj, all build directories.
 
 Figure out why moving Server to ./ would prevent Server from being build.
+
+Why is NULL public in Socket.h?
 
 Handle signals in products. Ctrl+C, etc.
