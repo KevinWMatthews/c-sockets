@@ -1,6 +1,13 @@
 #ifndef SOCKET_INCLUDED
 #define SOCKET_INCLUDED
 
+typedef struct SocketAddressStruct * SocketAddress;
+typedef struct SocketAddressStruct
+{
+    char * ip_address;
+    unsigned short port;
+} SocketAddressStruct;
+
 typedef struct SocketStruct * Socket;
 
 #ifndef NULL
@@ -97,7 +104,7 @@ void Socket_Close(Socket);
  *      SOCKET_ADDRESS_IN_USE if the socket has already been bound.
  *      SOCKET_FAILED_SYSTEM_CALL on other failures.
  */
-int SocketServer_Bind(Socket, const char * ip_address, int port);
+int SocketServer_Bind(Socket, SocketAddress);
 
 /*
  * Mark the socket as a 'passive socket' - it will accept incoming connections if SocketServer_Accept() is used.

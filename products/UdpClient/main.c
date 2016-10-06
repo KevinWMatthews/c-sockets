@@ -3,19 +3,12 @@
 #include <stdlib.h>
 #include "Socket.h"
 
-typedef struct ProgramOptionsStruct * ProgramOptions;
-typedef struct ProgramOptionsStruct
-{
-    char ip_address[16];
-    int port;
-} ProgramOptionsStruct;
-
-static void parse_options(ProgramOptions options, int argc, char * argv[])
+static void parse_options(SocketAddress socket_address, int argc, char * argv[])
 {
     int i = 0;
     char port[6] = {0};
 
-    if (options == 0)
+    if (socket_address == 0)
     {
         printf("%s was passed a null pointer!\n", __func__);
         return;
@@ -26,13 +19,13 @@ static void parse_options(ProgramOptions options, int argc, char * argv[])
         if ( strcmp(argv[i], "--ip-address") == 0 )
         {
             i++;
-            strcpy(options->ip_address, argv[i]);
+            strcpy(socket_address->ip_address, argv[i]);
         }
         if ( strcmp(argv[i], "--port") == 0 )
         {
             i++;
             strcpy(port, argv[i]);
-            options->port = atoi(port);
+            socket_address->port = atoi(port);
         }
     }
 }
@@ -47,12 +40,12 @@ int main(int argc, char * argv[])
     };
     int return_code = 0;
     char test_message[] = {"This is a test.\n"};
-    ProgramOptionsStruct user_options = {
+    SocketAddressStruct socket_address = {
         .ip_address = "127.0.0.1",
         .port = 8888
     };
 
-    parse_options(&user_options, argc, argv);
+    parse_options(&socket_address, argc, argv);
 
     printf("Starting UDP Client...\n");
     client = Socket_Create();
@@ -77,7 +70,7 @@ int main(int argc, char * argv[])
     }
 
     printf("Connecting to socket...\n");
-    return_code = SocketClient_Connect(client, user_options.ip_address, user_options.port);
+    return_code = SocketClient_Connect(client, socket_address.ip_address, socket_address.port);
     if (return_code < 0)
     {
         if (return_code == SOCKET_FAILED_SYSTEM_CALL)
@@ -90,7 +83,7 @@ int main(int argc, char * argv[])
         Socket_Destroy(&client);
     }
 
-    printf("Sending data to socket at %s:%d...\n", user_options.ip_address, user_options.port);
+    printf("Sending data to socket at %s:%d...\n", socket_address.ip_address, socket_address.port);
     return_code = Socket_Send( client, test_message, sizeof(test_message) );
     if (return_code < 0)
     {

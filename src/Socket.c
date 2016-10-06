@@ -139,11 +139,11 @@ void Socket_Close(Socket self)
     self->socket_descriptor = SOCKET_INVALID_DESCRIPTOR;
 }
 
-int SocketServer_Bind(Socket self, const char * ip_address, int port)
+int SocketServer_Bind(Socket self, SocketAddress socket_address)
 {
-    int return_code = SOCKET_SYSTEM_LAYER_FAIL;
+    int return_code = 0;
     RETURN_VALUE_IF_NULL(self, SOCKET_NULL_POINTER);
-    return_code = SocketSystemLayer_Bind(self->socket_descriptor, self->domain, ip_address, port);
+    return_code = SocketSystemLayer_Bind(self->socket_descriptor, self->domain, socket_address->ip_address, socket_address->port);
     if ( return_code == SOCKET_SYSTEM_LAYER_ADDRESS_IN_USE )
     {
         return SOCKET_ADDRESS_IN_USE;
@@ -155,6 +155,12 @@ int SocketServer_Bind(Socket self, const char * ip_address, int port)
     return SOCKET_SUCCESS;
 }
 
+/*
+ * Mark the socket as a 'passive socket' - it will accept incoming connections if SocketServer_Accept() is used.
+ * For connection-based sockets only.
+ * On success, returns 0.
+ * On failure, returns < 0.
+ */
 int Socket_GetDescriptor(Socket self)
 {
     RETURN_VALUE_IF_NULL(self, SOCKET_NULL_POINTER);

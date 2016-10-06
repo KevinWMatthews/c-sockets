@@ -6,15 +6,7 @@
 #include <errno.h>
 #include <unistd.h>
 
-
-typedef struct ProgramOptionsStruct * ProgramOptions;
-typedef struct ProgramOptionsStruct
-{
-    char ip_address[16];
-    int port;
-} ProgramOptionsStruct;
-
-static void parse_options(ProgramOptions options, int argc, char * argv[])
+static void parse_options(SocketAddress options, int argc, char * argv[])
 {
     int i = 0;
     char port[6] = {0};
@@ -77,7 +69,7 @@ static void * socket_handler_thread(void * client_socket)
             printf("Socket closed!\n");
             pthread_exit( (void *)&return_code );
         }
-        printf( "Received message from %s:%d, %d:\n", Socket_GetIpAddress(socket), Socket_GetPort(socket), Socket_GetDescriptor(socket) );
+        printf( "Received message from %d:\n", Socket_GetDescriptor(socket) );
         printf("%s\n", buffer);
         printf("Sending response to client... ");
         if ( Socket_Send(socket, buffer, sizeof(buffer) ) < 0 )
@@ -107,15 +99,15 @@ int main(int argc, char * argv[])
         .option_name = SOCKET_OPTION_REUSE_ADDRESS
     };
     Socket client_socket = 0;
-    ProgramOptionsStruct user_options = {
+    SocketAddressStruct socket_address = {
         .ip_address = "127.0.0.1",
         .port = 8888
     };
     int backlog = 0;
 
-    parse_options(&user_options, argc, argv);
+    parse_options(&socket_address, argc, argv);
 
-    printf("Starting server at %s:%d...\n", user_options.ip_address, user_options.port);
+    printf("Starting server at %s:%d...\n", socket_address.ip_address, socket_address.port);
 
     printf("Creating server socket...\n");
     server_socket = Socket_Create();
@@ -142,7 +134,7 @@ int main(int argc, char * argv[])
     }
 
     printf("Binding socket...\n");
-    if ( SocketServer_Bind(server_socket, user_options.ip_address, user_options.port) < 0 )
+    if ( SocketServer_Bind(server_socket, &socket_address) < 0 )
     {
         perror("Bind failed");
         close_and_destroy_socket(&server_socket);
@@ -158,7 +150,7 @@ int main(int argc, char * argv[])
     }
 
     printf("Waiting to accept a connection...\n");
-    printf("To connect to this socket, open a new terminal window and type:\ntelnet %s %d\n", user_options.ip_address, user_options.port);
+    printf("To connect to this socket, open a new terminal window and type:\ntelnet %s %d\n", socket_address.ip_address, socket_address.port);
     do
     {
         client_socket = SocketServer_Accept(server_socket);

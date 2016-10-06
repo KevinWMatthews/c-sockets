@@ -1,6 +1,8 @@
 #ifndef TEST_HELPERS_INCLUDED
 #define TEST_HELPERS_INCLUDED
 
+#include "Socket.h"
+
 #define CHECK_SOCKET_CLOSED(socket) \
     LONGS_EQUAL( SOCKET_INVALID_DESCRIPTOR, Socket_GetDescriptor((socket)) );
 
@@ -16,7 +18,7 @@ void expectSocketSendTo(int socket_descriptor, char * message, unsigned int mess
 void expectSocketConnect(int socket_descriptor, int domain, const char *ip_address, int port, int return_code);
 
 // Server sockets
-void expectSocketBind(int socket_descriptor, int domain, const char *ip_address, int port, int return_code);
+void expectSocketBind(int socket_descriptor, int domain, SocketAddress ip_address, int return_code);
 void expectSocketListen(int socket_descriptor, int backlog, int return_code);
 void expectSocketAccept(int server_socket_descriptor, int client_socket_descriptor);
 

@@ -71,13 +71,13 @@ void expectSocketConnect(int socket_descriptor, int domain, const char *ip_addre
 }
 
 // Server sockets
-void expectSocketBind(int socket_descriptor, int domain, const char *ip_address, int port, int return_code)
+void expectSocketBind(int socket_descriptor, int domain, SocketAddress socket_address, int return_code)
 {
     mock().expectOneCall("SocketSystemLayer_Bind")
         .withParameter("domain", domain)
         .withParameter("descriptor", socket_descriptor)
-        .withParameter("ip_address", ip_address)
-        .withParameter("port", port)
+        .withParameter("ip_address", socket_address->ip_address)
+        .withParameter("port", socket_address->port)
         .andReturnValue(return_code);
 }
 
