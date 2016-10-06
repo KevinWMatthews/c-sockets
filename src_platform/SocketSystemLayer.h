@@ -104,10 +104,17 @@ int SocketSystemLayer_Connect(int descriptor, int domain, const char * ip_addres
  * Send the message to the socket with the given file descriptor.
  * The option MSG_NOSIGNAL is enabled by default. This suppresses SIGPIPE signal and
  * lets the user handle the error with a return code.
- * On success, returns 0.
+ * On success, returns the number of bytes that were sent.
  * On failure, returns < 0.
  */
 int SocketSystemLayer_Send(int descriptor, const char * message, unsigned int message_length);
+
+/* Send the message from the given socket to the given IP address and port.
+ * For use with UDP sockets that have not had their default destination set using Connect().
+ * On success, returns the number of bytes that were sent.
+ * On failure, returns < 0.
+ */
+int SocketSystemLayer_SendTo(int descriptor, const char * message, unsigned int message_length, const char * ip_address, int port);
 
 /*
  * Receive a message from the socket with the given descriptor.

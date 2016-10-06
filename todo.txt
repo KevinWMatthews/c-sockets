@@ -1,3 +1,11 @@
+Double check return codes in Socket.c.
+    There should be no references to SOCKET_SYSTEM_LAYER.
+    What should the default value for return_code be?
+
+Verify zero-length UDP messages.
+
+Does the message length for send include the null terminator?
+
 Create a UDP broadcast demo.
     This may require implementing recvfrom() and sendto().
 

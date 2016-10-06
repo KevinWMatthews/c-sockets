@@ -81,6 +81,17 @@ int SocketSystemLayer_Send(int descriptor, const char * message, unsigned int me
     return mock().intReturnValue();
 }
 
+int SocketSystemLayer_SendTo(int descriptor, const char * message, unsigned int message_length, const char * ip_address, int port)
+{
+    mock().actualCall("SocketSystemLayer_Send")
+        .withParameter("descriptor", descriptor)
+        .withParameter("message", message)
+        .withParameter("message_length", message_length)
+        .withParameter("ip_address", ip_address)
+        .withParameter("port", port);
+    return mock().intReturnValue();
+}
+
 int SocketSystemLayer_Receive(int descriptor, char * buffer, unsigned int buffer_length)
 {
     mock().actualCall("SocketSystemLayer_Receive")

@@ -63,6 +63,11 @@ int SocketSystemLayer_Send(int descriptor, const char * message, unsigned int me
     return send(descriptor, message, message_length, MSG_NOSIGNAL);
 }
 
+int SocketSystemLayer_SendTo(int descriptor, const char * message, unsigned int message_length, const char * ip_address, int port)
+{
+    return 666;
+}
+
 int SocketSystemLayer_Receive(int descriptor, char * buffer, unsigned int buffer_length)
 {
     return recv(descriptor, buffer, buffer_length, 0);

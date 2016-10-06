@@ -15,6 +15,8 @@ TEST_GROUP(Socket)
     int socket_descriptor;
     SocketSettingsStruct socket_settings_struct;
     SocketSettings socket_settings;
+    SocketSettingsStruct udp_settings_struct;
+    SocketSettings udp_settings;
 
     void setup()
     {
@@ -25,6 +27,11 @@ TEST_GROUP(Socket)
         socket_settings_struct.type = SOCKET_TYPE_STREAM;
         socket_settings_struct.protocol = SOCKET_PROTOCOL_DEFAULT;
         socket_settings = &socket_settings_struct;
+
+        udp_settings_struct.domain = SOCKET_DOMAIN_IPV4;
+        udp_settings_struct.type = SOCKET_TYPE_DATAGRAM;
+        udp_settings_struct.protocol = SOCKET_PROTOCOL_DEFAULT;
+        udp_settings = &udp_settings_struct;
     }
 
     void teardown()
@@ -55,6 +62,9 @@ TEST_GROUP(Socket)
  *      Can set TCP Reuse Immediately.
  *
  *  Send:
+ *      Add flags.
+ *
+ *  SendTo:
  *      Add flags.
  *
  *  Receive:
@@ -437,6 +447,74 @@ TEST(Socket, it_will_not_send_a_zero_length_message)
     SocketClient_Connect(socket, ip_address, port);
 
     LONGS_EQUAL( SOCKET_INVALID_BUFFER, Socket_Send(socket, message, message_length) );
+}
+
+// SendTo
+TEST(Socket, send_to_can_send_a_message)
+{
+    const char * ip_address = "10.10.0.1";
+    int port = 12121;
+    char message[] = "Hello";
+    unsigned int message_length = sizeof(message);
+
+    expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_DATAGRAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
+    expectSocketSendTo(socket_descriptor, message, message_length, ip_address, port, message_length);
+
+    Socket_Open(socket, udp_settings);
+    LONGS_EQUAL( message_length, Socket_SendTo(socket, message, message_length, ip_address, port) );
+}
+
+TEST(Socket, send_to_can_send_a_message_of_zero_length) // This is valid for UDP packets.
+{
+    const char * ip_address = "10.10.0.1";
+    int port = 12121;
+    char message[] = "";
+    unsigned int message_length = 0;
+
+    expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_DATAGRAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
+    expectSocketSendTo(socket_descriptor, message, message_length, ip_address, port, message_length);
+
+    Socket_Open(socket, udp_settings);
+    LONGS_EQUAL( message_length, Socket_SendTo(socket, message, message_length, ip_address, port) );
+}
+
+TEST(Socket, send_to_can_detect_system_layer_failure)
+{
+    const char * ip_address = "10.10.0.1";
+    int port = 12121;
+    char message[] = "Hello";
+    unsigned int message_length = sizeof(message);
+
+    expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_DATAGRAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
+    expectSocketSendTo(socket_descriptor, message, message_length, ip_address, port, SOCKET_SYSTEM_LAYER_FAIL);
+
+    Socket_Open(socket, udp_settings);
+    LONGS_EQUAL( SOCKET_SYSTEM_LAYER_FAIL, Socket_SendTo(socket, message, message_length, ip_address, port) );
+}
+
+TEST(Socket, send_to_will_not_transmit_a_null_message)
+{
+    const char * ip_address = "10.10.0.1";
+    int port = 12121;
+    unsigned int message_length = 7;
+
+    expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_DATAGRAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
+
+    Socket_Open(socket, udp_settings);
+    LONGS_EQUAL( SOCKET_INVALID_BUFFER, Socket_SendTo(socket, NULL, message_length, ip_address, port) );
+}
+
+TEST(Socket, send_to_can_handle_a_null_socket)
+{
+    const char * ip_address = "10.10.0.1";
+    int port = 12121;
+    char message[] = "Hello";
+    unsigned int message_length = sizeof(message);
+
+    expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_DATAGRAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
+
+    Socket_Open(socket, udp_settings);
+    LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_SendTo(NULL, message, message_length, ip_address, port) );
 }
 
 // GetDescriptor

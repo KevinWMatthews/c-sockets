@@ -247,3 +247,16 @@ int Socket_Send(Socket self, char * message, unsigned int message_length)
         return SOCKET_FAILED_SYSTEM_CALL;
     return return_code;
 }
+
+int Socket_SendTo(Socket self, char * message, unsigned int message_length,
+        const char * ip_address, int port)
+{
+    int return_code = 0;
+    RETURN_VALUE_IF_NULL(self, SOCKET_NULL_POINTER);
+    RETURN_VALUE_IF_NULL(message, SOCKET_INVALID_BUFFER);
+
+    return_code = SocketSystemLayer_SendTo(self->socket_descriptor, message, message_length, ip_address, port);
+    if (return_code < 0)
+        return SOCKET_FAILED_SYSTEM_CALL;
+    return return_code;
+}

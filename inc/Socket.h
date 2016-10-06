@@ -142,6 +142,8 @@ int Socket_Receive(Socket, char * buffer, unsigned int buffer_length);
  */
 int Socket_Send(Socket, char * message, unsigned int message_length);
 
+int Socket_SendTo(Socket, char * message, unsigned int message_length,
+        const char * ip_address, int port);
 /*
  * Return the file descriptor for the given Socket.
  */
