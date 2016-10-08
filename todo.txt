@@ -1,3 +1,5 @@
+Add SocketAddress to Connect() and SendTo().
+
 Double check return codes in Socket.c.
     There should be no references to SOCKET_SYSTEM_LAYER.
     What should the default value for return_code be?
