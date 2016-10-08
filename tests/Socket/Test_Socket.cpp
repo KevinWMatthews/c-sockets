@@ -72,18 +72,12 @@ TEST_GROUP(Socket)
  *
  *  GetDescriptor:
  *      Can fail.
- *
- *  GetIpAddress:
- *      Can fail.
- *
- *  GetPort:
- *      Can fail.
  */
 
 // Create and destroy
 TEST(Socket, it_can_create_and_destroy_a_socket)
 {
-    CHECK_SOCKET_RESET(socket);
+    CHECK_SOCKET_CLOSED(socket);
 }
 
 TEST(Socket, it_can_destroy_a_socket_twice)
@@ -104,7 +98,6 @@ TEST(Socket, it_can_open_a_socket)
     LONGS_EQUAL( SOCKET_SUCCESS, Socket_Open(socket, socket_settings) );
 
     LONGS_EQUAL( socket_descriptor, Socket_GetDescriptor(socket) );
-    CHECK_SOCKET_ADDRESS_AND_PORT(socket, SOCKET_INVALID_IP_ADDRESS, SOCKET_INVALID_PORT);
 }
 
 TEST(Socket, it_can_open_a_tcp_socket)
@@ -117,7 +110,6 @@ TEST(Socket, it_can_open_a_tcp_socket)
     LONGS_EQUAL( SOCKET_SUCCESS, Socket_Open(socket, socket_settings) );
 
     LONGS_EQUAL( socket_descriptor, Socket_GetDescriptor(socket) );
-    CHECK_SOCKET_ADDRESS_AND_PORT(socket, SOCKET_INVALID_IP_ADDRESS, SOCKET_INVALID_PORT);
 }
 
 TEST(Socket, it_can_open_a_udp_socket)
@@ -130,7 +122,6 @@ TEST(Socket, it_can_open_a_udp_socket)
     LONGS_EQUAL( SOCKET_SUCCESS, Socket_Open(socket, socket_settings) );
 
     LONGS_EQUAL( socket_descriptor, Socket_GetDescriptor(socket) );
-    CHECK_SOCKET_ADDRESS_AND_PORT(socket, SOCKET_INVALID_IP_ADDRESS, SOCKET_INVALID_PORT);
 }
 
 TEST(Socket, it_can_fail_to_open_a_socket)
@@ -140,7 +131,6 @@ TEST(Socket, it_can_fail_to_open_a_socket)
     LONGS_EQUAL( SOCKET_FAILED_SYSTEM_CALL, Socket_Open(socket, socket_settings) );
 
     LONGS_EQUAL( SOCKET_INVALID_DESCRIPTOR, Socket_GetDescriptor(socket) );
-    CHECK_SOCKET_ADDRESS_AND_PORT(socket, SOCKET_INVALID_IP_ADDRESS, SOCKET_INVALID_PORT);
 }
 
 TEST(Socket, it_can_open_several_sockets)
@@ -160,9 +150,7 @@ TEST(Socket, it_can_open_several_sockets)
     Socket_Open(socket2, &socket_settings_struct2);
 
     LONGS_EQUAL( socket_descriptor, Socket_GetDescriptor(socket) );
-    CHECK_SOCKET_ADDRESS_AND_PORT(socket, SOCKET_INVALID_IP_ADDRESS, SOCKET_INVALID_PORT);
     LONGS_EQUAL( socket_descriptor2, Socket_GetDescriptor(socket2) );
-    CHECK_SOCKET_ADDRESS_AND_PORT(socket2, SOCKET_INVALID_IP_ADDRESS, SOCKET_INVALID_PORT);
 
     Socket_Destroy(&socket2);
 }
@@ -259,7 +247,7 @@ TEST(Socket, it_can_close_a_socket)
 
     Socket_Close(socket);
 
-    CHECK_SOCKET_RESET(socket);
+    CHECK_SOCKET_CLOSED(socket);
 }
 
 TEST(Socket, it_can_close_several_sockets)
@@ -283,8 +271,8 @@ TEST(Socket, it_can_close_several_sockets)
     Socket_Close(socket);
     Socket_Close(socket2);
 
-    CHECK_SOCKET_RESET(socket);
-    CHECK_SOCKET_RESET(socket2);
+    CHECK_SOCKET_CLOSED(socket);
+    CHECK_SOCKET_CLOSED(socket2);
 
     Socket_Destroy(&socket2);
 }
@@ -299,7 +287,7 @@ TEST(Socket, it_will_not_close_a_socket_twice)
 
     Socket_Close(socket);
 
-    CHECK_SOCKET_RESET(socket);
+    CHECK_SOCKET_CLOSED(socket);
 }
 
 TEST(Socket, close_can_handle_null_pointers)
@@ -521,16 +509,4 @@ TEST(Socket, send_to_can_handle_a_null_socket)
 TEST(Socket, get_descriptor_can_handle_null_pointers)
 {
     LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_GetDescriptor(NULL) );
-}
-
-// GetIpAddress
-TEST(Socket, get_ip_address_can_handle_null_pointers)
-{
-    POINTERS_EQUAL( SOCKET_INVALID_IP_ADDRESS, Socket_GetIpAddress(NULL) );
-}
-
-// GetPort
-TEST(Socket, get_port_can_handl_null_pointers)
-{
-    LONGS_EQUAL( SOCKET_INVALID_PORT, Socket_GetPort(NULL) );
 }

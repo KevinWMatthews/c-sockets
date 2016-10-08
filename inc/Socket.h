@@ -153,22 +153,4 @@ enum
 };
 int Socket_GetDescriptor(Socket);
 
-/*
- * Return the IP address of the given Socket.
- */
-enum
-{
-    SOCKET_INVALID_IP_ADDRESS = 0
-};
-const char * Socket_GetIpAddress(Socket);
-
-/*
- * Return the port of the given Socket.
- */
-enum
-{
-    SOCKET_INVALID_PORT = -1
-};
-int Socket_GetPort(Socket);
-
 #endif

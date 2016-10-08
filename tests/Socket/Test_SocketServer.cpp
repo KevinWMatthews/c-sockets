@@ -66,7 +66,6 @@ TEST(SocketServer, it_can_bind_to_a_specific_ip_address_and_port)
     Socket_Open(socket, socket_settings);
 
     LONGS_EQUAL( SOCKET_SUCCESS, SocketServer_Bind(socket, ip_address, port) );
-    CHECK_SOCKET_ADDRESS_AND_PORT(socket, ip_address, port);
 }
 
 TEST(SocketServer, closing_a_bound_socket_resets_ip_address_and_port)
@@ -81,7 +80,7 @@ TEST(SocketServer, closing_a_bound_socket_resets_ip_address_and_port)
     SocketServer_Bind(socket, ip_address, port);
 
     Socket_Close(socket);
-    CHECK_SOCKET_RESET(socket);
+    CHECK_SOCKET_CLOSED(socket);
 }
 
 // TEST(SocketServer, it_can_bind_to_any_ip_address_and_port)
@@ -101,7 +100,6 @@ TEST(SocketServer, it_can_not_bind_to_an_address_and_port_twice)
     SocketServer_Bind(socket, ip_address, port);
 
     LONGS_EQUAL( SOCKET_ADDRESS_IN_USE, SocketServer_Bind(socket, ip_address, port) );
-    CHECK_SOCKET_ADDRESS_AND_PORT(socket, ip_address, port);
 }
 
 TEST(SocketServer, it_can_fail_to_bind)
@@ -115,8 +113,6 @@ TEST(SocketServer, it_can_fail_to_bind)
     Socket_Open(socket, socket_settings);
 
     LONGS_EQUAL( SOCKET_FAILED_SYSTEM_CALL, SocketServer_Bind(socket, ip_address, port) );
-
-    CHECK_SOCKET_ADDRESS_AND_PORT(socket, SOCKET_INVALID_IP_ADDRESS, SOCKET_INVALID_PORT);
 
     Socket_Close(socket);
 }

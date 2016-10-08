@@ -1,13 +1,8 @@
 #ifndef TEST_HELPERS_INCLUDED
 #define TEST_HELPERS_INCLUDED
 
-#define CHECK_SOCKET_RESET(socket) \
-    LONGS_EQUAL( SOCKET_INVALID_DESCRIPTOR, Socket_GetDescriptor((socket)) ); \
-    CHECK_SOCKET_ADDRESS_AND_PORT((socket), SOCKET_INVALID_IP_ADDRESS, SOCKET_INVALID_PORT);
-
-#define CHECK_SOCKET_ADDRESS_AND_PORT(socket, address, port) \
-    LONGS_EQUAL( (address), Socket_GetIpAddress((socket)) ); \
-    LONGS_EQUAL( (port), Socket_GetPort((socket)) );
+#define CHECK_SOCKET_CLOSED(socket) \
+    LONGS_EQUAL( SOCKET_INVALID_DESCRIPTOR, Socket_GetDescriptor((socket)) );
 
 // All sockets
 void expectSocketOpen(int socket_descriptor_or_error_code, int domain, int type, int protocol);

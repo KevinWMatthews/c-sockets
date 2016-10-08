@@ -13,8 +13,6 @@ typedef struct SocketStruct
 {
     int socket_descriptor;
     SocketSystemLayerDomain domain; // Also referred to as family.
-    const char * ip_address;
-    int port;
 } SocketStruct;
 
 Socket Socket_Create(void)
@@ -23,8 +21,6 @@ Socket Socket_Create(void)
     RETURN_VALUE_IF_NULL(self, NULL);
 
     self->socket_descriptor = SOCKET_INVALID_DESCRIPTOR;
-    self->ip_address = SOCKET_INVALID_IP_ADDRESS;
-    self->port = SOCKET_INVALID_PORT;
     return self;
 }
 
@@ -141,8 +137,6 @@ void Socket_Close(Socket self)
 
     SocketSystemLayer_Close(self->socket_descriptor);
     self->socket_descriptor = SOCKET_INVALID_DESCRIPTOR;
-    self->ip_address = SOCKET_INVALID_IP_ADDRESS;
-    self->port = SOCKET_INVALID_PORT;
 }
 
 int SocketServer_Bind(Socket self, const char * ip_address, int port)
@@ -158,8 +152,6 @@ int SocketServer_Bind(Socket self, const char * ip_address, int port)
     {
         return SOCKET_FAILED_SYSTEM_CALL;
     }
-    self->ip_address = ip_address;
-    self->port = port;
     return SOCKET_SUCCESS;
 }
 
@@ -168,18 +160,6 @@ int Socket_GetDescriptor(Socket self)
     RETURN_VALUE_IF_NULL(self, SOCKET_NULL_POINTER);
 
     return self->socket_descriptor;
-}
-
-const char * Socket_GetIpAddress(Socket self)
-{
-    RETURN_VALUE_IF_NULL(self, SOCKET_INVALID_IP_ADDRESS);
-    return self->ip_address;
-}
-
-int Socket_GetPort(Socket self)
-{
-    RETURN_VALUE_IF_NULL(self, SOCKET_INVALID_PORT);
-    return self->port;
 }
 
 int SocketServer_Listen(Socket self, int backlog)
