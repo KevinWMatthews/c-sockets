@@ -2,36 +2,76 @@
 #include <string.h>
 #include <stdlib.h>
 #include "Socket.h"
+#include <argp.h>
 
-static void parse_options(SocketAddress socket_address, int argc, char * argv[])
+static char doc[] = "UDP client socket demo.\nSend a single UDP packet to a remote socket.";
+static char args_doc[] = "PORT";
+
+// keys may not be 0
+#define ARGUMENT_KEY_IP_ADDRESS 1
+static struct argp_option argp_options[] = {
+    // long option, key, doc?, option options (haha), group
+    { "ip-address", ARGUMENT_KEY_IP_ADDRESS, "IP_ADDRESS", 0, "IP address of remote socket", 0 },
+    { 0 }
+};
+
+#define NUMBER_OF_ARGUMENTS 1
+#define ARGUMENT_INDEX_PORT 0
+struct arguments
 {
-    int i = 0;
-    char port[6] = {0};
+    char * args[NUMBER_OF_ARGUMENTS];
+    char * ip_address;
+};
 
-    if (socket_address == 0)
+static error_t parse_arguments(int key, char *arg, struct argp_state *state)
+{
+    struct arguments *arguments = state->input;
+
+    switch (key)
     {
-        printf("%s was passed a null pointer!\n", __func__);
-        return;
+        case ARGUMENT_KEY_IP_ADDRESS:
+            if (arg)
+                arguments->ip_address = arg;
+            break;
+
+        case ARGP_KEY_ARG:
+        {
+            unsigned index_of_argument = state->arg_num;
+            if (index_of_argument >= NUMBER_OF_ARGUMENTS)
+            {
+                // Too many arguments; throw a usage error.
+                argp_usage(state);
+            }
+            // Store the current argument.
+            arguments->args[index_of_argument] = arg;
+            break;
+        }
+
+        case ARGP_KEY_END:
+        {
+            unsigned index_of_argument = state->arg_num;
+            if (index_of_argument < NUMBER_OF_ARGUMENTS)
+            {
+                // Not enough arguments; throw a usage error.
+                argp_usage(state);
+            }
+            break;
+        }
+
+        default:
+            return ARGP_ERR_UNKNOWN;
     }
 
-    for (i = 0; i < argc; i++)
-    {
-        if ( strcmp(argv[i], "--ip-address") == 0 )
-        {
-            i++;
-            strcpy(socket_address->ip_address, argv[i]);
-        }
-        if ( strcmp(argv[i], "--port") == 0 )
-        {
-            i++;
-            strcpy(port, argv[i]);
-            socket_address->port = atoi(port);
-        }
-    }
+    return 0;
 }
+
+static struct argp argp = {argp_options, parse_arguments, args_doc, doc, 0, 0, 0};
 
 int main(int argc, char * argv[])
 {
+    struct arguments arguments = {
+        .ip_address = "127.0.0.1"
+    };
     Socket client = {0};
     SocketSettingsStruct client_settings = {
         .domain = SOCKET_DOMAIN_IPV4,
@@ -40,12 +80,12 @@ int main(int argc, char * argv[])
     };
     int return_code = 0;
     char test_message[] = {"This is a test.\n"};
-    SocketAddressStruct socket_address = {
-        .ip_address = "127.0.0.1",
-        .port = 8888
-    };
+    SocketAddressStruct socket_address;
 
-    parse_options(&socket_address, argc, argv);
+    // Parse arguments
+    argp_parse(&argp, argc, argv, 0, 0, &arguments);
+    socket_address.ip_address = arguments.ip_address;
+    socket_address.port = atoi(arguments.args[ARGUMENT_INDEX_PORT]);
 
     printf("Starting UDP Client...\n");
     client = Socket_Create();
