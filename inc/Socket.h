@@ -4,7 +4,7 @@
 typedef struct SocketAddressStruct * SocketAddress;
 typedef struct SocketAddressStruct
 {
-    char * ip_address;
+    const char * ip_address;    // const?
     unsigned short port;
 } SocketAddressStruct;
 
@@ -128,7 +128,7 @@ Socket SocketServer_Accept(Socket);
  * On success, returns 0.
  * On failure, returns < 0.
  */
-int SocketClient_Connect(Socket, const char * ip_address, int port);
+int SocketClient_Connect(Socket, SocketAddress);
 
 /*
  * Receive a message from the given socket.
@@ -149,8 +149,7 @@ int Socket_Receive(Socket, char * buffer, unsigned int buffer_length);
  */
 int Socket_Send(Socket, char * message, unsigned int message_length);
 
-int Socket_SendTo(Socket, char * message, unsigned int message_length,
-        const char * ip_address, int port);
+int Socket_SendTo(Socket, char * message, unsigned int message_length, SocketAddress);
 /*
  * Return the file descriptor for the given Socket.
  */

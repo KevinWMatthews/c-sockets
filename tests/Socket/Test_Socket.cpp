@@ -17,6 +17,8 @@ TEST_GROUP(Socket)
     SocketSettings socket_settings;
     SocketSettingsStruct udp_settings_struct;
     SocketSettings udp_settings;
+    SocketAddressStruct socket_address_struct;
+    SocketAddress socket_address;
 
     void setup()
     {
@@ -32,6 +34,10 @@ TEST_GROUP(Socket)
         udp_settings_struct.type = SOCKET_TYPE_DATAGRAM;
         udp_settings_struct.protocol = SOCKET_PROTOCOL_DEFAULT;
         udp_settings = &udp_settings_struct;
+
+        socket_address_struct.ip_address = "10.10.0.1";
+        socket_address_struct.port = 10010;
+        socket_address = &socket_address_struct;
     }
 
     void teardown()
@@ -66,6 +72,7 @@ TEST_GROUP(Socket)
  *
  *  SendTo:
  *      Add flags.
+ *      Test for null socket address.
  *
  *  Receive:
  *      Add flags.
@@ -298,66 +305,58 @@ TEST(Socket, close_can_handle_null_pointers)
 // Receive
 TEST(Socket, it_can_receive_from_a_socket)
 {
-    const char * ip_address = "192.168.2.1";
-    int port = 10004;
     char receive_buffer[11] = {0};
     unsigned int receive_buffer_length = sizeof(receive_buffer) - 1;
     int number_of_bytes_read = 1;
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
-    expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, socket_address, SOCKET_SYSTEM_LAYER_SUCCESS);
     expectSocketReceive(socket_descriptor, receive_buffer, receive_buffer_length, number_of_bytes_read);
 
     Socket_Open(socket, socket_settings);
-    SocketClient_Connect(socket, ip_address, port);
+    SocketClient_Connect(socket, socket_address);
 
     LONGS_EQUAL( number_of_bytes_read, Socket_Receive(socket, receive_buffer, receive_buffer_length) );
 }
 
 TEST(Socket, it_can_fail_to_receive)
 {
-    const char * ip_address = "192.168.2.1";
-    int port = 10004;
     char receive_buffer[11] = {0};
     unsigned int receive_buffer_length = sizeof(receive_buffer) - 1;
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
-    expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, socket_address, SOCKET_SYSTEM_LAYER_SUCCESS);
     expectSocketReceive(socket_descriptor, receive_buffer, receive_buffer_length, SOCKET_SYSTEM_LAYER_FAIL);
 
     Socket_Open(socket, socket_settings);
-    SocketClient_Connect(socket, ip_address, port);
+    SocketClient_Connect(socket, socket_address);
 
     LONGS_EQUAL( SOCKET_FAILED_SYSTEM_CALL, Socket_Receive(socket, receive_buffer, receive_buffer_length) );
 }
 
 TEST(Socket, it_will_not_receive_with_a_receive_null_buffer)
 {
-    const char * ip_address = "192.168.2.1";
-    int port = 10004;
     unsigned int receive_buffer_length = 10;
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
-    expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, socket_address, SOCKET_SYSTEM_LAYER_SUCCESS);
 
     Socket_Open(socket, socket_settings);
-    SocketClient_Connect(socket, ip_address, port);
+    SocketClient_Connect(socket, socket_address);
 
     LONGS_EQUAL( SOCKET_INVALID_BUFFER, Socket_Receive(socket, NULL, receive_buffer_length) );
 }
 
 TEST(Socket, it_will_not_receive_if_buffer_length_is_zero)
 {
-    const char * ip_address = "192.168.2.1";
-    int port = 10004;
     char receive_buffer[11] = {0};
     unsigned int receive_buffer_length = 0;
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
-    expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, socket_address, SOCKET_SYSTEM_LAYER_SUCCESS);
 
     Socket_Open(socket, socket_settings);
-    SocketClient_Connect(socket, ip_address, port);
+    SocketClient_Connect(socket, socket_address);
 
     LONGS_EQUAL( SOCKET_INVALID_BUFFER, Socket_Receive(socket, receive_buffer, receive_buffer_length) );
 }
@@ -373,66 +372,58 @@ TEST(Socket, can_not_receive_from_a_null_socket)
 // Send
 TEST(Socket, it_can_send_data_to_a_socket)
 {
-    const char * ip_address = "192.168.2.1";
-    int port = 10004;
     char message[] = "A";
     unsigned int message_length = sizeof(message);
     int number_of_bytes_sent = 1;
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
-    expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, socket_address, SOCKET_SYSTEM_LAYER_SUCCESS);
     expectSocketSend(socket_descriptor, message, message_length, number_of_bytes_sent);
 
     Socket_Open(socket, socket_settings);
-    SocketClient_Connect(socket, ip_address, port);
+    SocketClient_Connect(socket, socket_address);
 
     LONGS_EQUAL( number_of_bytes_sent, Socket_Send(socket, message, message_length) );
 }
 
 TEST(Socket, it_can_fail_send_data_to_a_socket)
 {
-    const char * ip_address = "192.168.2.1";
-    int port = 10004;
     char message[] = "Hello";
     unsigned int message_length = sizeof(message);
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
-    expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, socket_address, SOCKET_SYSTEM_LAYER_SUCCESS);
     expectSocketSend(socket_descriptor, message, message_length, SOCKET_SYSTEM_LAYER_FAIL);
 
     Socket_Open(socket, socket_settings);
-    SocketClient_Connect(socket, ip_address, port);
+    SocketClient_Connect(socket, socket_address);
 
     LONGS_EQUAL( SOCKET_FAILED_SYSTEM_CALL, Socket_Send(socket, message, message_length) );
 }
 
 TEST(Socket, it_will_not_send_a_null_message)
 {
-    const char * ip_address = "192.168.2.1";
-    int port = 10004;
     unsigned int message_length = 7;
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
-    expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, socket_address, SOCKET_SYSTEM_LAYER_SUCCESS);
 
     Socket_Open(socket, socket_settings);
-    SocketClient_Connect(socket, ip_address, port);
+    SocketClient_Connect(socket, socket_address);
 
     LONGS_EQUAL( SOCKET_INVALID_BUFFER, Socket_Send(socket, NULL, message_length) );
 }
 
 TEST(Socket, it_will_not_send_a_zero_length_message)
 {
-    const char * ip_address = "192.168.2.1";
-    int port = 10004;
     char message[] = "Hello";
     unsigned int message_length = 0;
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_STREAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
-    expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, ip_address, port, SOCKET_SYSTEM_LAYER_SUCCESS);
+    expectSocketConnect(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, socket_address, SOCKET_SYSTEM_LAYER_SUCCESS);
 
     Socket_Open(socket, socket_settings);
-    SocketClient_Connect(socket, ip_address, port);
+    SocketClient_Connect(socket, socket_address);
 
     LONGS_EQUAL( SOCKET_INVALID_BUFFER, Socket_Send(socket, message, message_length) );
 }
@@ -440,69 +431,82 @@ TEST(Socket, it_will_not_send_a_zero_length_message)
 // SendTo
 TEST(Socket, send_to_can_send_a_message)
 {
-    const char * ip_address = "10.10.0.1";
-    int port = 12121;
     char message[] = "Hello";
     unsigned int message_length = sizeof(message);
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_DATAGRAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
-    expectSocketSendTo(socket_descriptor, message, message_length, ip_address, port, message_length);
+    expectSocketSendTo(socket_descriptor, message, message_length, socket_address, message_length);
 
     Socket_Open(socket, udp_settings);
-    LONGS_EQUAL( message_length, Socket_SendTo(socket, message, message_length, ip_address, port) );
+    LONGS_EQUAL( message_length, Socket_SendTo(socket, message, message_length, socket_address) );
 }
 
 TEST(Socket, send_to_can_send_a_message_of_zero_length) // This is valid for UDP packets.
 {
-    const char * ip_address = "10.10.0.1";
-    int port = 12121;
     char message[] = "";
     unsigned int message_length = 0;
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_DATAGRAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
-    expectSocketSendTo(socket_descriptor, message, message_length, ip_address, port, message_length);
+    expectSocketSendTo(socket_descriptor, message, message_length, socket_address, message_length);
 
     Socket_Open(socket, udp_settings);
-    LONGS_EQUAL( message_length, Socket_SendTo(socket, message, message_length, ip_address, port) );
+    LONGS_EQUAL( message_length, Socket_SendTo(socket, message, message_length, socket_address) );
 }
 
 TEST(Socket, send_to_can_detect_system_layer_failure)
 {
-    const char * ip_address = "10.10.0.1";
-    int port = 12121;
     char message[] = "Hello";
     unsigned int message_length = sizeof(message);
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_DATAGRAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
-    expectSocketSendTo(socket_descriptor, message, message_length, ip_address, port, SOCKET_SYSTEM_LAYER_FAIL);
+    expectSocketSendTo(socket_descriptor, message, message_length, socket_address, SOCKET_SYSTEM_LAYER_FAIL);
 
     Socket_Open(socket, udp_settings);
-    LONGS_EQUAL( SOCKET_SYSTEM_LAYER_FAIL, Socket_SendTo(socket, message, message_length, ip_address, port) );
+    LONGS_EQUAL( SOCKET_SYSTEM_LAYER_FAIL, Socket_SendTo(socket, message, message_length, socket_address) );
 }
 
 TEST(Socket, send_to_will_not_transmit_a_null_message)
 {
-    const char * ip_address = "10.10.0.1";
-    int port = 12121;
     unsigned int message_length = 7;
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_DATAGRAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
 
     Socket_Open(socket, udp_settings);
-    LONGS_EQUAL( SOCKET_INVALID_BUFFER, Socket_SendTo(socket, NULL, message_length, ip_address, port) );
+    LONGS_EQUAL( SOCKET_INVALID_BUFFER, Socket_SendTo(socket, NULL, message_length, socket_address) );
 }
 
-TEST(Socket, send_to_can_handle_a_null_socket)
+TEST(Socket, send_to_will_fail_with_a_null_socket)
 {
-    const char * ip_address = "10.10.0.1";
-    int port = 12121;
     char message[] = "Hello";
     unsigned int message_length = sizeof(message);
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_DATAGRAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
 
     Socket_Open(socket, udp_settings);
-    LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_SendTo(NULL, message, message_length, ip_address, port) );
+    LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_SendTo(NULL, message, message_length, socket_address) );
+}
+
+TEST(Socket, send_to_will_fail_with_a_null_socket_address)
+{
+    char message[] = "Hello";
+    unsigned int message_length = sizeof(message);
+
+    expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_DATAGRAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
+
+    Socket_Open(socket, udp_settings);
+    LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_SendTo(socket, message, message_length, NULL) );
+}
+
+TEST(Socket, send_to_will_fail_with_a_null_ip_address)
+{
+    socket_address->ip_address = NULL;
+    char message[] = "Hello";
+    unsigned int message_length = sizeof(message);
+
+    expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_DATAGRAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
+
+    Socket_Open(socket, udp_settings);
+    LONGS_EQUAL( SOCKET_NULL_POINTER, Socket_SendTo(socket, message, message_length, socket_address) );
 }
 
 // GetDescriptor

@@ -77,7 +77,7 @@ int main(int argc, char * argv[])
         return 1;
     }
 
-    return_code = SocketClient_Connect(client, socket_address.ip_address, socket_address.port);
+    return_code = SocketClient_Connect(client, &socket_address);
     if (return_code < 0)
     {
         if (return_code == SOCKET_FAILED_SYSTEM_CALL)

@@ -195,13 +195,14 @@ Socket SocketServer_Accept(Socket self)
     return client_socket;
 }
 
-int SocketClient_Connect(Socket self, const char * ip_address, int port)
+int SocketClient_Connect(Socket self, SocketAddress socket_address)
 {
     int return_code = SOCKET_SYSTEM_LAYER_FAIL;
     RETURN_VALUE_IF_NULL(self, SOCKET_NULL_POINTER);
-    RETURN_VALUE_IF_NULL(ip_address, SOCKET_NULL_POINTER);
+    RETURN_VALUE_IF_NULL(socket_address, SOCKET_NULL_POINTER);
+    RETURN_VALUE_IF_NULL(socket_address->ip_address, SOCKET_NULL_POINTER);
 
-    return_code = SocketSystemLayer_Connect(self->socket_descriptor, self->domain, ip_address, port);
+    return_code = SocketSystemLayer_Connect(self->socket_descriptor, self->domain, socket_address->ip_address, socket_address->port);
     if (return_code < 0)
         return SOCKET_FAILED_SYSTEM_CALL;
     return SOCKET_SUCCESS;
@@ -234,14 +235,15 @@ int Socket_Send(Socket self, char * message, unsigned int message_length)
     return return_code;
 }
 
-int Socket_SendTo(Socket self, char * message, unsigned int message_length,
-        const char * ip_address, int port)
+int Socket_SendTo(Socket self, char * message, unsigned int message_length, SocketAddress socket_address)
 {
     int return_code = 0;
     RETURN_VALUE_IF_NULL(self, SOCKET_NULL_POINTER);
     RETURN_VALUE_IF_NULL(message, SOCKET_INVALID_BUFFER);
+    RETURN_VALUE_IF_NULL(socket_address, SOCKET_NULL_POINTER);
+    RETURN_VALUE_IF_NULL(socket_address->ip_address, SOCKET_NULL_POINTER);
 
-    return_code = SocketSystemLayer_SendTo(self->socket_descriptor, message, message_length, ip_address, port);
+    return_code = SocketSystemLayer_SendTo(self->socket_descriptor, message, message_length, socket_address->ip_address, socket_address->port);
     if (return_code < 0)
         return SOCKET_FAILED_SYSTEM_CALL;
     return return_code;

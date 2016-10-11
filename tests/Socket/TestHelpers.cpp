@@ -48,25 +48,25 @@ void expectSocketSend(int socket_descriptor, char * message, unsigned int messag
         .andReturnValue(return_code);
 }
 
-void expectSocketSendTo(int socket_descriptor, char * message, unsigned int message_length, const char * ip_address, int port, int return_code)
+void expectSocketSendTo(int socket_descriptor, char * message, unsigned int message_length, SocketAddress socket_address, int return_code)
 {
     mock().expectOneCall("SocketSystemLayer_Send")
         .withParameter("descriptor", socket_descriptor)
         .withParameter("message", message)
         .withParameter("message_length", message_length)
-        .withParameter("ip_address", ip_address)
-        .withParameter("port", port)
+        .withParameter("ip_address", socket_address->ip_address)
+        .withParameter("port", socket_address->port)
         .andReturnValue(return_code);
 }
 
 // Client sockets
-void expectSocketConnect(int socket_descriptor, int domain, const char *ip_address, int port, int return_code)
+void expectSocketConnect(int socket_descriptor, int domain, SocketAddress socket_address, int return_code)
 {
     mock().expectOneCall("SocketSystemLayer_Connect")
         .withParameter("domain", domain)
         .withParameter("descriptor", socket_descriptor)
-        .withParameter("ip_address", ip_address)
-        .withParameter("port", port)
+        .withParameter("ip_address", socket_address->ip_address)
+        .withParameter("port", socket_address->port)
         .andReturnValue(return_code);
 }
 
