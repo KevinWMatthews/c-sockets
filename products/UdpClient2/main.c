@@ -4,7 +4,7 @@
 #include "Socket.h"
 #include <argp.h>
 
-static char doc[] = "UDP client socket demo.\nUses SendTo() to transmit a single UDP packet to a remote socket.";
+static char doc[] = "UDP client socket demo.\nUses Connect() and Send() to transmit a single UDP packet to a remote socket.";
 static char args_doc[] = "PORT";
 
 // keys may not be 0
@@ -109,8 +109,22 @@ int main(int argc, char * argv[])
         Socket_Destroy(&client);
     }
 
+    printf("Connecting to socket...\n");
+    return_code = SocketClient_Connect(client, &socket_address);
+    if (return_code < 0)
+    {
+        if (return_code == SOCKET_FAILED_SYSTEM_CALL)
+            perror("System call to socket connect failed");
+        else
+            printf("Could not connect socket!\n");
+
+        printf("Destroying socket...\n");
+        Socket_Close(client);
+        Socket_Destroy(&client);
+    }
+
     printf("Sending data to socket at %s:%d...\n", socket_address.ip_address, socket_address.port);
-    return_code = Socket_SendTo( client, test_message, sizeof(test_message), &socket_address );
+    return_code = Socket_Send( client, test_message, sizeof(test_message) );
     if (return_code < 0)
     {
         if (return_code == SOCKET_FAILED_SYSTEM_CALL)

@@ -243,7 +243,7 @@ int Socket_SendTo(Socket self, char * message, unsigned int message_length, Sock
     RETURN_VALUE_IF_NULL(socket_address, SOCKET_NULL_POINTER);
     RETURN_VALUE_IF_NULL(socket_address->ip_address, SOCKET_NULL_POINTER);
 
-    return_code = SocketSystemLayer_SendTo(self->socket_descriptor, message, message_length, socket_address->ip_address, socket_address->port);
+    return_code = SocketSystemLayer_SendTo(self->socket_descriptor, message, message_length, self->domain, socket_address->ip_address, socket_address->port);
     if (return_code < 0)
         return SOCKET_FAILED_SYSTEM_CALL;
     return return_code;

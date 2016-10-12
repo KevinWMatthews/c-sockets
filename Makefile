@@ -6,6 +6,7 @@ ALL_PRODUCTS =	\
 				ClientDemo \
 				UdpListener \
 				UdpClient \
+				UdpClient2 \
 				TcpServer
 
 ALL_TEST_MODULES = \

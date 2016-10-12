@@ -48,12 +48,13 @@ void expectSocketSend(int socket_descriptor, char * message, unsigned int messag
         .andReturnValue(return_code);
 }
 
-void expectSocketSendTo(int socket_descriptor, char * message, unsigned int message_length, SocketAddress socket_address, int return_code)
+void expectSocketSendTo(int socket_descriptor, char * message, unsigned int message_length, int domain, SocketAddress socket_address, int return_code)
 {
     mock().expectOneCall("SocketSystemLayer_Send")
         .withParameter("descriptor", socket_descriptor)
         .withParameter("message", message)
         .withParameter("message_length", message_length)
+        .withParameter("domain", domain)
         .withParameter("ip_address", socket_address->ip_address)
         .withParameter("port", socket_address->port)
         .andReturnValue(return_code);

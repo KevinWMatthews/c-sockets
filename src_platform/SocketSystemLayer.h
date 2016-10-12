@@ -114,7 +114,7 @@ int SocketSystemLayer_Send(int descriptor, const char * message, unsigned int me
  * On success, returns the number of bytes that were sent.
  * On failure, returns < 0.
  */
-int SocketSystemLayer_SendTo(int descriptor, const char * message, unsigned int message_length, const char * ip_address, int port);
+int SocketSystemLayer_SendTo(int descriptor, const char * message, unsigned int message_length, int domain, const char * ip_address, int port);
 
 /*
  * Receive a message from the socket with the given descriptor.

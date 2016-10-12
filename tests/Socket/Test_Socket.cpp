@@ -435,7 +435,7 @@ TEST(Socket, send_to_can_send_a_message)
     unsigned int message_length = sizeof(message);
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_DATAGRAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
-    expectSocketSendTo(socket_descriptor, message, message_length, socket_address, message_length);
+    expectSocketSendTo(socket_descriptor, message, message_length, SOCKET_SYSTEM_DOMAIN_IPV4, socket_address, message_length);
 
     Socket_Open(socket, udp_settings);
     LONGS_EQUAL( message_length, Socket_SendTo(socket, message, message_length, socket_address) );
@@ -447,7 +447,7 @@ TEST(Socket, send_to_can_send_a_message_of_zero_length) // This is valid for UDP
     unsigned int message_length = 0;
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_DATAGRAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
-    expectSocketSendTo(socket_descriptor, message, message_length, socket_address, message_length);
+    expectSocketSendTo(socket_descriptor, message, message_length, SOCKET_SYSTEM_DOMAIN_IPV4, socket_address, message_length);
 
     Socket_Open(socket, udp_settings);
     LONGS_EQUAL( message_length, Socket_SendTo(socket, message, message_length, socket_address) );
@@ -459,7 +459,7 @@ TEST(Socket, send_to_can_detect_system_layer_failure)
     unsigned int message_length = sizeof(message);
 
     expectSocketOpen(socket_descriptor, SOCKET_SYSTEM_DOMAIN_IPV4, SOCKET_SYSTEM_TYPE_DATAGRAM, SOCKET_SYSTEM_PROTOCOL_DEFAULT);
-    expectSocketSendTo(socket_descriptor, message, message_length, socket_address, SOCKET_SYSTEM_LAYER_FAIL);
+    expectSocketSendTo(socket_descriptor, message, message_length, SOCKET_SYSTEM_DOMAIN_IPV4, socket_address, SOCKET_SYSTEM_LAYER_FAIL);
 
     Socket_Open(socket, udp_settings);
     LONGS_EQUAL( SOCKET_SYSTEM_LAYER_FAIL, Socket_SendTo(socket, message, message_length, socket_address) );

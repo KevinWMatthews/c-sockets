@@ -63,9 +63,18 @@ int SocketSystemLayer_Send(int descriptor, const char * message, unsigned int me
     return send(descriptor, message, message_length, MSG_NOSIGNAL);
 }
 
-int SocketSystemLayer_SendTo(int descriptor, const char * message, unsigned int message_length, const char * ip_address, int port)
+int SocketSystemLayer_SendTo(int descriptor, const char * message, unsigned int message_length, int domain, const char * ip_address, int port)
 {
-    return 666;
+    struct sockaddr_in socket;
+    // family and domain seem to be used interchangably.
+    // The original reason for the distinction seems to never have been realized in practice.
+    socket.sin_family = domain;
+    socket.sin_addr.s_addr = inet_addr(ip_address);
+    socket.sin_port = htons(port);
+    // We defined an internet socket (sockaddr_in) instead of a standard socket(sockaddr).
+    // Conveniently, their pointers can be typecast.
+    // MSG_NOSIGNAL suppresses SIGPIPE signal and lets the user handle the error.
+    return sendto( descriptor, message, message_length, MSG_NOSIGNAL, (struct sockaddr *)&socket, sizeof(socket) );
 }
 
 int SocketSystemLayer_Receive(int descriptor, char * buffer, unsigned int buffer_length)
