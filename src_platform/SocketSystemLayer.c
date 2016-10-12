@@ -2,6 +2,23 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
+/*
+ * Notes:
+ *  Internet sockets (sockaddr_in) can be typecast to standard sockets (sockaddr).
+ */
+
+
+static void populate_sockaddr_in_struct(struct sockaddr_in * socket, int domain, const char * ip_address, int port)
+{
+    if (socket == 0)
+        return;
+    // family and domain seem to be used interchangably.
+    // The original reason for the distinction seems to never have been realized in practice.
+    socket->sin_family = domain;
+    socket->sin_addr.s_addr = inet_addr(ip_address);
+    socket->sin_port = htons(port);
+}
+
 int SocketSystemLayer_Open(int domain, int type, int protocol)
 {
     return socket(domain, type, protocol);
@@ -21,13 +38,7 @@ int SocketSystemLayer_SetOptions(int descriptor, int option_level, int option_na
 int SocketSystemLayer_Bind(int descriptor, int domain, const char * ip_address, int port)
 {
     struct sockaddr_in socket;
-    // family and domain seem to be used interchangably.
-    // The original reason for the distinction seems to never have been realized in practice.
-    socket.sin_family = domain;
-    socket.sin_addr.s_addr = inet_addr(ip_address);
-    socket.sin_port = htons(port);
-    // We defined an internet socket (sockaddr_in) instead of a standard socket(sockaddr).
-    // Conveniently, their pointers can be typecast.
+    populate_sockaddr_in_struct(&socket, domain, ip_address, port);
     return bind( descriptor, (struct sockaddr *)&socket, sizeof(socket) );
 }
 
@@ -47,13 +58,7 @@ int SocketSystemLayer_Accept(int descriptor)
 int SocketSystemLayer_Connect(int descriptor, int domain, const char * ip_address, int port)
 {
     struct sockaddr_in socket;
-    // family and domain seem to be used interchangably.
-    // The original reason for the distinction seems to never have been realized in practice.
-    socket.sin_family = domain;
-    socket.sin_addr.s_addr = inet_addr(ip_address);
-    socket.sin_port = htons(port);
-    // We defined an internet socket (sockaddr_in) instead of a standard socket(sockaddr).
-    // Conveniently, their pointers can be typecast.
+    populate_sockaddr_in_struct(&socket, domain, ip_address, port);
     return connect( descriptor, (struct sockaddr *)&socket, sizeof(socket) );
 }
 
@@ -66,13 +71,7 @@ int SocketSystemLayer_Send(int descriptor, const char * message, unsigned int me
 int SocketSystemLayer_SendTo(int descriptor, const char * message, unsigned int message_length, int domain, const char * ip_address, int port)
 {
     struct sockaddr_in socket;
-    // family and domain seem to be used interchangably.
-    // The original reason for the distinction seems to never have been realized in practice.
-    socket.sin_family = domain;
-    socket.sin_addr.s_addr = inet_addr(ip_address);
-    socket.sin_port = htons(port);
-    // We defined an internet socket (sockaddr_in) instead of a standard socket(sockaddr).
-    // Conveniently, their pointers can be typecast.
+    populate_sockaddr_in_struct(&socket, domain, ip_address, port);
     // MSG_NOSIGNAL suppresses SIGPIPE signal and lets the user handle the error.
     return sendto( descriptor, message, message_length, MSG_NOSIGNAL, (struct sockaddr *)&socket, sizeof(socket) );
 }
