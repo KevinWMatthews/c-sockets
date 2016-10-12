@@ -1,4 +1,10 @@
-Add SocketAddress to Connect() and SendTo().
+Should the SocketSystemLayer require a sockaddr_in struct (or sockaddr struct) instead of a domain, IP, and port?
+Perhaps.
+If we did this, the Socket layer would be responsible for packaging things into this struct.
+The SocketSystemLayer would purely be a wrapper for the system call.
+Think about it... I'd rather not introduce system-dependence at the Socket layer.
+However, I'd also rather not introduce yet another intermediate layer unless we really have to.
+Also consider that the tests are quite clunky because they have so many arguments.
 
 Double check return codes in Socket.c.
     There should be no references to SOCKET_SYSTEM_LAYER.
