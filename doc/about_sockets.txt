@@ -54,3 +54,69 @@ Datagram sockets:
         Send data with sendto().
             send() is not allowed.
         Close the socket with close().
+
+    Multicast datagram:
+        For any of this to work on a PC, your computer's interface must be configured to send and receive multicasts.
+        # Check that an interface is listening to allmulti
+        ifconfig
+        # If not, add it:
+        sudo ifconfig eth<n> allmulti
+
+        # Check for a multicast route:
+        route -n
+        # If destination 224.0.0.0 with Genmask 240.0.0.0 is not present, add it:
+        sudo route add -net 224.0.0.0 netmask 240.0.0.0 dev eth2
+        # or in CIDR notation,
+        sudo route add -net 224.0.0.0/4 dev eth<n>
+
+        Send:
+            Must send to an IP addrss in the range 224.0.0.0 to 239.255.255.255 using sendto().
+            That's it for the basics?
+
+            TTL
+                unsigned char ttl;
+                setsockopt( socket, IPPROTO_IP, IP_MULTICAST_TTL, &ttl, sizeof(ttl) );
+
+                Multicasts use time-to-live (TTL) to determine how many subnets the datagram can be forwarded to.
+                Each rouer decrements the TTL of every datagram as it traverses from one network to another.
+                When TTL reaches 0 (when it would be decremented to -1?), the packet is dropped.
+                Acceptable values for TTL are:
+                    TTL     Packets are restricted to
+                    0       same host
+                    1       same subnet
+                    32      same site   (site is not strictly defined)
+                    64      same region (region is not strictly defined)
+                    128     same continent
+                    255     unrestricted
+
+            Loopback
+                If an interface is multicasting to a group that it is a member of, it could receive its own packets from the network.
+                Loopback can be set to 0 to prevent an interface from receiving its own multicasts.
+                Loopback can be set to 1 to allow an interface to receive its own multicasts.
+
+            Is the interface restricted to AF_INET? Can we multicast to local/unix sockets?
+
+        Receive:
+            Interfaces ignore multicasts by default (?).
+            A process must join a multicast group on an interface.
+            A process must also bind to a particular port.
+
+            Bind to a particular port (before or after joining the multicast group?):
+                addr.sin_family = AF_INET;
+                addr.sin_addr.s_addr = htonl(INADDR_ANY);
+                addr.sin_port = htons(multicast_port_of_interest);
+                bind( file_descriptor, (struct sockaddr *)&addr, sizeof(addr) );
+
+            You probably want to set SO_REUSEADDR so that several sockets can bind to the same port.
+            // setsockopt(...);
+
+            struct ip_mreq {
+                struct in_addr imr_multiaddr;   /* multicast group to join */
+                struct in_addr imr_interface;   /* interface to join on */
+            }
+            struct ip_mreq mreq;                // membership request
+            mreq.imr_multiaddr = multicast_address_of_interest;
+            mreq.imr_interface = INADDR_ANY;    // Required? How would you specify another interface? What is an interface?
+            setsockopt( sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq) );
+
+            Then receive using recvfrom().

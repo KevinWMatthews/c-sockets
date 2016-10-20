@@ -1,3 +1,7 @@
+Create a multicast project:
+    send
+    receive
+
 Should the SocketSystemLayer require a sockaddr_in struct (or sockaddr struct) instead of a domain, IP, and port?
 Perhaps.
 If we did this, the Socket layer would be responsible for packaging things into this struct.
