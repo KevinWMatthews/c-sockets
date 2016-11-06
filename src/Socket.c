@@ -102,7 +102,7 @@ int Socket_SetOptions(Socket self, SocketOptions options)
 {
     const int option_value = 1;
     int option_name = -1;
-    int return_code = SOCKET_SYSTEM_LAYER_FAIL;
+    int return_code = SOCKET_UNKNOWN_FAILURE;
 
     RETURN_VALUE_IF_NULL(self, SOCKET_NULL_POINTER);
     RETURN_VALUE_IF_NULL(options, SOCKET_NULL_POINTER);
@@ -141,7 +141,7 @@ void Socket_Close(Socket self)
 
 int SocketServer_Bind(Socket self, SocketAddress socket_address)
 {
-    int return_code = 0;
+    int return_code = SOCKET_UNKNOWN_FAILURE;
     RETURN_VALUE_IF_NULL(self, SOCKET_NULL_POINTER);
     return_code = SocketSystemLayer_Bind(self->socket_descriptor, self->domain, socket_address->ip_address, socket_address->port);
     if ( return_code == SOCKET_SYSTEM_LAYER_ADDRESS_IN_USE )
@@ -170,7 +170,7 @@ int Socket_GetDescriptor(Socket self)
 
 int SocketServer_Listen(Socket self, int backlog)
 {
-    int return_code = SOCKET_SYSTEM_LAYER_FAIL;
+    int return_code = SOCKET_UNKNOWN_FAILURE;
     RETURN_VALUE_IF_NULL(self, SOCKET_NULL_POINTER);
 
     return_code = SocketSystemLayer_Listen(self->socket_descriptor, backlog);
@@ -182,7 +182,7 @@ int SocketServer_Listen(Socket self, int backlog)
 Socket SocketServer_Accept(Socket self)
 {
     Socket client_socket = {0};
-    int return_code = SOCKET_SYSTEM_LAYER_FAIL;
+    int return_code = SOCKET_UNKNOWN_FAILURE;
     RETURN_VALUE_IF_NULL(self, NULL);
 
     return_code = SocketSystemLayer_Accept(self->socket_descriptor);
@@ -197,7 +197,7 @@ Socket SocketServer_Accept(Socket self)
 
 int SocketClient_Connect(Socket self, SocketAddress socket_address)
 {
-    int return_code = SOCKET_SYSTEM_LAYER_FAIL;
+    int return_code = SOCKET_UNKNOWN_FAILURE;
     RETURN_VALUE_IF_NULL(self, SOCKET_NULL_POINTER);
     RETURN_VALUE_IF_NULL(socket_address, SOCKET_NULL_POINTER);
     RETURN_VALUE_IF_NULL(socket_address->ip_address, SOCKET_NULL_POINTER);
@@ -210,7 +210,7 @@ int SocketClient_Connect(Socket self, SocketAddress socket_address)
 
 int Socket_Receive(Socket self, char * buffer, unsigned int buffer_length)
 {
-    int return_code = SOCKET_SYSTEM_LAYER_FAIL;
+    int return_code = SOCKET_UNKNOWN_FAILURE;
     RETURN_VALUE_IF_NULL(self, SOCKET_NULL_POINTER);
     RETURN_VALUE_IF_NULL(buffer, SOCKET_INVALID_BUFFER);
     if (buffer_length == 0)
@@ -224,7 +224,7 @@ int Socket_Receive(Socket self, char * buffer, unsigned int buffer_length)
 
 int Socket_Send(Socket self, char * message, unsigned int message_length)
 {
-    int return_code = SOCKET_SYSTEM_LAYER_FAIL;
+    int return_code = SOCKET_UNKNOWN_FAILURE;
     RETURN_VALUE_IF_NULL(message, SOCKET_INVALID_BUFFER);
     if (message_length == 0)
         return SOCKET_INVALID_BUFFER;
@@ -237,7 +237,7 @@ int Socket_Send(Socket self, char * message, unsigned int message_length)
 
 int Socket_SendTo(Socket self, char * message, unsigned int message_length, SocketAddress socket_address)
 {
-    int return_code = 0;
+    int return_code = SOCKET_UNKNOWN_FAILURE;
     RETURN_VALUE_IF_NULL(self, SOCKET_NULL_POINTER);
     RETURN_VALUE_IF_NULL(message, SOCKET_INVALID_BUFFER);
     RETURN_VALUE_IF_NULL(socket_address, SOCKET_NULL_POINTER);

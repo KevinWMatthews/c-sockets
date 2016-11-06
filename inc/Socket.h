@@ -22,6 +22,7 @@ typedef struct SocketStruct * Socket;
  */
 typedef enum
 {
+    SOCKET_UNKNOWN_FAILURE = -8,
     SOCKET_INVALID_OPTION = -7,
     SOCKET_INVALID_SETTING = -6,
     SOCKET_INVALID_BUFFER = -5,
