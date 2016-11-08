@@ -19,6 +19,7 @@ SET (Socket_VERSION_MINOR 1)
 SET (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 SET (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 
+add_subdirectory (tests/Socket)
 add_subdirectory (products/ClientDemo)
 add_subdirectory (products/ServerDemo)
 add_subdirectory (products/TcpServer)

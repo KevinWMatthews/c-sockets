@@ -1,3 +1,10 @@
+How should we reference source code in the products? It'd be cool if they didn't need to explicitly reference the source code, but perhaps they should.
+We'll also need to think about src/ vs src_platform/ and how we'll package those.
+
+Figure out what to do with the existing Makefile. I'd rather not continue to use it, but I don't necessarily want to delete it.... Maybe I should. Version control?
+
+Experiment with developing in CLion.
+
 Create a multicast project:
     send
     receive
